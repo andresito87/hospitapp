@@ -9,7 +9,13 @@ module es.aplicacion.hospitaljavafx {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.sql;
+    requires java.desktop;
 
     opens app to javafx.fxml;
     exports app;
+    exports controllers;
+    exports models;
+    opens controllers to javafx.fxml;
+    opens models to javafx.base;
 }

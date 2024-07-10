@@ -48,6 +48,10 @@ dependencies {
         exclude(group: 'org.openjfx')
     }
 
+    // Driver MySQL
+    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.1.0'
+
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }

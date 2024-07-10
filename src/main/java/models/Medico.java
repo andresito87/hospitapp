@@ -1,7 +1,8 @@
 package models;
 
+import javafx.beans.binding.BooleanExpression;
+
 /**
- *
  * @author andres
  */
 public class Medico {
@@ -12,6 +13,15 @@ public class Medico {
     private String apellido1;
     private String apellido2;
     private String observaciones;
+    
+    public Medico(long id, long numColegiado, String nombre, String apellido1, String apellido2, String observaciones) {
+        this.id = id;
+        this.numColegiado = numColegiado;
+        this.nombre = nombre;
+        this.apellido1 = apellido1;
+        this.apellido2 = apellido2;
+        this.observaciones = observaciones;
+    }
 
     public boolean setData(
             long id,
@@ -108,5 +118,5 @@ public class Medico {
     public void eliminar() {
 
     }
-
+    
 }
