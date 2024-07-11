@@ -36,7 +36,7 @@
         <TextField fx:id="textNumColegiado12" layoutX="662.0" layoutY="277.0" />
         <CheckBox layoutX="543.0" layoutY="326.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Segundo Apellido" />
         <TextField fx:id="textNumColegiado111" layoutX="673.0" layoutY="321.0" />
-        <Button layoutX="107.0" layoutY="442.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="194.0" text="Consultar" />
+        <Button fx:id="buttonGetInfo" layoutX="107.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#callMediciansModifyForm" prefHeight="54.0" prefWidth="194.0" text="Consultar" />
         <Button fx:id="buttonExit" layoutX="618.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0" prefWidth="194.0" text="Salir" />
         <Button fx:id="buttonClean" layoutX="365.0" layoutY="442.0" mnemonicParsing="false" onMousePressed="#cleanPageText" prefHeight="54.0" prefWidth="194.0" text="Limpiar" />
     </children>

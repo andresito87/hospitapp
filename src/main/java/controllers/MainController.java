@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -25,8 +26,9 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+
 public class MainController implements Initializable {
-    private static final Stage stage = new Stage();
+    private final Stage stage = new Stage();
     ObservableList<Medico> medicosObservableList = FXCollections.observableArrayList();
 
     @FXML
@@ -46,6 +48,7 @@ public class MainController implements Initializable {
 
     @FXML
     protected void closeApp() {
+        DB.closeConnection();
         System.out.println("Closing application...");
         System.exit(0);
     }
@@ -59,7 +62,6 @@ public class MainController implements Initializable {
         stage.show();
     }
 
-
     @FXML
     protected void callPatientsMantForm(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("patientsMantForm.fxml")));
@@ -70,11 +72,12 @@ public class MainController implements Initializable {
     }
 
     public void closeWindow(MouseEvent mouseEvent) {
+        Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
         stage.close();
     }
 
     public void cleanPageText(MouseEvent mouseEvent) {
-        if (stage != null && stage.getScene() != null && stage.getScene().getRoot() != null) {
+        if (stage.getScene() != null && stage.getScene().getRoot() != null) {
             clearTextFields(stage.getScene().getRoot());
         }
     }
@@ -92,13 +95,11 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        DB db = new DB();
-        medicosObservableList.addAll(db.obtenerMedicos());
-        db.close();
+        DB.connect();
+        medicosObservableList.addAll(DB.obtenerMedicos());
 
-        if (mediciansTable == null) {
-            System.out.println("mediciansTable is null!");
-        } else {
+
+        if (mediciansTable != null) {
             idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
             numColegiadoColumn.setCellValueFactory(new PropertyValueFactory<>("numColegiado"));
             nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -107,6 +108,52 @@ public class MainController implements Initializable {
             observacionesColumn.setCellValueFactory(new PropertyValueFactory<>("observaciones"));
 
             mediciansTable.setItems(medicosObservableList);
+
+            // Add mouse listener to each cell in the table
+            addListeners();
+
         }
     }
+
+    public void callMediciansModifyForm(MouseEvent mouseEvent) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("mediciansModifyForm.fxml")));
+        stage.setTitle("Modificar médico");
+        stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+    }
+
+
+    private void addListeners() {
+        // Define the row factory for the table
+        mediciansTable.setRowFactory(tv -> {
+            TableRow<Medico> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty()) {
+                    Medico rowData = row.getItem();
+                    handleRowClick(event, rowData);
+                }
+            });
+            return row;
+        });
+    }
+
+    private void handleRowClick(MouseEvent event, Medico medician) {
+        MedicoController.setMedician(medician);
+        // Open a new window with the selected medician data
+        Parent root = null;
+        FXMLLoader loader = null;
+        try {
+            loader = new FXMLLoader(Objects.requireNonNull(Main.class.getResource("mediciansModifyForm.fxml")));
+            root = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        stage.setTitle("Modificar médico");
+        stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+
+    }
+
 }
