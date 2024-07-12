@@ -1,18 +1,27 @@
 package controllers;
 
+import app.Main;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import models.Medico;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
-import static Database.DB.saveMedician;
+import static database.DB.saveMedician;
 
 public class MedicoController implements Initializable {
+    private final Stage stage = new Stage();
     private static Medico medician;
 
     @FXML
@@ -32,7 +41,7 @@ public class MedicoController implements Initializable {
 
     @FXML
     private TextField textObservaciones;
-
+    
     public static void setMedician(Medico medician) {
         System.out.println("Medician: " + medician);
         MedicoController.medician = medician;
@@ -86,5 +95,7 @@ public class MedicoController implements Initializable {
             System.out.println("Error saving medician");
         }
     }
+
+  
 
 }

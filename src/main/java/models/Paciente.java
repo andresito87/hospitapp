@@ -1,9 +1,11 @@
 package models;
 
-import java.util.Date;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
 
 /**
- *
  * @author andres
  */
 public class Paciente {
@@ -14,12 +16,19 @@ public class Paciente {
     private String nombre;
     private String apellido1;
     private String apellido2;
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
     private String numSeguridadSocial;
     private long idCama;
-    private Date fechaIngreso;
-    private Date fechaAlta;
+    private Cama cama;
+    private LocalDate fechaIngreso;
+    private LocalDate fechaAlta;
     private String observaciones;
+    private final Connection conexionBD;
+
+    public Paciente(long id, Connection conexionBD) {
+        this.id = id;
+        this.conexionBD = conexionBD;
+    }
 
     public boolean setData(
             long id,
@@ -28,11 +37,11 @@ public class Paciente {
             String nombre,
             String apellido1,
             String apellido2,
-            Date fechaNacimiento,
+            LocalDate fechaNacimiento,
             String numSeguridadSocial,
             long idCama,
-            Date fechaIngreso,
-            Date fechaAlta,
+            LocalDate fechaIngreso,
+            LocalDate fechaAlta,
             String observaciones
     ) {
 
@@ -52,6 +61,7 @@ public class Paciente {
         return resultado;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
         return id;
     }
@@ -112,11 +122,11 @@ public class Paciente {
         return true;
     }
 
-    public Date getFechaNacimiento() {
+    public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public boolean setFechaNacimiento(Date fechaNacimiento) {
+    public boolean setFechaNacimiento(LocalDate fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
 
         return true;
@@ -142,21 +152,21 @@ public class Paciente {
         return true;
     }
 
-    public Date getFechaIngreso() {
+    public LocalDate getFechaIngreso() {
         return fechaIngreso;
     }
 
-    public boolean setFechaIngreso(Date fechaIngreso) {
+    public boolean setFechaIngreso(LocalDate fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
 
         return true;
     }
 
-    public Date getFechaAlta() {
+    public LocalDate getFechaAlta() {
         return fechaAlta;
     }
 
-    public boolean setFechaAlta(Date fechaAlta) {
+    public boolean setFechaAlta(LocalDate fechaAlta) {
         this.fechaAlta = fechaAlta;
 
         return true;
@@ -172,9 +182,50 @@ public class Paciente {
         return true;
     }
 
+    // </editor-fold>
+    
     public boolean inicializarDesdeBD() {
+        boolean devolucion;
+        ResultSet resultado;
+        String cadenaSQL;
 
-        return true;
+        try {
+            cadenaSQL = new String("SELECT * FROM Medicos WHERE eliminado IS NULL AND Id = " + this.getId());
+
+            Statement Vinculo = this.conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            resultado = Vinculo.executeQuery(cadenaSQL);
+
+            if (resultado != null) {
+                resultado.beforeFirst();
+
+                if (resultado.next()) {
+
+                    devolucion = this.setData(
+                            resultado.getLong("Id"),
+                            resultado.getString("DNI"),
+                            resultado.getString("CI"),
+                            resultado.getString("Nombre"),
+                            resultado.getString("Apellido1"),
+                            resultado.getString("Apellido2"),
+                            resultado.getDate("FechaNacimiento").toLocalDate(),
+                            resultado.getString("NumSeguridadSocial"),
+                            resultado.getLong("IdCama"),
+                            resultado.getDate("FechaIngreso").toLocalDate(),
+                            resultado.getDate("FechaAlta").toLocalDate(),
+                            resultado.getString("Observaciones")
+                    );
+                } else {
+                    devolucion = false;
+                }
+            } else {
+                devolucion = false;
+            }
+
+        } catch (Exception ex) {
+            devolucion = false;
+        }
+
+        return devolucion;
     }
 
     public void anhadir() {

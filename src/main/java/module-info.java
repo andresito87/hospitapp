@@ -11,11 +11,12 @@ module es.aplicacion.hospitaljavafx {
     requires eu.hansolo.tilesfx;
     requires java.sql;
     requires java.desktop;
-
-    opens app to javafx.fxml;
+    
     exports app;
     exports controllers;
     exports models;
+    exports database;
+    opens app to javafx.fxml;
     opens controllers to javafx.fxml;
     opens models to javafx.base;
 }

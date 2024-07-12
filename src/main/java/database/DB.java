@@ -1,4 +1,4 @@
-package Database;
+package database;
 
 import models.Medico;
 
@@ -49,14 +49,8 @@ public class DB {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                Medico medico = new Medico(
-                        resultSet.getLong("id"),
-                        resultSet.getLong("numColegiado"),
-                        resultSet.getString("nombre"),
-                        resultSet.getString("apellido1"),
-                        resultSet.getString("apellido2"),
-                        resultSet.getString("observaciones")
-                );
+                Medico medico = new Medico(resultSet.getLong("id"), connection);
+                medico.inicializarDesdeBD();
                 medicos.add(medico);
             }
         } catch (SQLException e) {
@@ -82,5 +76,22 @@ public class DB {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static List<Medico> obtenerPacientes() {
+        String sql = "SELECT * FROM Pacientes";
+        List<Medico> pacientes = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                Medico paciente = new Medico(resultSet.getLong("id"), connection);
+                paciente.inicializarDesdeBD();
+                pacientes.add(paciente);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pacientes;
     }
 }

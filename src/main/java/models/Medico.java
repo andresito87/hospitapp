@@ -1,26 +1,27 @@
 package models;
 
-import javafx.beans.binding.BooleanExpression;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
 
 /**
  * @author andres
  */
 public class Medico {
 
+    private final Connection conexionBD;
     private long id;
     private long numColegiado;
     private String nombre;
     private String apellido1;
     private String apellido2;
     private String observaciones;
-    
-    public Medico(long id, long numColegiado, String nombre, String apellido1, String apellido2, String observaciones) {
+
+    public Medico(long id, Connection conexionBD) {
         this.id = id;
-        this.numColegiado = numColegiado;
-        this.nombre = nombre;
-        this.apellido1 = apellido1;
-        this.apellido2 = apellido2;
-        this.observaciones = observaciones;
+        this.conexionBD = conexionBD;
     }
 
     public boolean setData(
@@ -104,8 +105,41 @@ public class Medico {
 
     public boolean inicializarDesdeBD() {
 
-        return true;
+        boolean devolucion;
+        ResultSet resultado;
+        String cadenaSQL;
+
+        try {
+            cadenaSQL = new String("SELECT * FROM Medicos WHERE eliminado IS NULL AND Id = " + this.getId());
+
+            Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            resultado = Vinculo.executeQuery(cadenaSQL);
+
+            if (resultado != null) {
+                resultado.beforeFirst();
+
+                if (resultado.next()) {
+
+                    devolucion = this.setData(resultado.getLong("id"),
+                            resultado.getLong("numColegiado"),
+                            resultado.getString("nombre"),
+                            resultado.getString("apellido1"),
+                            resultado.getString("apellido2"),
+                            resultado.getString("Observaciones"));
+                } else {
+                    devolucion = false;
+                }
+            } else {
+                devolucion = false;
+            }
+
+        } catch (Exception ex) {
+            devolucion = false;
+        }
+
+        return devolucion;
     }
+
 
     public void anhadir() {
 
@@ -118,5 +152,4 @@ public class Medico {
     public void eliminar() {
 
     }
-    
 }
