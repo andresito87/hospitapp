@@ -9,7 +9,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="529.0" prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListadoMedicosController">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="529.0" prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListadoMedicosController">
     <children>
         <ImageView fitHeight="89.0" fitWidth="97.0" layoutX="14.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
             <image>
@@ -26,18 +26,18 @@
                 <TableColumn fx:id="observacionesColumn" minWidth="0.0" prefWidth="161.5999755859375" text="Observaciones" />
             </columns>
         </TableView>
-        <CheckBox layoutX="139.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Número de Colegiado" />
-        <TextField fx:id="textNumColegiado" layoutX="290.0" layoutY="278.0" />
-        <CheckBox layoutX="194.0" layoutY="373.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="139.0" text="Observaciones" />
-        <TextField fx:id="textNumColegiado11" layoutX="346.0" layoutY="369.0" prefHeight="26.0" prefWidth="465.0" />
-        <CheckBox layoutX="139.0" layoutY="325.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Nombre" />
-        <TextField fx:id="textNumColegiado2" layoutX="226.0" layoutY="322.0" />
-        <CheckBox layoutX="543.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Primer Apellido" />
-        <TextField fx:id="textNumColegiado12" layoutX="662.0" layoutY="277.0" />
-        <CheckBox layoutX="543.0" layoutY="326.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Segundo Apellido" />
-        <TextField fx:id="textNumColegiado111" layoutX="673.0" layoutY="321.0" />
-        <Button fx:id="buttonGetInfo" layoutX="107.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#callMediciansModifyForm" prefHeight="54.0" prefWidth="194.0" text="Consultar" />
-        <Button fx:id="buttonExit" layoutX="618.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0" prefWidth="194.0" text="Salir" />
+        <CheckBox fx:id="numColegiado" layoutX="139.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Número de Colegiado" />
+        <TextField fx:id="textnumColegiado" layoutX="290.0" layoutY="278.0" />
+        <CheckBox fx:id="observaciones" layoutX="194.0" layoutY="373.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="139.0" text="Observaciones" />
+        <TextField fx:id="textobservaciones" layoutX="346.0" layoutY="369.0" prefHeight="26.0" prefWidth="465.0" />
+        <CheckBox fx:id="nombre" layoutX="139.0" layoutY="325.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Nombre" />
+        <TextField fx:id="textnombre" layoutX="226.0" layoutY="322.0" />
+        <CheckBox fx:id="apellido1" layoutX="543.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Primer Apellido" />
+        <TextField fx:id="textapellido1" layoutX="662.0" layoutY="277.0" />
+        <CheckBox fx:id="apellido2" layoutX="543.0" layoutY="326.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Segundo Apellido" />
+        <TextField fx:id="textapellido2" layoutX="673.0" layoutY="321.0" />
+        <Button fx:id="filterInfo" layoutX="107.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#callFilterInfoTable" prefHeight="54.0" prefWidth="194.0" text="Filtrar" />
         <Button fx:id="buttonClean" layoutX="365.0" layoutY="442.0" mnemonicParsing="false" onMousePressed="#cleanPageText" prefHeight="54.0" prefWidth="194.0" text="Limpiar" />
+        <Button fx:id="buttonExit" layoutX="618.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0" prefWidth="194.0" text="Salir" />
     </children>
 </AnchorPane>

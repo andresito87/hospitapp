@@ -16,7 +16,9 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ListadoPacientesController implements Initializable {
+    
     private final Stage stage = new Stage();
+    
     @FXML
     protected void callPatientsMantForm(ActionEvent actionEvent) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("patientsMantForm.fxml")));

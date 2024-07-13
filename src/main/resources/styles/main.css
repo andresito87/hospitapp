@@ -1,0 +1,66 @@
+.root {
+    -fx-base: #2b2b2b;
+    -fx-background: #2b2b2b;
+    -fx-text-fill: white;
+}
+
+.MenuBar {
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+}
+
+.Menu {
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+}
+
+.MenuItem {
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+}
+
+.MenuItem:hover {
+    -fx-background-color: #4feacb;
+}
+
+.button {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+}
+
+.button:hover {
+    -fx-background-color: #ce4fea !important;
+    -fx-text-fill: white;
+    -fx-border-style: solid;
+    -fx-border-color: #ce4fea !important;
+}
+
+.imageView {
+    -fx-background-color: transparent;
+}
+
+.TextField {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+}
+
+.TextField:hover {
+    -fx-background-color: #4feacb;
+}
+
+.TextField:focused {
+    -fx-background-color: #4feacb;
+}
+
+.ComboBox {
+    -fx-background-color: #555555;
+    -fx-text-fill: white;
+}
+
+.ComboBox:hover {
+    -fx-background-color: #4feacb;
+}
+
+.ComboBox:focused {
+    -fx-background-color: #4feacb;
+}

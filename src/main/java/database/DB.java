@@ -5,23 +5,26 @@ import models.Medico;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DB {
-/*
-    //Datos de conexion a la base de datos MV Debian
-    private static final String URL = "jdbc:mysql://192.168.1.10:3306/Hospital";
-    private static final String USER = "usuariohospital";
-    private static final String PASSWORD = "asdasd";
-    private static Connection connection;
-*/
 
-    // Datos de conexion a la base de XAMPP
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
+    // Datos de conexion a la DB de XAMPP
     private static final String URL = "jdbc:mysql://localhost:3306/Hospital";
     private static final String USER = "root";
     private static final String PASSWORD = "";
-    private static Connection connection;
 
-    // Constructor de la clase, se encarga de establecer la conexion a la base de datos
+    //Datos de conexion a la DB de MV Debian
+    //private static final String URL = "jdbc:mysql://192.168.1.10:3306/Hospital";
+    //private static final String USER = "usuariohospital";
+    //private static final String PASSWORD = "asdasd";
+
+
+    private static Connection connection;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Métodos Conexion y Desconexion">
     public static void connect() {
         try {
             DB.connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -36,12 +39,13 @@ public class DB {
                 DB.connection.close();
                 System.out.println("Conexión DB cerrada");
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("Error al cerrar la conexión a la base de datos");
             }
         }
     }
+    // </editor-fold>
 
-
+    // <editor-fold defaultstate="collapsed" desc="Métodos para Médicos">
     public static List<Medico> obtenerMedicos() {
         String sql = "SELECT * FROM Medicos";
         List<Medico> medicos = new ArrayList<>();
@@ -50,15 +54,15 @@ public class DB {
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 Medico medico = new Medico(resultSet.getLong("id"), connection);
-                medico.inicializarDesdeBD();
-                medicos.add(medico);
+                if (medico.inicializarDesdeBD()) {
+                    medicos.add(medico);
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error al obtener los médicos de la base de datos");
         }
         return medicos;
     }
-
 
     public static boolean saveMedician(Medico medician) {
         String sql = "INSERT INTO Medicos (numColegiado, nombre, apellido1, apellido2, observaciones) VALUES (?, ?, ?, ?, ?)";
@@ -73,11 +77,41 @@ public class DB {
             preparedStatement.executeUpdate();
             result = true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error al guardar el médico en la base de datos");
         }
         return result;
     }
 
+    public static List<Medico> obtenerMedicosFiltered(Map<String, String> filterData) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM Medicos");
+        if (!filterData.isEmpty()) {
+            sql.append(" WHERE ");
+            for (Map.Entry<String, String> entry : filterData.entrySet()) {
+                sql.append(entry.getKey()).append(" LIKE '%").append(entry.getValue()).append("%' AND ");
+            }
+            sql = new StringBuilder(sql.substring(0, sql.length() - 5));
+
+        }
+        List<Medico> medicos = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+            ResultSet resultSet = preparedStatement.executeQuery(sql.toString());
+            System.out.println(sql);
+            while (resultSet.next()) {
+                Medico medico = new Medico(resultSet.getLong("id"), connection);
+                if (medico.inicializarDesdeBD()) {
+                    medicos.add(medico);
+                }
+            }
+        } catch (SQLException e) {
+
+            System.out.println(sql);
+        }
+        return medicos;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Métodos para Pacientes">
     public static List<Medico> obtenerPacientes() {
         String sql = "SELECT * FROM Pacientes";
         List<Medico> pacientes = new ArrayList<>();
@@ -86,12 +120,15 @@ public class DB {
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 Medico paciente = new Medico(resultSet.getLong("id"), connection);
-                paciente.inicializarDesdeBD();
-                pacientes.add(paciente);
+                if (paciente.inicializarDesdeBD()) {
+                    pacientes.add(paciente);
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error al obtener los pacientes de la base de datos");
         }
         return pacientes;
     }
+    // </editor-fold>
+
 }

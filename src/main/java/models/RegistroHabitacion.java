@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.Connection;
 import java.util.Date;
 
 /**
@@ -8,26 +9,22 @@ import java.util.Date;
  */
 public class RegistroHabitacion {
 
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
+    private final Connection conexionBD;
     private long id;
     private long idPaciente;
     private long idHabitacion;
     private Date fechaEntrada;
+    // </editor-fold>
 
-    public boolean setData(
-            long id,
-            long idPaciente,
-            long idHabitacion,
-            Date fechaEntrada
-    ) {
-
-        boolean resultado = setId(id);
-        resultado &= setIdPaciente(idPaciente);
-        resultado &= setIdHabitacion(idHabitacion);
-        resultado &= setFechaEntrada(fechaEntrada);
-
-        return resultado;
+    // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
+    public RegistroHabitacion(long id, Connection conexionBD) {
+        this.id = id;
+        this.conexionBD = conexionBD;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
         return id;
     }
@@ -67,10 +64,27 @@ public class RegistroHabitacion {
 
         return true;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
 
         return true;
+    }
+
+    public boolean setData(
+            long id,
+            long idPaciente,
+            long idHabitacion,
+            Date fechaEntrada
+    ) {
+
+        boolean resultado = setId(id);
+        resultado &= setIdPaciente(idPaciente);
+        resultado &= setIdHabitacion(idHabitacion);
+        resultado &= setFechaEntrada(fechaEntrada);
+
+        return resultado;
     }
 
     public void anhadir() {
@@ -84,5 +98,6 @@ public class RegistroHabitacion {
     public void eliminar() {
 
     }
+    // </editor-fold>
 
 }

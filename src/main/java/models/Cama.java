@@ -1,34 +1,29 @@
 package models;
 
+import java.sql.Connection;
+
 /**
- *
  * @author andres
  */
 public class Cama {
 
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
+    private final Connection conexionBD;
     private long id;
     private String marca;
     private String modelo;
     private int tipo;
     private String observaciones;
-
-    public boolean setData(
-            long id,
-            String marca,
-            String modelo,
-            int tipo,
-            String observaciones
-    ) {
-
-        boolean resultado = setId(id);
-        resultado &= setMarca(marca);
-        resultado &= setModelo(modelo);
-        resultado &= setTipo(tipo);
-        resultado &= setObservaciones(observaciones);
-
-        return resultado;
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
+    public Cama(long id, Connection conexionBD) {
+        this.id = id;
+        this.conexionBD = conexionBD;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
         return id;
     }
@@ -78,10 +73,29 @@ public class Cama {
 
         return true;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
 
         return true;
+    }
+
+    public boolean setData(
+            long id,
+            String marca,
+            String modelo,
+            int tipo,
+            String observaciones
+    ) {
+
+        boolean resultado = setId(id);
+        resultado &= setMarca(marca);
+        resultado &= setModelo(modelo);
+        resultado &= setTipo(tipo);
+        resultado &= setObservaciones(observaciones);
+
+        return resultado;
     }
 
     public void anhadir() {
@@ -95,5 +109,6 @@ public class Cama {
     public void eliminar() {
 
     }
+    // </editor-fold>
 
 }

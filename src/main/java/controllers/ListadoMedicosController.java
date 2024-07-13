@@ -4,7 +4,6 @@ import app.Main;
 import database.DB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,15 +14,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import models.Medico;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ListadoMedicosController implements Initializable {
+
     private final Stage stage = new Stage();
     ObservableList<Medico> medicosObservableList = FXCollections.observableArrayList();
 
@@ -43,19 +43,11 @@ public class ListadoMedicosController implements Initializable {
     private TableColumn<Medico, String> observacionesColumn;
     @FXML
     ContextMenu contextMenu = new ContextMenu();
-
     @FXML
-    protected void callMediciansMantForm(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("mediciansMantForm.fxml")));
-        stage.setTitle("Médicos");
-        stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
-        stage.setScene(new Scene(root, 1000, 600));
-        stage.show();
-    }
+    private AnchorPane anchorPane = new AnchorPane();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        DB.connect();
         // Medicians table
         medicosObservableList.addAll(DB.obtenerMedicos());
 
@@ -82,7 +74,7 @@ public class ListadoMedicosController implements Initializable {
                 if (!row.isEmpty() && event.getButton().toString().equals("SECONDARY")) {
                     Medico rowData = row.getItem();
                     handleRowClick(event, rowData);
-                }else {
+                } else {
                     contextMenu.hide();
                 }
             });
@@ -92,7 +84,6 @@ public class ListadoMedicosController implements Initializable {
 
     private void handleRowClick(MouseEvent event, Medico medician) {
         MedicoController.setMedician(medician);
-        // Open a new context menu with the selected row and 2 options: modify and delete
         // Crear las opciones del menú
         MenuItem option1 = new MenuItem("Modificar");
         MenuItem option2 = new MenuItem("Eliminar");
@@ -103,7 +94,7 @@ public class ListadoMedicosController implements Initializable {
             try {
                 callMediciansModifyForm(event);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Error al abrir el formulario de modificación de médicos");
             }
 
         });
@@ -119,18 +110,32 @@ public class ListadoMedicosController implements Initializable {
     }
 
     public void cleanPageText(MouseEvent mouseEvent) {
-        if (stage.getScene() != null && stage.getScene().getRoot() != null) {
-            clearTextFields(stage.getScene().getRoot());
-        }
+        // Clear all text fields in the form
+        clearTextFields((Parent) mediciansTable.getParent());
+        // Uncheck all checkboxes in the form
+        uncheckedAllCheckboxes((Parent) mediciansTable.getParent());
     }
 
     private void clearTextFields(Parent root) {
-        ObservableList<Node> children = root.getChildrenUnmodifiable();
-        for (Node node : children) {
+        // Clear all text fields in the form
+        for (Node node : root.getChildrenUnmodifiable()) {
             if (node instanceof TextField) {
                 ((TextField) node).setText("");
-            } else if (node instanceof Parent) {
-                clearTextFields((Parent) node); // recursively clear TextFields in child nodes
+            }
+            if (node instanceof Parent) {
+                clearTextFields((Parent) node);
+            }
+        }
+    }
+
+    private void uncheckedAllCheckboxes(Parent root) {
+        // Uncheck all checkboxes in the form
+        for (Node node : root.getChildrenUnmodifiable()) {
+            if (node instanceof CheckBox) {
+                ((CheckBox) node).setSelected(false);
+            }
+            if (node instanceof Parent) {
+                uncheckedAllCheckboxes((Parent) node);
             }
         }
     }
@@ -146,5 +151,48 @@ public class ListadoMedicosController implements Initializable {
         stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
         stage.setScene(new Scene(root, 1000, 600));
         stage.show();
+    }
+
+    @FXML
+    private void callFilterInfoTable() {
+        Map<String, String> checkedMap = new HashMap<>();
+
+        // obtener el anchorPane
+        this.anchorPane = (AnchorPane) mediciansTable.getParent().lookup("#anchorPane");
+        
+        // Recorrer todos los nodos hijos del AnchorPane
+        anchorPane.getChildren().forEach(node -> {
+            if (node instanceof CheckBox checkBox) {
+                if (checkBox.isSelected()) {
+                    String checkBoxId = checkBox.getId();
+                    TextField associatedTextField = getTextFieldById("text" + checkBoxId);
+                    if (associatedTextField != null) {
+                        checkedMap.put(checkBoxId, associatedTextField.getText());
+                    }
+                }
+            }
+        });
+        
+        // hay algun checkbox seleccionado sin texto
+        if (checkedMap.values().contains("")) {
+            System.out.println("Hay algún campo vacío");
+            return;
+        }
+
+        medicosObservableList.clear();
+        List<Medico> medicos = DB.obtenerMedicosFiltered(checkedMap);
+        if (!medicos.isEmpty()){
+            medicosObservableList.addAll(medicos);
+        }
+        
+    }
+
+    private TextField getTextFieldById(String id) {
+        for (javafx.scene.Node node : anchorPane.getChildren()) {
+            if (node instanceof TextField && node.getId().equals(id)) {
+                return (TextField) node;
+            }
+        }
+        return null;
     }
 }

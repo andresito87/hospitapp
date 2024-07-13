@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.Connection;
 import java.util.Date;
 
 /**
@@ -8,6 +9,8 @@ import java.util.Date;
  */
 public class Diagnostico {
 
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
+    private final Connection conexionBD;
     private long id;
     private Date fecha;
     private long idMedico;
@@ -16,30 +19,16 @@ public class Diagnostico {
     private String codigo;
     private String descripcion;
     private String observaciones;
+    // </editor-fold>
 
-    public boolean setData(
-            long id,
-            Date fecha,
-            long idMedico,
-            long idPaciente,
-            String tipo,
-            String codigo,
-            String descripcion,
-            String observaciones
-    ) {
-
-        boolean resultado = setId(id);
-        resultado &= setFecha(fecha);
-        resultado &= setIdMedico(idMedico);
-        resultado &= setIdPaciente(idPaciente);
-        resultado &= setTipo(tipo);
-        resultado &= setCodigo(codigo);
-        resultado &= setDescripcion(descripcion);
-        resultado &= setObservaciones(observaciones);
-
-        return resultado;
+    // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
+    public Diagnostico(long id, Connection conexionBD) {
+        this.id = id;
+        this.conexionBD = conexionBD;
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
         return id;
     }
@@ -119,10 +108,35 @@ public class Diagnostico {
 
         return true;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
 
         return true;
+    }
+
+    public boolean setData(
+            long id,
+            Date fecha,
+            long idMedico,
+            long idPaciente,
+            String tipo,
+            String codigo,
+            String descripcion,
+            String observaciones
+    ) {
+
+        boolean resultado = setId(id);
+        resultado &= setFecha(fecha);
+        resultado &= setIdMedico(idMedico);
+        resultado &= setIdPaciente(idPaciente);
+        resultado &= setTipo(tipo);
+        resultado &= setCodigo(codigo);
+        resultado &= setDescripcion(descripcion);
+        resultado &= setObservaciones(observaciones);
+
+        return resultado;
     }
 
     public void anhadir() {
@@ -136,6 +150,7 @@ public class Diagnostico {
     public void eliminar() {
 
     }
+    // </editor-fold>
 
 }
 

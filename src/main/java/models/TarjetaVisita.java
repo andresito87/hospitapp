@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.Connection;
 import java.util.Date;
 
 /**
@@ -8,26 +9,22 @@ import java.util.Date;
  */
 public class TarjetaVisita {
 
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
+    private final Connection conexionBD;
     private long id;
     private int numero;
     private Date fechaCaducidad;
     private long idPaciente;
+    // </editor-fold>
 
-    public boolean setData(
-            long id,
-            int numero,
-            Date fecha,
-            long idPaciente
-    ) {
-
-        boolean resultado = setId(id);
-        resultado &= setNumero(numero);
-        resultado &= setFechaCaducidad(fecha);
-        resultado &= setIdPaciente(idPaciente);
-
-        return resultado;
+    // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
+    public TarjetaVisita(long id, Connection conexionBD) {
+        this.id = id;
+        this.conexionBD = conexionBD;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
         return id;
     }
@@ -67,17 +64,27 @@ public class TarjetaVisita {
 
         return true;
     }
+    // </editor-fold>
 
-    public void visualizar() {
-        System.out.println("Id: " + this.id + "\n"
-                + "Numero: " + this.numero + "\n"
-                + "Fecha de caducidad: " + this.fechaCaducidad + "\n"
-                + "Id Paciente: " + this.idPaciente + "\n");
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
 
         return true;
+    }
+
+    public boolean setData(
+            long id,
+            int numero,
+            Date fecha,
+            long idPaciente
+    ) {
+
+        boolean resultado = setId(id);
+        resultado &= setNumero(numero);
+        resultado &= setFechaCaducidad(fecha);
+        resultado &= setIdPaciente(idPaciente);
+
+        return resultado;
     }
 
     public void anhadir() {
@@ -91,6 +98,7 @@ public class TarjetaVisita {
     public void eliminar() {
 
     }
+    // </editor-fold>
 
 }
 

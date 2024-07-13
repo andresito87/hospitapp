@@ -5,19 +5,26 @@ import app.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 
-public class MainController  {
+public class MainController  implements Initializable {
+    
     private final Stage stage = new Stage();
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        DB.connect();
+    }
     
     @FXML
     protected void closeApp() {
@@ -41,4 +48,5 @@ public class MainController  {
             stage.setScene(new Scene(root, 1000, 600));
             stage.show();
     }
+    
 }

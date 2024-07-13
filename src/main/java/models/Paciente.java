@@ -10,6 +10,7 @@ import java.time.LocalDate;
  */
 public class Paciente {
 
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
     private long id;
     private String dni;
     private String ci;
@@ -24,42 +25,14 @@ public class Paciente {
     private LocalDate fechaAlta;
     private String observaciones;
     private final Connection conexionBD;
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
     public Paciente(long id, Connection conexionBD) {
         this.id = id;
         this.conexionBD = conexionBD;
     }
-
-    public boolean setData(
-            long id,
-            String dni,
-            String ci,
-            String nombre,
-            String apellido1,
-            String apellido2,
-            LocalDate fechaNacimiento,
-            String numSeguridadSocial,
-            long idCama,
-            LocalDate fechaIngreso,
-            LocalDate fechaAlta,
-            String observaciones
-    ) {
-
-        boolean resultado = setId(id);
-        resultado &= setDni(dni);
-        resultado &= setCi(ci);
-        resultado &= setNombre(nombre);
-        resultado &= setApellido1(apellido1);
-        resultado &= setApellido2(apellido2);
-        resultado &= setFechaNacimiento(fechaNacimiento);
-        resultado &= setNumSeguridadSocial(numSeguridadSocial);
-        resultado &= setIdCama(idCama);
-        resultado &= setFechaIngreso(fechaIngreso);
-        resultado &= setFechaAlta(fechaAlta);
-        resultado &= setObservaciones(observaciones);
-
-        return resultado;
-    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
@@ -184,13 +157,14 @@ public class Paciente {
 
     // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
         boolean devolucion;
         ResultSet resultado;
         String cadenaSQL;
 
         try {
-            cadenaSQL = new String("SELECT * FROM Medicos WHERE eliminado IS NULL AND Id = " + this.getId());
+            cadenaSQL = "SELECT * FROM Medicos WHERE eliminado IS NULL AND Id = " + this.getId();
 
             Statement Vinculo = this.conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             resultado = Vinculo.executeQuery(cadenaSQL);
@@ -228,6 +202,37 @@ public class Paciente {
         return devolucion;
     }
 
+    public boolean setData(
+            long id,
+            String dni,
+            String ci,
+            String nombre,
+            String apellido1,
+            String apellido2,
+            LocalDate fechaNacimiento,
+            String numSeguridadSocial,
+            long idCama,
+            LocalDate fechaIngreso,
+            LocalDate fechaAlta,
+            String observaciones
+    ) {
+
+        boolean resultado = setId(id);
+        resultado &= setDni(dni);
+        resultado &= setCi(ci);
+        resultado &= setNombre(nombre);
+        resultado &= setApellido1(apellido1);
+        resultado &= setApellido2(apellido2);
+        resultado &= setFechaNacimiento(fechaNacimiento);
+        resultado &= setNumSeguridadSocial(numSeguridadSocial);
+        resultado &= setIdCama(idCama);
+        resultado &= setFechaIngreso(fechaIngreso);
+        resultado &= setFechaAlta(fechaAlta);
+        resultado &= setObservaciones(observaciones);
+
+        return resultado;
+    }
+
     public void anhadir() {
 
     }
@@ -239,5 +244,6 @@ public class Paciente {
     public void eliminar() {
 
     }
+    // </editor-fold>
 
 }

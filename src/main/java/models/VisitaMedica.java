@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.Connection;
 import java.util.Date;
 
 /**
@@ -7,30 +8,24 @@ import java.util.Date;
  * @author andres
  */
 public class VisitaMedica {
-
+    
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
+    private final Connection conexionBD;
     private long id;
     private long idMedico;
     private long idPaciente;
     private Date fecha;
     private String observaciones;
-
-    public boolean setData(
-            long id,
-            long idMedico,
-            long idPaciente,
-            Date fecha,
-            String observaciones
-    ) {
-
-        boolean resultado = setId(id);
-        resultado &= setIdMedico(idMedico);
-        resultado &= setIdPaciente(idPaciente);
-        resultado &= setFecha(fecha);
-        resultado &= setObservaciones(observaciones);
-
-        return resultado;
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
+    public VisitaMedica(long id, Connection conexionBD) {
+        this.id = id;
+        this.conexionBD = conexionBD;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
         return id;
     }
@@ -80,17 +75,29 @@ public class VisitaMedica {
 
         return true;
     }
+    // </editor-fold>
 
-    public void visualizar() {
-        System.out.println("Id: " + this.id + "\n"
-                + "Id Medico: " + this.idMedico + "\n"
-                + "Id Paciente: " + this.idPaciente + "\n"
-                + "Observaciones: " + this.observaciones + "\n");
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD(){
 
         return true;
+    }
+
+    public boolean setData(
+            long id,
+            long idMedico,
+            long idPaciente,
+            Date fecha,
+            String observaciones
+    ) {
+
+        boolean resultado = setId(id);
+        resultado &= setIdMedico(idMedico);
+        resultado &= setIdPaciente(idPaciente);
+        resultado &= setFecha(fecha);
+        resultado &= setObservaciones(observaciones);
+
+        return resultado;
     }
 
     public void anhadir() {
@@ -104,6 +111,7 @@ public class VisitaMedica {
     public void eliminar() {
 
     }
+    // </editor-fold>
 
 }
 

@@ -1,16 +1,15 @@
 package models;
 
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDate;
 
 /**
  * @author andres
  */
 public class Medico {
 
+    // <editor-fold defaultstate="collapsed" desc="Atributos">
     private final Connection conexionBD;
     private long id;
     private long numColegiado;
@@ -18,31 +17,16 @@ public class Medico {
     private String apellido1;
     private String apellido2;
     private String observaciones;
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
     public Medico(long id, Connection conexionBD) {
         this.id = id;
         this.conexionBD = conexionBD;
     }
+    // </editor-fold>
 
-    public boolean setData(
-            long id,
-            long numColegiado,
-            String nombre,
-            String apellido1,
-            String apellido2,
-            String observaciones
-    ) {
-
-        boolean resultado = setId(id);
-        resultado &= setNumColegiado(numColegiado);
-        resultado &= setNombre(nombre);
-        resultado &= setApellido1(apellido1);
-        resultado &= setApellido2(apellido2);
-        resultado &= setObservaciones(observaciones);
-
-        return resultado;
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
         return id;
     }
@@ -102,7 +86,9 @@ public class Medico {
 
         return true;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
 
         boolean devolucion;
@@ -110,7 +96,7 @@ public class Medico {
         String cadenaSQL;
 
         try {
-            cadenaSQL = new String("SELECT * FROM Medicos WHERE eliminado IS NULL AND Id = " + this.getId());
+            cadenaSQL = "SELECT * FROM Medicos WHERE eliminado IS NULL AND Id = " + this.getId();
 
             Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             resultado = Vinculo.executeQuery(cadenaSQL);
@@ -140,6 +126,24 @@ public class Medico {
         return devolucion;
     }
 
+    public boolean setData(
+            long id,
+            long numColegiado,
+            String nombre,
+            String apellido1,
+            String apellido2,
+            String observaciones
+    ) {
+
+        boolean resultado = setId(id);
+        resultado &= setNumColegiado(numColegiado);
+        resultado &= setNombre(nombre);
+        resultado &= setApellido1(apellido1);
+        resultado &= setApellido2(apellido2);
+        resultado &= setObservaciones(observaciones);
+
+        return resultado;
+    }
 
     public void anhadir() {
 
@@ -152,4 +156,6 @@ public class Medico {
     public void eliminar() {
 
     }
+    // </editor-fold>
+    
 }
