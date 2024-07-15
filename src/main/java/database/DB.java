@@ -1,6 +1,7 @@
 package database;
 
 import models.Medico;
+import models.Paciente;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,12 +26,16 @@ public class DB {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Métodos Conexion y Desconexion">
-    public static void connect() {
-        try {
-            DB.connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException e) {
-            System.out.println("Error al conectar a la base de datos");
+    public static Connection connect() {
+        if (DB.connection == null) {
+            try {
+                DB.connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                System.out.println("Conexión DB establecida");
+            } catch (SQLException e) {
+                System.out.println("Error al conectar a la base de datos");
+            }
         }
+        return DB.connection;
     }
 
     public static void closeConnection() {
@@ -47,7 +52,7 @@ public class DB {
 
     // <editor-fold defaultstate="collapsed" desc="Métodos para Médicos">
     public static List<Medico> obtenerMedicos() {
-        String sql = "SELECT * FROM Medicos";
+        String sql = "SELECT * FROM Medicos WHERE eliminado IS NULL";
         List<Medico> medicos = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
@@ -112,14 +117,14 @@ public class DB {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Métodos para Pacientes">
-    public static List<Medico> obtenerPacientes() {
+    public static List<Paciente> obtenerPacientes() {
         String sql = "SELECT * FROM Pacientes";
-        List<Medico> pacientes = new ArrayList<>();
+        List<Paciente> pacientes = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                Medico paciente = new Medico(resultSet.getLong("id"), connection);
+                Paciente paciente = new Paciente(resultSet.getLong("id"), connection);
                 if (paciente.inicializarDesdeBD()) {
                     pacientes.add(paciente);
                 }

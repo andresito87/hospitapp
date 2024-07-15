@@ -1,32 +1,23 @@
 package controllers;
 
-import app.Main;
-import javafx.event.ActionEvent;
+import database.DB;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import models.Medico;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
-import static database.DB.saveMedician;
-
 public class MedicoController implements Initializable {
-    private final Stage stage = new Stage();
     private static Medico medician;
 
     @FXML
     private TextField textId;
-    
+
     @FXML
     private TextField textNumColegiado;
 
@@ -41,7 +32,7 @@ public class MedicoController implements Initializable {
 
     @FXML
     private TextField textObservaciones;
-    
+
     public static void setMedician(Medico medician) {
         System.out.println("Medician: " + medician);
         MedicoController.medician = medician;
@@ -49,18 +40,21 @@ public class MedicoController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        textId.setText(String.valueOf(medician.getId()));
-        textId.setDisable(true);
-        textNumColegiado.setText(String.valueOf(medician.getNumColegiado()));
-        textNombre.setText(medician.getNombre());
-        textApellido1.setText(medician.getApellido1());
-        textApellido2.setText(medician.getApellido2());
-        textObservaciones.setText(medician.getObservaciones());
+        if (medician != null) {
+            textNumColegiado.setText(String.valueOf(medician.getNumColegiado()));
+            textNombre.setText(medician.getNombre());
+            textApellido1.setText(medician.getApellido1());
+            textApellido2.setText(medician.getApellido2());
+            textObservaciones.setText(medician.getObservaciones());
+        }
+        if (textId != null) {
+            textId.setText(String.valueOf(medician.getId()));
+        }
     }
 
 
     public void closeWindow(MouseEvent mouseEvent) {
-        Stage stage = (Stage) textId.getScene().getWindow();
+        Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
         stage.close();
     }
 
@@ -72,30 +66,47 @@ public class MedicoController implements Initializable {
         textObservaciones.setText("");
     }
 
-    public void callSave(MouseEvent mouseEvent) {
-        
-        if(textNumColegiado.getText().isEmpty() || textNombre.getText().isEmpty() || textApellido1.getText().isEmpty() || textApellido2.getText().isEmpty()) {
+    public void callUpdate(MouseEvent mouseEvent) {
+
+        if (textNumColegiado.getText().isEmpty() || textNombre.getText().isEmpty() || textApellido1.getText().isEmpty() || textApellido2.getText().isEmpty()) {
             System.out.println("Error: Campos vacíos");
             return;
         }
         try {
-        medician.setNumColegiado(Long.parseLong(textNumColegiado.getText()));
-        medician.setNombre(textNombre.getText());
-        medician.setApellido1(textApellido1.getText());
-        medician.setApellido2(textApellido2.getText());
-        medician.setObservaciones(textObservaciones.getText());
+            medician.setNumColegiado(Long.parseLong(textNumColegiado.getText()));
+            medician.setNombre(textNombre.getText());
+            medician.setApellido1(textApellido1.getText());
+            medician.setApellido2(textApellido2.getText());
+            medician.setObservaciones(textObservaciones.getText());
         } catch (Exception e) {
             System.out.println("Error: Información incorrecta");
             return;
         }
-        
-        if(saveMedician(medician)) {
-            System.out.println("Medician saved");
-        } else {
-            System.out.println("Error saving medician");
+
+        if (medician.modificar()) {
+            System.out.println("Medico modificado correctamente");
         }
     }
 
-  
 
+    public void callCreate(MouseEvent mouseEvent) {
+        if (textNumColegiado.getText().isEmpty() || textNombre.getText().isEmpty() || textApellido1.getText().isEmpty() || textApellido2.getText().isEmpty()) {
+            System.out.println("Error: Campos vacíos");
+            return;
+        }
+        try {
+            medician.setNumColegiado(Long.parseLong(textNumColegiado.getText()));
+            medician.setNombre(textNombre.getText());
+            medician.setApellido1(textApellido1.getText());
+            medician.setApellido2(textApellido2.getText());
+            medician.setObservaciones(textObservaciones.getText());
+        } catch (Exception e) {
+            System.out.println("Error: Información incorrecta");
+            return;
+        }
+
+        if (medician.agregar()) {
+            System.out.println("Medico creado correctamente");
+        }
+    }
 }

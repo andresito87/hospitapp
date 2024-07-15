@@ -9,34 +9,48 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="529.0" prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListadoPacientesController">
-   <children>
-      <ImageView fitHeight="89.0" fitWidth="97.0" layoutX="14.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../images/logo-pacientes.jpeg" />
-         </image></ImageView>
-      <TableView layoutX="139.0" layoutY="19.0" prefHeight="226.0" prefWidth="715.0">
-        <columns>
-          <TableColumn prefWidth="75.0" text="ID" />
-          <TableColumn prefWidth="153.59994506835938" text="Número Colegiado" />
-            <TableColumn prefWidth="76.800048828125" text="Nombre" />
-            <TableColumn prefWidth="111.19998168945312" text="Primer Apellido" />
-            <TableColumn prefWidth="131.20001220703125" text="Segundo Apellido" />
-            <TableColumn minWidth="0.0" prefWidth="161.5999755859375" text="Observaciones" />
-        </columns>
-      </TableView>
-      <CheckBox layoutX="139.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Número de Colegiado" />
-      <TextField fx:id="textNumColegiado" layoutX="290.0" layoutY="278.0" />
-      <CheckBox layoutX="194.0" layoutY="373.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="139.0" text="Observaciones" />
-      <TextField fx:id="textNumColegiado11" layoutX="346.0" layoutY="369.0" prefHeight="26.0" prefWidth="465.0" />
-      <CheckBox layoutX="139.0" layoutY="325.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Nombre" />
-      <TextField fx:id="textNumColegiado2" layoutX="226.0" layoutY="322.0" />
-      <CheckBox layoutX="543.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Primer Apellido" />
-      <TextField fx:id="textNumColegiado12" layoutX="662.0" layoutY="277.0" />
-      <CheckBox layoutX="543.0" layoutY="326.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Segundo Apellido" />
-      <TextField fx:id="textNumColegiado111" layoutX="673.0" layoutY="321.0" />
-      <Button layoutX="107.0" layoutY="442.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="194.0" text="Consultar" />
-      <Button fx:id="buttonExit" layoutX="618.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0" prefWidth="194.0" text="Salir" />
-      <Button fx:id="buttonClean" layoutX="365.0" layoutY="442.0" mnemonicParsing="false" onMousePressed="#cleanPageText" prefHeight="54.0" prefWidth="194.0" text="Limpiar" />
-   </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="696.0" prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListadoPacientesController">
+    <children>
+        <ImageView fitHeight="89.0" fitWidth="97.0" layoutX="14.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../images/logo-pacientes.jpeg" />
+            </image>
+        </ImageView>
+        <TableView layoutX="139.0" layoutY="19.0" prefHeight="226.0" prefWidth="715.0">
+            <columns>
+                <TableColumn prefWidth="62.4000244140625" text="ID" />
+                <TableColumn prefWidth="77.5999755859375" text="CI" />
+            <TableColumn prefWidth="77.5999755859375" text="NumSS" />
+                <TableColumn prefWidth="82.4000244140625" text="Nombre" />
+                <TableColumn prefWidth="195.99996948242188" text="Primer Apellido" />
+                <TableColumn prefWidth="131.20001220703125" text="Segundo Apellido" />
+                <TableColumn minWidth="0.0" prefWidth="161.5999755859375" text="Observaciones" />
+            </columns>
+        </TableView>
+        <CheckBox fx:id="dni" layoutX="139.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="78.0" text="DNI" />
+        <TextField fx:id="textdni" layoutX="218.0" layoutY="277.0" />
+        <CheckBox fx:id="ci" layoutX="139.0" layoutY="325.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="67.0" text="CI" />
+        <TextField fx:id="textci" layoutX="216.0" layoutY="322.0" />
+        <CheckBox fx:id="fecNac" layoutX="497.0" layoutY="326.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Fecha de Naciemiento" />
+        <TextField fx:id="textfecNac" layoutX="652.0" layoutY="322.0" />
+        <CheckBox fx:id="idCama" layoutX="497.0" layoutY="371.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Identificador de cama" />
+        <TextField fx:id="textidCama" layoutX="648.0" layoutY="366.0" />
+        <CheckBox fx:id="numSS" layoutX="502.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Número de SS" />
+        <TextField fx:id="textnumSS" layoutX="610.0" layoutY="277.0" />
+        <CheckBox fx:id="nombre" layoutX="141.0" layoutY="370.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Nombre" />
+        <TextField fx:id="textnombre" layoutX="228.0" layoutY="367.0" />
+        <CheckBox fx:id="apellido1" layoutX="142.0" layoutY="417.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Primer Apellido" />
+        <TextField fx:id="textapellido1" layoutX="249.0" layoutY="413.0" />
+        <CheckBox fx:id="apellido2" layoutX="142.0" layoutY="464.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="122.0" text="Segundo Apellido" />
+        <TextField fx:id="textapellido2" layoutX="266.0" layoutY="461.0" />
+        <CheckBox fx:id="fecIngreso" layoutX="497.0" layoutY="418.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="122.0" text="Fecha de Ingreso" />
+        <TextField fx:id="textfecIngreso" layoutX="619.0" layoutY="414.0" />
+        <CheckBox fx:id="fecAlta" layoutX="502.0" layoutY="466.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Fecha de Alta" />
+        <TextField fx:id="textfecAlta" layoutX="610.0" layoutY="463.0" />
+        <CheckBox fx:id="observaciones" layoutX="142.0" layoutY="524.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="139.0" text="Observaciones" />
+        <TextField fx:id="textobservaciones" layoutX="294.0" layoutY="520.0" prefHeight="26.0" prefWidth="465.0" />
+        <Button fx:id="buttonGetInfo" layoutX="106.0" layoutY="601.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="194.0" text="Consultar" />
+        <Button fx:id="buttonExit" layoutX="610.0" layoutY="601.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0" prefWidth="194.0" text="Salir" />
+        <Button fx:id="buttonClean" layoutX="355.0" layoutY="601.0" mnemonicParsing="false" onMousePressed="#cleanPageText" prefHeight="54.0" prefWidth="194.0" text="Limpiar" />
+    </children>
 </AnchorPane>

@@ -28,7 +28,7 @@ public class ListadoMedicosController implements Initializable {
     ObservableList<Medico> medicosObservableList = FXCollections.observableArrayList();
 
     @FXML
-    private TableView<Medico> mediciansTable;
+    private TableView<Medico> medicosTable;
     @FXML
     private TableColumn<Medico, Long> idColumn;
     @FXML
@@ -51,7 +51,7 @@ public class ListadoMedicosController implements Initializable {
         // Medicians table
         medicosObservableList.addAll(DB.obtenerMedicos());
 
-        if (mediciansTable != null) {
+        if (medicosTable != null) {
             idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
             numColegiadoColumn.setCellValueFactory(new PropertyValueFactory<>("numColegiado"));
             nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -59,7 +59,7 @@ public class ListadoMedicosController implements Initializable {
             apellido2Column.setCellValueFactory(new PropertyValueFactory<>("apellido2"));
             observacionesColumn.setCellValueFactory(new PropertyValueFactory<>("observaciones"));
 
-            mediciansTable.setItems(medicosObservableList);
+            medicosTable.setItems(medicosObservableList);
 
             addListeners();
 
@@ -68,7 +68,7 @@ public class ListadoMedicosController implements Initializable {
 
     private void addListeners() {
         // Define the row factory for the table
-        mediciansTable.setRowFactory(tv -> {
+        medicosTable.setRowFactory(tv -> {
             TableRow<Medico> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getButton().toString().equals("SECONDARY")) {
@@ -84,36 +84,47 @@ public class ListadoMedicosController implements Initializable {
 
     private void handleRowClick(MouseEvent event, Medico medician) {
         MedicoController.setMedician(medician);
+
         // Crear las opciones del menú
         MenuItem option1 = new MenuItem("Modificar");
         MenuItem option2 = new MenuItem("Eliminar");
 
         // Añadir acciones a las opciones del menú
         option1.setOnAction(event1 -> {
-            System.out.println("Modificar");
             try {
-                callMediciansModifyForm(event);
+                callMediciansModifyForm(event,medician);
             } catch (IOException e) {
                 System.out.println("Error al abrir el formulario de modificación de médicos");
             }
 
         });
-        option2.setOnAction(event1 -> System.out.println("Option 2 selected"));
+        option2.setOnAction(event1 -> callDeleteMedician(event));
 
         // Limpiar las opciones anteriores y añadir nuevas opciones
         contextMenu.getItems().clear();
         contextMenu.getItems().addAll(option1, option2);
 
         // Mostrar el menú contextual
-        contextMenu.show(mediciansTable, event.getScreenX(), event.getScreenY());
+        contextMenu.show(medicosTable, event.getScreenX(), event.getScreenY());
 
+    }
+
+    private void callDeleteMedician(MouseEvent event) {
+        Medico medico = medicosTable.getSelectionModel().getSelectedItem();
+        if (medico != null) {
+            if (medico.eliminar()) {
+                medicosObservableList.remove(medico);
+            } else {
+                System.out.println("Error al eliminar el médico");
+            }
+        }
     }
 
     public void cleanPageText(MouseEvent mouseEvent) {
         // Clear all text fields in the form
-        clearTextFields((Parent) mediciansTable.getParent());
+        clearTextFields(medicosTable.getParent());
         // Uncheck all checkboxes in the form
-        uncheckedAllCheckboxes((Parent) mediciansTable.getParent());
+        uncheckedAllCheckboxes(medicosTable.getParent());
     }
 
     private void clearTextFields(Parent root) {
@@ -145,8 +156,9 @@ public class ListadoMedicosController implements Initializable {
         stage.close();
     }
 
-    public void callMediciansModifyForm(MouseEvent mouseEvent) throws IOException {
+    public void callMediciansModifyForm(MouseEvent mouseEvent,Medico medico) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("mediciansModifyForm.fxml")));
+        MedicoController.setMedician(medico);
         stage.setTitle("Modificar médico");
         stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
         stage.setScene(new Scene(root, 1000, 600));
@@ -158,8 +170,8 @@ public class ListadoMedicosController implements Initializable {
         Map<String, String> checkedMap = new HashMap<>();
 
         // obtener el anchorPane
-        this.anchorPane = (AnchorPane) mediciansTable.getParent().lookup("#anchorPane");
-        
+        this.anchorPane = (AnchorPane) medicosTable.getParent().lookup("#anchorPane");
+
         // Recorrer todos los nodos hijos del AnchorPane
         anchorPane.getChildren().forEach(node -> {
             if (node instanceof CheckBox checkBox) {
@@ -172,19 +184,20 @@ public class ListadoMedicosController implements Initializable {
                 }
             }
         });
-        
+
         // hay algun checkbox seleccionado sin texto
-        if (checkedMap.values().contains("")) {
+        if (checkedMap.containsValue("")) {
+            //TODO: mostrar mensaje de error en un label
             System.out.println("Hay algún campo vacío");
             return;
         }
 
         medicosObservableList.clear();
         List<Medico> medicos = DB.obtenerMedicosFiltered(checkedMap);
-        if (!medicos.isEmpty()){
+        if (!medicos.isEmpty()) {
             medicosObservableList.addAll(medicos);
         }
-        
+
     }
 
     private TextField getTextFieldById(String id) {
@@ -194,5 +207,16 @@ public class ListadoMedicosController implements Initializable {
             }
         }
         return null;
+    }
+
+
+    public void callCreateForm(MouseEvent mouseEvent) throws IOException {
+        
+        Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("mediciansCreateForm.fxml")));
+        stage.setTitle("Crear médico");
+        stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
+        
     }
 }

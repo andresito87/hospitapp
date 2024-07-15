@@ -1,10 +1,12 @@
 package models;
 
 import java.sql.Connection;
-import java.util.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
 
 /**
- *
  * @author andres
  */
 public class Diagnostico {
@@ -12,10 +14,10 @@ public class Diagnostico {
     // <editor-fold defaultstate="collapsed" desc="Atributos">
     private final Connection conexionBD;
     private long id;
-    private Date fecha;
+    private LocalDate fecha;
     private long idMedico;
     private long idPaciente;
-    private String tipo;
+    private int tipo;
     private String codigo;
     private String descripcion;
     private String observaciones;
@@ -27,7 +29,7 @@ public class Diagnostico {
         this.conexionBD = conexionBD;
     }
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">
     public long getId() {
         return id;
@@ -39,11 +41,11 @@ public class Diagnostico {
         return true;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public boolean setFecha(Date fecha) {
+    public boolean setFecha(LocalDate fecha) {
         this.fecha = fecha;
 
         return true;
@@ -69,11 +71,11 @@ public class Diagnostico {
         return true;
     }
 
-    public String getTipo() {
+    public int getTipo() {
         return tipo;
     }
 
-    public boolean setTipo(String tipo) {
+    public boolean setTipo(int tipo) {
         this.tipo = tipo;
 
         return true;
@@ -113,15 +115,49 @@ public class Diagnostico {
     // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
 
-        return true;
+        boolean devolucion = true;
+        ResultSet resultado;
+        String cadenaSQL;
+
+        try {
+            cadenaSQL = "SELECT * FROM Diagnosticos WHERE eliminado IS NULL AND Id = " + this.getId();
+
+            Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            resultado = Vinculo.executeQuery(cadenaSQL);
+
+            if (resultado != null) {
+                resultado.beforeFirst();
+
+                if (resultado.next()) {
+
+                    devolucion = this.setData(resultado.getLong("id"),
+                            resultado.getDate("fecha").toLocalDate(),
+                            resultado.getLong("idMedico"),
+                            resultado.getLong("idPaciente"),
+                            resultado.getInt("tipo"),
+                            resultado.getString("codigo"),
+                            resultado.getString("descripcion"),
+                            resultado.getString("Observaciones"));
+                } else {
+                    devolucion = false;
+                }
+            } else {
+                devolucion = false;
+            }
+
+        } catch (Exception ex) {
+            devolucion = false;
+        }
+
+        return devolucion;
     }
 
     public boolean setData(
             long id,
-            Date fecha,
+            LocalDate fecha,
             long idMedico,
             long idPaciente,
-            String tipo,
+            int tipo,
             String codigo,
             String descripcion,
             String observaciones
@@ -139,15 +175,94 @@ public class Diagnostico {
         return resultado;
     }
 
-    public void anhadir() {
+    public boolean agregar() {
 
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+        ResultSet claveGenerada;
+
+        try {
+
+            cadenaSQL = "INSERT INTO Diagnosticos "
+                    + "(fecha, idMedico, idPaciente, tipo, codigo, descripcion, observaciones) "
+                    + "VALUES ('" + this.getFecha() + "',"
+                    + this.getIdMedico() + "," + this.getIdPaciente() + ","
+                    + this.getTipo() + ",'" + this.getCodigo() + "','" 
+                    + this.getDescripcion() + "','" + this.getObservaciones() + "')";
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL, Statement.RETURN_GENERATED_KEYS);
+            comandoSQL.execute();
+
+            claveGenerada = comandoSQL.getGeneratedKeys();
+            if (claveGenerada.next()) {
+
+                this.setId(claveGenerada.getLong(1));
+
+                devolucion = true;
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
     }
 
-    public void modificar() {
+    public boolean modificar() {
 
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+
+        try {
+
+            cadenaSQL = "UPDATE Diagnosticos SET "
+                    + "fecha = '" + this.getFecha() + "', "
+                    + "idMedico = " + this.getIdMedico() + ", "
+                    + "idPaciente = " + this.getIdPaciente() + ", "
+                    + "tipo = " + this.getTipo() + ", "
+                    + "codigo = '" + this.getCodigo() + "', "
+                    + "descripcion = '" + this.getDescripcion() + "', "
+                    + "observaciones = '" + this.getObservaciones() + "' "
+                    + "WHERE Id = " + this.getId();
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL);
+            comandoSQL.execute();
+
+            devolucion = true;
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
     }
 
-    public void eliminar() {
+    public boolean eliminar() {
+
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+
+        try {
+
+            cadenaSQL = "UPDATE Diagnosticos SET eliminado=CURRENT_TIMESTAMP "
+                    + "WHERE Id = " + this.getId();
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL);
+            comandoSQL.execute();
+
+            devolucion = true;
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
 
     }
     // </editor-fold>

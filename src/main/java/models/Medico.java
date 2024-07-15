@@ -1,6 +1,8 @@
 package models;
 
+
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -20,6 +22,10 @@ public class Medico {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
+    public Medico(Connection conexionBD) {
+        this.conexionBD = conexionBD;
+    }
+    
     public Medico(long id, Connection conexionBD) {
         this.id = id;
         this.conexionBD = conexionBD;
@@ -91,7 +97,7 @@ public class Medico {
     // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
 
-        boolean devolucion;
+        boolean devolucion = true;
         ResultSet resultado;
         String cadenaSQL;
 
@@ -145,17 +151,96 @@ public class Medico {
         return resultado;
     }
 
-    public void anhadir() {
+    public boolean agregar() {
+
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+        ResultSet claveGenerada;
+
+        try {
+
+            cadenaSQL = "INSERT INTO Medicos "
+                    + "(numColegiado, nombre, apellido1, apellido2, observaciones) "
+                    + "VALUES ('" + this.getNumColegiado() + "','"
+                    + this.getNombre() + "','" + this.getApellido1() + "','"
+                    + this.getApellido2() + "','"
+                    + this.getObservaciones() + "')";
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL, Statement.RETURN_GENERATED_KEYS);
+            comandoSQL.execute();
+
+            claveGenerada = comandoSQL.getGeneratedKeys();
+            if (claveGenerada.next()) {
+
+                this.setId(claveGenerada.getLong(1));
+
+                devolucion = true;
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
+    }
+
+    public boolean modificar() {
+
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+
+        try {
+
+            cadenaSQL = "UPDATE Medicos SET "
+                    + "numColegiado = '" + this.getNumColegiado() + "', "
+                    + "nombre = '" + this.getNombre() + "', "
+                    + "apellido1 = '" + this.getApellido1() + "', "
+                    + "apellido2 = '" + this.getApellido2() + "', "
+                    + "observaciones = '" + this.getObservaciones() + "' "
+                    + "WHERE Id = " + this.getId();
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL);
+            comandoSQL.execute();
+
+            devolucion = true;
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
+    }
+
+    public boolean eliminar() {
+
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+
+        try {
+
+
+            cadenaSQL = "UPDATE Medicos SET eliminado=CURRENT_TIMESTAMP "
+                    + "WHERE Id = " + this.getId();
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL);
+            comandoSQL.execute();
+
+            devolucion = true;
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
 
     }
 
-    public void modificar() {
-
-    }
-
-    public void eliminar() {
-
-    }
     // </editor-fold>
-    
+
 }

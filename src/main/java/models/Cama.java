@@ -1,6 +1,9 @@
 package models;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * @author andres
@@ -15,7 +18,7 @@ public class Cama {
     private int tipo;
     private String observaciones;
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Métodos Constructores">
     public Cama(long id, Connection conexionBD) {
         this.id = id;
@@ -78,7 +81,38 @@ public class Cama {
     // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
 
-        return true;
+        boolean devolucion = true;
+        ResultSet resultado;
+        String cadenaSQL;
+
+        try {
+            cadenaSQL = "SELECT * FROM Camas WHERE eliminado IS NULL AND Id = " + this.getId();
+
+            Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            resultado = Vinculo.executeQuery(cadenaSQL);
+
+            if (resultado != null) {
+                resultado.beforeFirst();
+
+                if (resultado.next()) {
+
+                    devolucion = this.setData(resultado.getLong("id"),
+                            resultado.getString("marca"),
+                            resultado.getString("modelo"),
+                            resultado.getInt("tipo"),
+                            resultado.getString("Observaciones"));
+                } else {
+                    devolucion = false;
+                }
+            } else {
+                devolucion = false;
+            }
+
+        } catch (Exception ex) {
+            devolucion = false;
+        }
+
+        return devolucion;
     }
 
     public boolean setData(
@@ -98,17 +132,93 @@ public class Cama {
         return resultado;
     }
 
-    public void anhadir() {
+    public boolean agregar() {
+
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+        ResultSet claveGenerada;
+
+        try {
+
+            cadenaSQL = "INSERT INTO Camas "
+                    + "(marca, modelo, tipo, observaciones) "
+                    + "VALUES ('" + this.getMarca() + "',"
+                    + this.getModelo() + "," + this.getTipo() + ","
+                    + this.getObservaciones() + "')";
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL, Statement.RETURN_GENERATED_KEYS);
+            comandoSQL.execute();
+
+            claveGenerada = comandoSQL.getGeneratedKeys();
+            if (claveGenerada.next()) {
+
+                this.setId(claveGenerada.getLong(1));
+
+                devolucion = true;
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
+    }
+
+    public boolean modificar() {
+
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+
+        try {
+            
+            cadenaSQL = "UPDATE Camas SET "
+                    + "marca = '" + this.getMarca() + "', "
+                    + "modelo = '" + this.getModelo() + "', "
+                    + "tipo = " + this.getTipo() + ", "
+                    + "observaciones = '" + this.getObservaciones() + "' "
+                    + "WHERE Id = " + this.getId();
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL);
+            comandoSQL.execute();
+
+            devolucion = true;
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
+    }
+
+    public boolean eliminar() {
+
+        boolean devolucion = false;
+        String cadenaSQL;
+
+        PreparedStatement comandoSQL;
+
+        try {
+            
+            cadenaSQL = "UPDATE Camas SET eliminado=CURRENT_TIMESTAMP "
+                    + "WHERE Id = " + this.getId();
+
+            comandoSQL = this.conexionBD.prepareStatement(cadenaSQL);
+            comandoSQL.execute();
+
+            devolucion = true;
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        return devolucion;
 
     }
 
-    public void modificar() {
-
-    }
-
-    public void eliminar() {
-
-    }
     // </editor-fold>
 
 }
