@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="529.0" prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PacienteController">
+    <children>
+        <ImageView fitHeight="89.0" fitWidth="97.0" layoutX="86.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../images/logo-pacientes.jpeg" />
+            </image>
+        </ImageView>
+        <CheckBox layoutX="223.0" layoutY="111.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="59.0" text="ID" />
+        <TextField fx:id="textId" layoutX="297.0" layoutY="111.0" />
+        <CheckBox layoutX="220.0" layoutY="144.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="78.0" text="DNI" />
+        <TextField fx:id="textDni" layoutX="299.0" layoutY="140.0" />
+        <CheckBox layoutX="220.0" layoutY="188.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="67.0" text="CI" />
+        <TextField fx:id="textCi" layoutX="297.0" layoutY="185.0" />
+        <CheckBox layoutX="536.0" layoutY="185.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Fecha de Nacimiento" />
+        <TextField fx:id="textFecNac" layoutX="691.0" layoutY="181.0" />
+        <CheckBox layoutX="536.0" layoutY="230.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Identificador de cama" />
+        <TextField fx:id="textIdCama" layoutX="687.0" layoutY="225.0" />
+        <CheckBox layoutX="541.0" layoutY="140.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Número de SS" />
+        <TextField fx:id="textNumSegSocial" layoutX="649.0" layoutY="136.0" />
+        <CheckBox layoutX="222.0" layoutY="233.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Nombre" />
+        <TextField fx:id="textNombre" layoutX="309.0" layoutY="230.0" />
+        <CheckBox layoutX="223.0" layoutY="280.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Primer Apellido" />
+        <TextField fx:id="textApellido1" layoutX="330.0" layoutY="276.0" />
+        <CheckBox layoutX="223.0" layoutY="327.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="122.0" text="Segundo Apellido" />
+        <TextField fx:id="textApellido2" layoutX="347.0" layoutY="324.0" />
+        <CheckBox layoutX="536.0" layoutY="277.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="122.0" text="Fecha de Ingreso" />
+        <TextField fx:id="textFecIngreso" layoutX="658.0" layoutY="273.0" />
+        <CheckBox layoutX="541.0" layoutY="325.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Fecha de Alta" />
+        <TextField fx:id="textFecAlta" layoutX="649.0" layoutY="322.0" />
+        <CheckBox layoutX="239.0" layoutY="369.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="114.0" text="Observaciones" />
+        <TextField fx:id="textObservaciones" layoutX="356.0" layoutY="369.0" prefHeight="26.0" prefWidth="465.0" />
+        <Button layoutX="64.0" layoutY="419.0" mnemonicParsing="false" onMouseClicked="#callUpdate" prefHeight="54.0" prefWidth="194.0" text="Guardar" />
+        <Button layoutX="589.0" layoutY="419.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0" prefWidth="194.0" text="Salir" />
+        <Button layoutX="324.0" layoutY="419.0" mnemonicParsing="false" onMouseClicked="#cleanPageText" prefHeight="54.0" prefWidth="194.0" text="Limpiar" />
+        <Text fill="#f2f2f2" layoutX="269.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Modificar Paciente" wrappingWidth="362.1366882324219">
+            <font>
+                <Font size="39.0" />
+            </font>
+        </Text>
+    </children>
+</AnchorPane>

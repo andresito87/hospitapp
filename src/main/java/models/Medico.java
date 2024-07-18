@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  * @author andres
@@ -25,7 +26,7 @@ public class Medico {
     public Medico(Connection conexionBD) {
         this.conexionBD = conexionBD;
     }
-    
+
     public Medico(long id, Connection conexionBD) {
         this.id = id;
         this.conexionBD = conexionBD;
@@ -243,4 +244,93 @@ public class Medico {
 
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Métodos Estáticos">
+    public static ArrayList<Medico> getTodosMedicos(Connection conexionBD) {
+        ArrayList<Medico> devolucion = new ArrayList<Medico>();
+        ResultSet medicos;
+        Medico medicoAux;
+        String cadenaSQL;
+
+        try {
+            cadenaSQL = "SELECT * "
+                    + "FROM Medicos "
+                    + "WHERE Medicos.eliminado IS NULL "
+                    + "ORDER BY apellido1,apellido2,nombre";
+
+            Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            medicos = Vinculo.executeQuery(cadenaSQL);
+
+            if (medicos != null) {
+                medicos.beforeFirst();
+
+                while (medicos.next()) {
+
+                    medicoAux = new Medico(conexionBD);
+
+                    medicoAux.setData(medicos.getLong("id"),
+                            medicos.getLong("numColegiado"),
+                            medicos.getString("nombre"),
+                            medicos.getString("apellido1"),
+                            medicos.getString("apellido2"),
+                            medicos.getString("Observaciones"));
+
+                    devolucion.add(medicoAux);
+                }
+
+            } else {
+                devolucion = null;
+            }
+
+        } catch (Exception ex) {
+            devolucion = null;
+        }
+
+        return devolucion;
+    }
+
+    public static ArrayList<Medico> getTodosMedicos(String nombre, Connection conexionBD) {
+        ArrayList<Medico> devolucion = new ArrayList<Medico>();
+        ResultSet medicos;
+        Medico medicoAux;
+        String cadenaSQL;
+
+        try {
+            cadenaSQL = "SELECT * "
+                    + "FROM Medicos "
+                    + "WHERE Medicos.eliminado IS NULL AND Medicos.nombre LIKE '%" + nombre + "%' "
+                    + "ORDER BY apellido1,apellido2,nombre";
+
+            Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            medicos = Vinculo.executeQuery(cadenaSQL);
+
+            if (medicos != null) {
+                medicos.beforeFirst();
+
+                while (medicos.next()) {
+
+                    medicoAux = new Medico(conexionBD);
+
+                    medicoAux.setData(medicos.getLong("id"),
+                            medicos.getLong("numColegiado"),
+                            medicos.getString("nombre"),
+                            medicos.getString("apellido1"),
+                            medicos.getString("apellido2"),
+                            medicos.getString("Observaciones"));
+
+                    devolucion.add(medicoAux);
+                }
+
+            } else {
+                devolucion = null;
+            }
+
+        } catch (Exception ex) {
+            devolucion = null;
+        }
+
+        return devolucion;
+    }
+
+
+    // </editor-fold>
 }

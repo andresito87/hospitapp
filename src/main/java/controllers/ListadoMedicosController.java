@@ -92,7 +92,7 @@ public class ListadoMedicosController implements Initializable {
         // Añadir acciones a las opciones del menú
         option1.setOnAction(event1 -> {
             try {
-                callMediciansModifyForm(event,medician);
+                callMediciansModifyForm(event, medician);
             } catch (IOException e) {
                 System.out.println("Error al abrir el formulario de modificación de médicos");
             }
@@ -107,6 +107,19 @@ public class ListadoMedicosController implements Initializable {
         // Mostrar el menú contextual
         contextMenu.show(medicosTable, event.getScreenX(), event.getScreenY());
 
+    }
+
+    public void callMediciansModifyForm(MouseEvent mouseEvent, Medico medico) throws IOException {
+        if (medico == null) {
+            return;
+        }
+        MedicoController.setMedician(medico);
+        Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("mediciansModifyForm.fxml")));
+        
+        stage.setTitle("Modificar médico");
+        stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
+        stage.setScene(new Scene(root, 1000, 600));
+        stage.show();
     }
 
     private void callDeleteMedician(MouseEvent event) {
@@ -156,15 +169,6 @@ public class ListadoMedicosController implements Initializable {
         stage.close();
     }
 
-    public void callMediciansModifyForm(MouseEvent mouseEvent,Medico medico) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("mediciansModifyForm.fxml")));
-        MedicoController.setMedician(medico);
-        stage.setTitle("Modificar médico");
-        stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
-        stage.setScene(new Scene(root, 1000, 600));
-        stage.show();
-    }
-
     @FXML
     private void callFilterInfoTable() {
         Map<String, String> checkedMap = new HashMap<>();
@@ -197,7 +201,6 @@ public class ListadoMedicosController implements Initializable {
         if (!medicos.isEmpty()) {
             medicosObservableList.addAll(medicos);
         }
-
     }
 
     private TextField getTextFieldById(String id) {
@@ -211,12 +214,36 @@ public class ListadoMedicosController implements Initializable {
 
 
     public void callCreateForm(MouseEvent mouseEvent) throws IOException {
-        
+
+        MedicoController.setMedician(null);
         Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("mediciansCreateForm.fxml")));
         stage.setTitle("Crear médico");
         stage.getIcons().add(new Image("images/logo-medicos.jpeg"));
         stage.setScene(new Scene(root, 1000, 600));
         stage.show();
-        
+
     }
+
+    public void callModifyForm(MouseEvent mouseEvent) {
+        Medico medico = medicosTable.getSelectionModel().getSelectedItem();
+        if (medico != null) {
+            try {
+                callMediciansModifyForm(mouseEvent, medico);
+            } catch (IOException e) {
+                System.out.println("Error al abrir el formulario de modificación de médicos");
+            }
+        }
+    }
+
+    public void callDelete(MouseEvent mouseEvent) {
+        Medico medico = medicosTable.getSelectionModel().getSelectedItem();
+        if (medico != null) {
+            if (medico.eliminar()) {
+                medicosObservableList.remove(medico);
+            } else {
+                System.out.println("Error al eliminar el médico");
+            }
+        }
+    }
+    
 }

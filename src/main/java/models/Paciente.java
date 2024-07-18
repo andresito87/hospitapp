@@ -19,7 +19,7 @@ public class Paciente {
     private String apellido1;
     private String apellido2;
     private LocalDate fechaNacimiento;
-    private String numSeguridadSocial;
+    private String numSegSocial;
     private long idCama;
     private Cama cama;
     private LocalDate fechaIngreso;
@@ -106,12 +106,12 @@ public class Paciente {
         return true;
     }
 
-    public String getNumSeguridadSocial() {
-        return numSeguridadSocial;
+    public String getNumSegSocial() {
+        return numSegSocial;
     }
 
     public boolean setNumSeguridadSocial(String numSeguridadSocial) {
-        this.numSeguridadSocial = numSeguridadSocial;
+        this.numSegSocial = numSeguridadSocial;
 
         return true;
     }
@@ -157,7 +157,7 @@ public class Paciente {
     }
 
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Métodos DB y SetData">
     public boolean inicializarDesdeBD() {
         boolean devolucion;
@@ -165,29 +165,29 @@ public class Paciente {
         String cadenaSQL;
 
         try {
-            cadenaSQL = "SELECT * FROM Medicos WHERE eliminado IS NULL AND Id = " + this.getId();
+            cadenaSQL = "SELECT * FROM Pacientes WHERE eliminado IS NULL AND Id = " + this.getId();
 
             Statement Vinculo = this.conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
             resultado = Vinculo.executeQuery(cadenaSQL);
 
             if (resultado != null) {
                 resultado.beforeFirst();
-
                 if (resultado.next()) {
 
                     devolucion = this.setData(
-                            resultado.getLong("Id"),
-                            resultado.getString("DNI"),
-                            resultado.getString("CI"),
-                            resultado.getString("Nombre"),
-                            resultado.getString("Apellido1"),
-                            resultado.getString("Apellido2"),
-                            resultado.getDate("FechaNacimiento").toLocalDate(),
-                            resultado.getString("NumSeguridadSocial"),
-                            resultado.getLong("IdCama"),
-                            resultado.getDate("FechaIngreso").toLocalDate(),
-                            resultado.getDate("FechaAlta").toLocalDate(),
-                            resultado.getString("Observaciones")
+                            resultado.getLong("id"),
+                            resultado.getString("dni"),
+                            resultado.getString("ci"),
+                            resultado.getString("nombre"),
+                            resultado.getString("apellido1"),
+                            resultado.getString("apellido2"),
+                            resultado.getDate("fechaNacimiento").toLocalDate(),
+                            resultado.getString("numSegSocial"),
+                            resultado.getLong("idCama"),
+                            resultado.getDate("fechaIngreso") == null ? null : resultado.getDate("fechaIngreso").toLocalDate(),
+                            resultado.getDate("fechaAlta") == null ? null : resultado.getDate("fechaAlta").toLocalDate(),
+                            resultado.getString("observaciones")
                     );
                 } else {
                     devolucion = false;
@@ -197,6 +197,7 @@ public class Paciente {
             }
 
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             devolucion = false;
         }
 
@@ -211,13 +212,12 @@ public class Paciente {
             String apellido1,
             String apellido2,
             LocalDate fechaNacimiento,
-            String numSeguridadSocial,
+            String numSegSocial,
             long idCama,
             LocalDate fechaIngreso,
             LocalDate fechaAlta,
             String observaciones
     ) {
-
         boolean resultado = setId(id);
         resultado &= setDni(dni);
         resultado &= setCi(ci);
@@ -225,32 +225,33 @@ public class Paciente {
         resultado &= setApellido1(apellido1);
         resultado &= setApellido2(apellido2);
         resultado &= setFechaNacimiento(fechaNacimiento);
-        resultado &= setNumSeguridadSocial(numSeguridadSocial);
+        resultado &= setNumSeguridadSocial(numSegSocial);
         resultado &= setIdCama(idCama);
         resultado &= setFechaIngreso(fechaIngreso);
         resultado &= setFechaAlta(fechaAlta);
         resultado &= setObservaciones(observaciones);
 
+
         return resultado;
     }
 
-    public boolean agregar(){
+    public boolean agregar() {
 
-        boolean devolucion=false;
+        boolean devolucion = false;
         String cadenaSQL;
 
         PreparedStatement comandoSQL;
         ResultSet claveGenerada;
 
-        try{
-            
+        try {
+
             cadenaSQL = "INSERT INTO Pacientes "
                     + "(dni, ci, nombre, apellido1, apellido2, fechaNacimiento, "
                     + "numSegSocial, idCama, fechaIngreso, fechaAlta, observaciones) "
                     + "VALUES ('" + this.getDni() + "','" + this.getCi() + "','"
                     + this.getNombre() + "','" + this.getApellido1() + "','"
                     + this.getApellido2() + "','" + this.getFechaNacimiento() + "','"
-                    + this.getNumSeguridadSocial() + "'," + this.getIdCama() + ",'"
+                    + this.getNumSegSocial() + "'," + this.getIdCama() + ",'"
                     + this.getFechaIngreso() + "','" + this.getFechaAlta() + "','"
                     + this.getObservaciones() + "')";
 
@@ -262,69 +263,69 @@ public class Paciente {
 
                 this.setId(claveGenerada.getLong(1));
 
-                devolucion=true;
+                devolucion = true;
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
 
         return devolucion;
     }
 
-    public boolean modificar(){
+    public boolean modificar() {
 
-        boolean devolucion=false;
+        boolean devolucion = false;
         String cadenaSQL;
 
         PreparedStatement comandoSQL;
 
-        try{
-            
-            cadenaSQL="UPDATE Pacientes SET "
-                    + "dni = '"+this.getDni()+"', "
-                    + "ci = '"+this.getCi()+"', "
-                    + "nombre = '"+this.getNombre()+"', "
-                    + "apellido1 = '"+this.getApellido1()+"', "
-                    + "apellido2 = '"+this.getApellido2()+"', "
-                    + "fechaNacimiento = '"+this.getFechaNacimiento()+"', "
-                    + "numSegSocial = '"+this.getNumSeguridadSocial()+"', "
-                    + "idCama = '"+this.getIdCama()+"', "
-                    + "fechaIngreso = '"+this.getFechaIngreso()+"', "
-                    + "fechaAlta = '"+this.getFechaAlta()+"', "
-                    + "observaciones = '"+this.getObservaciones()+"' "
-                    + "WHERE Id = "+this.getId();
+        try {
+
+            cadenaSQL = "UPDATE Pacientes SET "
+                    + "dni = '" + this.getDni() + "', "
+                    + "ci = '" + this.getCi() + "', "
+                    + "nombre = '" + this.getNombre() + "', "
+                    + "apellido1 = '" + this.getApellido1() + "', "
+                    + "apellido2 = '" + this.getApellido2() + "', "
+                    + "fechaNacimiento = '" + this.getFechaNacimiento() + "', "
+                    + "numSegSocial = '" + this.getNumSegSocial() + "', "
+                    + "idCama = '" + this.getIdCama() + "', "
+                    + "fechaIngreso = '" + this.getFechaIngreso() + "', "
+                    + "fechaAlta = '" + this.getFechaAlta() + "', "
+                    + "observaciones = '" + this.getObservaciones() + "' "
+                    + "WHERE Id = " + this.getId();
 
             comandoSQL = this.conexionBD.prepareStatement(cadenaSQL);
             comandoSQL.execute();
 
-            devolucion=true;
+            devolucion = true;
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
 
         return devolucion;
     }
 
-    public boolean eliminar(){
+    public boolean eliminar() {
 
-        boolean devolucion=false;
+        boolean devolucion = false;
         String cadenaSQL;
 
         PreparedStatement comandoSQL;
 
-        try{
-            
-            cadenaSQL="UPDATE Pacientes SET eliminado=CURRENT_TIMESTAMP "
-                    + "WHERE Id = "+this.getId();
+        try {
+
+            cadenaSQL = "UPDATE Pacientes SET eliminado=CURRENT_TIMESTAMP "
+                    + "WHERE Id = " + this.getId();
 
             comandoSQL = this.conexionBD.prepareStatement(cadenaSQL);
             comandoSQL.execute();
 
-            devolucion=true;
+            devolucion = true;
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
 

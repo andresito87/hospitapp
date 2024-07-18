@@ -1,6 +1,5 @@
 package controllers;
 
-import database.DB;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -34,7 +33,6 @@ public class MedicoController implements Initializable {
     private TextField textObservaciones;
 
     public static void setMedician(Medico medician) {
-        System.out.println("Medician: " + medician);
         MedicoController.medician = medician;
     }
 
@@ -52,7 +50,6 @@ public class MedicoController implements Initializable {
         }
     }
 
-
     public void closeWindow(MouseEvent mouseEvent) {
         Stage stage = (Stage) ((Node) mouseEvent.getSource()).getScene().getWindow();
         stage.close();
@@ -68,7 +65,10 @@ public class MedicoController implements Initializable {
 
     public void callUpdate(MouseEvent mouseEvent) {
 
-        if (textNumColegiado.getText().isEmpty() || textNombre.getText().isEmpty() || textApellido1.getText().isEmpty() || textApellido2.getText().isEmpty()) {
+        if (textNumColegiado.getText().isEmpty()
+                || textNombre.getText().isEmpty()
+                || textApellido1.getText().isEmpty()
+                || textApellido2.getText().isEmpty()) {
             System.out.println("Error: Campos vacíos");
             return;
         }
@@ -87,10 +87,12 @@ public class MedicoController implements Initializable {
             System.out.println("Medico modificado correctamente");
         }
     }
-
-
+    
     public void callCreate(MouseEvent mouseEvent) {
-        if (textNumColegiado.getText().isEmpty() || textNombre.getText().isEmpty() || textApellido1.getText().isEmpty() || textApellido2.getText().isEmpty()) {
+        if (textNumColegiado.getText().isEmpty()
+                || textNombre.getText().isEmpty()
+                || textApellido1.getText().isEmpty()
+                || textApellido2.getText().isEmpty()) {
             System.out.println("Error: Campos vacíos");
             return;
         }

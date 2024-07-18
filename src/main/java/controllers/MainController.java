@@ -37,7 +37,7 @@ public class MainController  implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("patientsMantForm.fxml")));
         stage.setTitle("Listado de Pacientes");
         stage.getIcons().add(new Image("images/logo-pacientes.jpeg"));
-        stage.setScene(new Scene(root, 1000, 700));
+        stage.setScene(new Scene(root, 1300, 700));
         stage.show();
     }
 

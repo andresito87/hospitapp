@@ -8,9 +8,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="619.0" prefWidth="620.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="619.0" prefWidth="737.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
     <children>
-        <ImageView fitHeight="619.0" fitWidth="626.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="619.0" fitWidth="619.0" layoutX="-7.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../images/imagenBienvenida.jpeg" />
             </image>
@@ -35,6 +35,7 @@
                 </Menu>
             </menus>
         </MenuBar>
-      <FontAwesomeIcon accessibleHelp="Salir" accessibleText="Salir" fx:id="iconSalir" fill="#f70000" glyphName="CLOSE" layoutX="544.0" layoutY="48.0" onMousePressed="#closeApp" size="5em" />
+      <FontAwesomeIcon onMouseClicked="#closeApp" fill="#ea1515" glyphName="POWER_OFF" layoutX="650.0" layoutY="78.0" size="5em" stroke="#030303" strokeWidth="2.0" wrappingWidth="47.99999809265137" />
+        
     </children>
 </AnchorPane>

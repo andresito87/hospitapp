@@ -10,38 +10,51 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="529.0" prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListadoMedicosController">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="529.0" prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListadoMedicosController">
     <children>
-        <ImageView fitHeight="89.0" fitWidth="97.0" layoutX="14.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="89.0" fitWidth="97.0" layoutX="14.0" layoutY="19.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/logo-medicos.jpeg" />
+                <Image url="@../images/logo-medicos.jpeg"/>
             </image>
         </ImageView>
         <TableView fx:id="medicosTable" layoutX="139.0" layoutY="19.0" prefHeight="226.0" prefWidth="715.0">
             <columns>
-                <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
-                <TableColumn fx:id="numColegiadoColumn" prefWidth="153.59994506835938" text="Número Colegiado" />
-                <TableColumn fx:id="nombreColumn" prefWidth="76.800048828125" text="Nombre" />
-                <TableColumn fx:id="apellido1Column" prefWidth="111.19998168945312" text="Primer Apellido" />
-                <TableColumn fx:id="apellido2Column" prefWidth="131.20001220703125" text="Segundo Apellido" />
-                <TableColumn fx:id="observacionesColumn" minWidth="0.0" prefWidth="161.5999755859375" text="Observaciones" />
+                <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID"/>
+                <TableColumn fx:id="numColegiadoColumn" prefWidth="153.59994506835938" text="Número Colegiado"/>
+                <TableColumn fx:id="nombreColumn" prefWidth="76.800048828125" text="Nombre"/>
+                <TableColumn fx:id="apellido1Column" prefWidth="111.19998168945312" text="Primer Apellido"/>
+                <TableColumn fx:id="apellido2Column" prefWidth="131.20001220703125" text="Segundo Apellido"/>
+                <TableColumn fx:id="observacionesColumn" minWidth="0.0" prefWidth="161.5999755859375"
+                             text="Observaciones"/>
             </columns>
         </TableView>
-        <CheckBox fx:id="numColegiado" layoutX="139.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Número de Colegiado" />
-        <TextField fx:id="textnumColegiado" layoutX="290.0" layoutY="278.0" />
-        <CheckBox fx:id="observaciones" layoutX="194.0" layoutY="373.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="139.0" text="Observaciones" />
-        <TextField fx:id="textobservaciones" layoutX="346.0" layoutY="369.0" prefHeight="26.0" prefWidth="465.0" />
-        <CheckBox fx:id="nombre" layoutX="139.0" layoutY="325.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Nombre" />
-        <TextField fx:id="textnombre" layoutX="226.0" layoutY="322.0" />
-        <CheckBox fx:id="apellido1" layoutX="543.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Primer Apellido" />
-        <TextField fx:id="textapellido1" layoutX="662.0" layoutY="277.0" />
-        <CheckBox fx:id="apellido2" layoutX="543.0" layoutY="326.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Segundo Apellido" />
-        <TextField fx:id="textapellido2" layoutX="673.0" layoutY="321.0" />
-        <Button fx:id="filterInfo" layoutX="107.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#callFilterInfoTable" prefHeight="54.0" prefWidth="194.0" text="Filtrar" />
-        <Button fx:id="buttonClean" layoutX="365.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#cleanPageText" prefHeight="54.0" prefWidth="194.0" text="Limpiar" />
-        <Button fx:id="buttonExit" layoutX="618.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0" prefWidth="194.0" text="Salir" />
-      <FontAwesomeIcon fill="#65ef20" glyphName="PLUS" layoutX="29.0" layoutY="220.0" size="5em" onMouseClicked="#callCreateForm"/>
-      <FontAwesomeIcon fill="#21beed" glyphName="EDIT" layoutX="29.0" layoutY="302.0" size="5em" />
-      <FontAwesomeIcon fill="#fc1818" glyphName="TRASH" layoutX="35.0" layoutY="390.0" size="5em" />
+        <CheckBox fx:id="numColegiado" layoutX="139.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0"
+                  prefWidth="150.0" text="Número de Colegiado"/>
+        <TextField fx:id="textnumColegiado" layoutX="290.0" layoutY="278.0"/>
+        <CheckBox fx:id="observaciones" layoutX="194.0" layoutY="373.0" mnemonicParsing="false" prefHeight="26.0"
+                  prefWidth="139.0" text="Observaciones"/>
+        <TextField fx:id="textobservaciones" layoutX="346.0" layoutY="369.0" prefHeight="26.0" prefWidth="465.0"/>
+        <CheckBox fx:id="nombre" layoutX="139.0" layoutY="325.0" mnemonicParsing="false" prefHeight="18.0"
+                  prefWidth="130.0" text="Nombre"/>
+        <TextField fx:id="textnombre" layoutX="226.0" layoutY="322.0"/>
+        <CheckBox fx:id="apellido1" layoutX="543.0" layoutY="281.0" mnemonicParsing="false" prefHeight="18.0"
+                  prefWidth="130.0" text="Primer Apellido"/>
+        <TextField fx:id="textapellido1" layoutX="662.0" layoutY="277.0"/>
+        <CheckBox fx:id="apellido2" layoutX="543.0" layoutY="326.0" mnemonicParsing="false" prefHeight="18.0"
+                  prefWidth="150.0" text="Segundo Apellido"/>
+        <TextField fx:id="textapellido2" layoutX="673.0" layoutY="321.0"/>
+        <Button fx:id="filterInfo" layoutX="107.0" layoutY="442.0" mnemonicParsing="false"
+                onMouseClicked="#callFilterInfoTable" prefHeight="54.0" prefWidth="194.0" text="Filtrar"/>
+        <Button fx:id="buttonClean" layoutX="365.0" layoutY="442.0" mnemonicParsing="false"
+                onMouseClicked="#cleanPageText" prefHeight="54.0" prefWidth="194.0" text="Limpiar"/>
+        <Button fx:id="buttonExit" layoutX="618.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#closeWindow"
+                prefHeight="54.0" prefWidth="194.0" text="Salir"/>
+        <FontAwesomeIcon fill="#65ef20" glyphName="PLUS_CIRCLE" layoutX="29.0" layoutY="220.0" size="5em"
+                         onMouseClicked="#callCreateForm"/>
+        <FontAwesomeIcon fill="#21beed" glyphName="PENCIL_SQUARE" layoutX="29.0" layoutY="302.0" size="5em" onMouseClicked="#callModifyForm"/>
+        <FontAwesomeIcon fill="#fc1818" glyphName="TIMES_CIRCLE" layoutX="35.0" layoutY="390.0" size="5em" onMouseClicked="#callDelete"/>
     </children>
 </AnchorPane>

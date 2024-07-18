@@ -101,7 +101,6 @@ public class DB {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
             ResultSet resultSet = preparedStatement.executeQuery(sql.toString());
-            System.out.println(sql);
             while (resultSet.next()) {
                 Medico medico = new Medico(resultSet.getLong("id"), connection);
                 if (medico.inicializarDesdeBD()) {
@@ -109,8 +108,7 @@ public class DB {
                 }
             }
         } catch (SQLException e) {
-
-            System.out.println(sql);
+            System.out.println("Error al obtener los médicos de la base de datos");
         }
         return medicos;
     }
@@ -118,11 +116,38 @@ public class DB {
 
     // <editor-fold defaultstate="collapsed" desc="Métodos para Pacientes">
     public static List<Paciente> obtenerPacientes() {
-        String sql = "SELECT * FROM Pacientes";
+        String sql = "SELECT * FROM Pacientes WHERE eliminado IS NULL";
         List<Paciente> pacientes = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                Paciente paciente = new Paciente(resultSet.getLong("id"), connection);
+
+                if (paciente.inicializarDesdeBD()) {
+                    pacientes.add(paciente);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener los pacientes de la base de datos");
+        }
+        
+        return pacientes;
+    }
+
+    public static List<Paciente> obtenerPacientesFiltered(Map<String, String> checkedMap) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM Pacientes");
+        if (!checkedMap.isEmpty()) {
+            sql.append(" WHERE ");
+            for (Map.Entry<String, String> entry : checkedMap.entrySet()) {
+                sql.append(entry.getKey()).append(" LIKE '%").append(entry.getValue()).append("%' AND ");
+            }
+            sql = new StringBuilder(sql.substring(0, sql.length() - 5));
+        }
+        List<Paciente> pacientes = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
+            ResultSet resultSet = preparedStatement.executeQuery(sql.toString());
             while (resultSet.next()) {
                 Paciente paciente = new Paciente(resultSet.getLong("id"), connection);
                 if (paciente.inicializarDesdeBD()) {
