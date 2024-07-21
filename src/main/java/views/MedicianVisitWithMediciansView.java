@@ -1,10 +1,10 @@
 package views;
 
-public class MedicianVisitView {
+public class MedicianVisitWithMediciansView {
     private final String fecha;
     private final String medico;
 
-    public MedicianVisitView(String fecha, String medico) {
+    public MedicianVisitWithMediciansView(String fecha, String medico) {
         this.fecha = fecha;
         this.medico = medico;
     }

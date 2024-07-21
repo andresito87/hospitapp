@@ -233,6 +233,22 @@ public class DB {
         return visitasMedicas;
     }
 
+    public static List<VisitaMedica> obtenerVisitasMedicasMedico(long id) {
+        String sql = "SELECT * FROM VisitasMedicas WHERE idMedico = ? AND eliminado IS NULL";
+        List<VisitaMedica> visitasMedicas = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                visitasMedicas.add(new VisitaMedica(resultSet.getLong("id"), connection));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener las visitas médicas del médico de la base de datos");
+        }
+        return visitasMedicas;
+    }
+
     // </editor-fold>
 
 }

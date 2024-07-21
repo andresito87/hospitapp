@@ -8,34 +8,37 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="619.0" prefWidth="737.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="619.0"
+            prefWidth="737.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
     <children>
         <ImageView fitHeight="619.0" fitWidth="619.0" layoutX="-7.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../images/imagenBienvenida.jpeg" />
+                <Image url="@../images/imagenBienvenida.jpeg"/>
             </image>
         </ImageView>
         <MenuBar layoutX="14.0" layoutY="14.0">
             <menus>
                 <Menu mnemonicParsing="false" text="Mantenimientos">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Camas" />
-                        <MenuItem mnemonicParsing="false" onAction="#callPatientsMantForm" text="Pacientes" />
-                        <MenuItem mnemonicParsing="false" text="Diagnósticos" />
-                        <MenuItem mnemonicParsing="false" text="VisitasMédicas" />
-                        <MenuItem mnemonicParsing="false" onAction="#callMediciansMantForm" text="Médicos" />
-                        <MenuItem mnemonicParsing="false" text="Habitaciones" />
-                        <MenuItem mnemonicParsing="false" text="TarjetasVisitas" />
+                        <MenuItem mnemonicParsing="false" text="Camas"/>
+                        <MenuItem mnemonicParsing="false" onAction="#callPatientsMantForm" text="Pacientes"/>
+                        <MenuItem mnemonicParsing="false" text="Diagnósticos"/>
+                        <MenuItem mnemonicParsing="false" text="VisitasMédicas"/>
+                        <MenuItem mnemonicParsing="false" onAction="#callMediciansMantForm" text="Médicos"/>
+                        <MenuItem mnemonicParsing="false" text="Habitaciones"/>
+                        <MenuItem mnemonicParsing="false" text="TarjetasVisitas"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Información">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Ayuda" />
+                        <MenuItem mnemonicParsing="false" text="Ayuda"/>
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
-      <FontAwesomeIcon onMouseClicked="#closeApp" fill="#ea1515" glyphName="POWER_OFF" layoutX="650.0" layoutY="78.0" size="5em" stroke="#030303" strokeWidth="2.0" wrappingWidth="47.99999809265137" />
-        
+        <FontAwesomeIcon onMouseClicked="#closeApp" fill="#ea1515" glyphName="POWER_OFF" layoutX="650.0" layoutY="78.0"
+                         size="5em" stroke="#030303" strokeWidth="2.0" wrappingWidth="47.99999809265137"/>
+
     </children>
 </AnchorPane>

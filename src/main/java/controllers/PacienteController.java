@@ -16,8 +16,8 @@ import models.Diagnostico;
 import models.Medico;
 import models.Paciente;
 import models.VisitaMedica;
-import views.DiagnosticView;
-import views.MedicianVisitView;
+import views.DiagnosticWithMediciansView;
+import views.MedicianVisitWithMediciansView;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -30,10 +30,10 @@ public class PacienteController implements Initializable {
     private static Paciente paciente;
 
     @FXML
-    public TableView<DiagnosticView> tableDiagnostics;
+    public TableView<DiagnosticWithMediciansView> tableDiagnostics;
 
     @FXML
-    public TableView<MedicianVisitView> tableMediciansVisits;
+    public TableView<MedicianVisitWithMediciansView> tableMediciansVisits;
 
     @FXML
     private TextField textId;
@@ -86,7 +86,7 @@ public class PacienteController implements Initializable {
     @FXML
     private TableColumn<VisitaMedica, LocalDate> fechaVisitaMedicaColumn;
 
-    ObservableList<DiagnosticView> diagnosticosObservableList = FXCollections.observableArrayList();
+    ObservableList<DiagnosticWithMediciansView> diagnosticosObservableList = FXCollections.observableArrayList();
 
 
     public static void setPaciente(Paciente paciente) {
@@ -98,7 +98,7 @@ public class PacienteController implements Initializable {
         if (paciente != null) {
             // cargar datos generales del paciente
             loadPaciente();
-            
+
             // cargar datos de diagnósticos del paciente
             loadDiagnostics();
 
@@ -136,14 +136,14 @@ public class PacienteController implements Initializable {
             List<Diagnostico> diagnosticos = DB.obtenerDiagnosticosPaciente(paciente.getId());
 
             // Crear una lista de DiagnosticoView
-            List<DiagnosticView> diagnosticosViewList = new ArrayList<>();
+            List<DiagnosticWithMediciansView> diagnosticosViewList = new ArrayList<>();
             for (Diagnostico diagnostico : diagnosticos) {
                 Diagnostico diagnosticoAux = new Diagnostico(diagnostico.getId(), DB.getConnection());
                 diagnosticoAux.inicializarDesdeBD();
                 Medico medico = new Medico(diagnosticoAux.getIdMedico(), DB.getConnection());
                 medico.inicializarDesdeBD();
                 String fullNombre = medico.getNombre() + " " + medico.getApellido1() + " " + medico.getApellido2();
-                diagnosticosViewList.add(new DiagnosticView(diagnosticoAux.getCodigo(), diagnosticoAux.getFecha().toString(), fullNombre));
+                diagnosticosViewList.add(new DiagnosticWithMediciansView(diagnosticoAux.getCodigo(), diagnosticoAux.getFecha().toString(), fullNombre));
             }
 
             // Asignar la lista de DiagnosticoView a la tabla
@@ -167,19 +167,18 @@ public class PacienteController implements Initializable {
             List<VisitaMedica> visitasMedicas = DB.obtenerVisitasMedicasPaciente(paciente.getId());
 
             // Crear una lista de MedicianVisitView
-            List<MedicianVisitView> mediciansVisitsViewList = new ArrayList<>();
+            List<MedicianVisitWithMediciansView> mediciansVisitsViewList = new ArrayList<>();
             for (VisitaMedica visitaMedica : visitasMedicas) {
                 VisitaMedica visitaMedicaAux = new VisitaMedica(visitaMedica.getId(), DB.getConnection());
                 visitaMedicaAux.inicializarDesdeBD();
-                System.out.println("Medico: " + visitaMedicaAux.getIdMedico());
                 Medico medico = new Medico(visitaMedicaAux.getIdMedico(), DB.getConnection());
                 medico.inicializarDesdeBD();
                 String fullNombre = medico.getNombre() + " " + medico.getApellido1() + " " + medico.getApellido2();
-                mediciansVisitsViewList.add(new MedicianVisitView(visitaMedicaAux.getFecha().toString(), fullNombre));
+                mediciansVisitsViewList.add(new MedicianVisitWithMediciansView(visitaMedicaAux.getFecha().toString(), fullNombre.contains("null") ? "Sin asignar" : fullNombre));
             }
 
             // Asignar la lista de MedicianVisitView a la tabla
-            ObservableList<MedicianVisitView> mediciansVisitsObservableList = FXCollections.observableArrayList(mediciansVisitsViewList);
+            ObservableList<MedicianVisitWithMediciansView> mediciansVisitsObservableList = FXCollections.observableArrayList(mediciansVisitsViewList);
             tableMediciansVisits.setItems(mediciansVisitsObservableList);
         } catch (Exception e) {
             System.out.println(e.getMessage());

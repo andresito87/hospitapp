@@ -9,41 +9,58 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="529.0" prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PacienteController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="529.0"
+            prefWidth="883.0" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/22"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PacienteController">
     <children>
-        <ImageView fitHeight="89.0" fitWidth="97.0" layoutX="86.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="89.0" fitWidth="97.0" layoutX="86.0" layoutY="31.0" pickOnBounds="true"
+                   preserveRatio="true">
             <image>
-                <Image url="@../images/logo-pacientes.jpeg" />
+                <Image url="@../images/logo-pacientes.jpeg"/>
             </image>
         </ImageView>
-        <CheckBox layoutX="224.0" layoutY="149.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="59.0" text="DNI" />
-        <TextField fx:id="textDni" layoutX="297.0" layoutY="147.0" />
-        <CheckBox layoutX="220.0" layoutY="188.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="67.0" text="CI" />
-        <TextField fx:id="textCi" layoutX="297.0" layoutY="185.0" />
-        <CheckBox layoutX="537.0" layoutY="160.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Fecha de Nacimiento" />
-        <TextField fx:id="textFecNac" layoutX="692.0" layoutY="156.0" />
-        <CheckBox layoutX="537.0" layoutY="205.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0" text="Identificador de cama" />
-        <TextField fx:id="textIdCama" layoutX="688.0" layoutY="200.0" />
-        <CheckBox layoutX="542.0" layoutY="115.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Número de SS" />
-        <TextField fx:id="textNumSegSocial" layoutX="650.0" layoutY="111.0" />
-        <CheckBox layoutX="222.0" layoutY="233.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0" text="Nombre" />
-        <TextField fx:id="textNombre" layoutX="309.0" layoutY="230.0" />
-        <CheckBox layoutX="223.0" layoutY="280.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Primer Apellido" />
-        <TextField fx:id="textApellido1" layoutX="330.0" layoutY="276.0" />
-        <CheckBox layoutX="223.0" layoutY="327.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="122.0" text="Segundo Apellido" />
-        <TextField fx:id="textApellido2" layoutX="347.0" layoutY="324.0" />
-        <CheckBox layoutX="537.0" layoutY="252.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="122.0" text="Fecha de Ingreso" />
-        <TextField fx:id="textFecIngreso" layoutX="659.0" layoutY="248.0" />
-        <CheckBox layoutX="542.0" layoutY="300.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0" text="Fecha de Alta" />
-        <TextField fx:id="textFecAlta" layoutX="650.0" layoutY="297.0" />
-        <CheckBox layoutX="233.0" layoutY="379.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="139.0" text="Observaciones" />
-        <TextField fx:id="textObservaciones" layoutX="385.0" layoutY="379.0" prefHeight="26.0" prefWidth="465.0" />
-        <Button layoutX="107.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#callCreate" prefHeight="54.0" prefWidth="194.0" text="Crear" />
-        <Button layoutX="618.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0" prefWidth="194.0" text="Salir" />
-        <Button layoutX="365.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#cleanPageText" prefHeight="54.0" prefWidth="194.0" text="Limpiar" />
-        <Text fill="#fafafa" layoutX="303.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Añadir nuevo Paciente" wrappingWidth="386.9367370605469">
+        <CheckBox layoutX="224.0" layoutY="149.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="59.0"
+                  text="DNI"/>
+        <TextField fx:id="textDni" layoutX="297.0" layoutY="147.0"/>
+        <CheckBox layoutX="220.0" layoutY="188.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="67.0" text="CI"/>
+        <TextField fx:id="textCi" layoutX="297.0" layoutY="185.0"/>
+        <CheckBox layoutX="537.0" layoutY="160.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0"
+                  text="Fecha de Nacimiento"/>
+        <TextField fx:id="textFecNac" layoutX="692.0" layoutY="156.0"/>
+        <CheckBox layoutX="537.0" layoutY="205.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="150.0"
+                  text="Identificador de cama"/>
+        <TextField fx:id="textIdCama" layoutX="688.0" layoutY="200.0"/>
+        <CheckBox layoutX="542.0" layoutY="115.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0"
+                  text="Número de SS"/>
+        <TextField fx:id="textNumSegSocial" layoutX="650.0" layoutY="111.0"/>
+        <CheckBox layoutX="222.0" layoutY="233.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="130.0"
+                  text="Nombre"/>
+        <TextField fx:id="textNombre" layoutX="309.0" layoutY="230.0"/>
+        <CheckBox layoutX="223.0" layoutY="280.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0"
+                  text="Primer Apellido"/>
+        <TextField fx:id="textApellido1" layoutX="330.0" layoutY="276.0"/>
+        <CheckBox layoutX="223.0" layoutY="327.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="122.0"
+                  text="Segundo Apellido"/>
+        <TextField fx:id="textApellido2" layoutX="347.0" layoutY="324.0"/>
+        <CheckBox layoutX="537.0" layoutY="252.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="122.0"
+                  text="Fecha de Ingreso"/>
+        <TextField fx:id="textFecIngreso" layoutX="659.0" layoutY="248.0"/>
+        <CheckBox layoutX="542.0" layoutY="300.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="108.0"
+                  text="Fecha de Alta"/>
+        <TextField fx:id="textFecAlta" layoutX="650.0" layoutY="297.0"/>
+        <CheckBox layoutX="233.0" layoutY="379.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="139.0"
+                  text="Observaciones"/>
+        <TextField fx:id="textObservaciones" layoutX="385.0" layoutY="379.0" prefHeight="26.0" prefWidth="465.0"/>
+        <Button layoutX="107.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#callCreate" prefHeight="54.0"
+                prefWidth="194.0" text="Crear"/>
+        <Button layoutX="618.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#closeWindow" prefHeight="54.0"
+                prefWidth="194.0" text="Salir"/>
+        <Button layoutX="365.0" layoutY="442.0" mnemonicParsing="false" onMouseClicked="#cleanPageText"
+                prefHeight="54.0" prefWidth="194.0" text="Limpiar"/>
+        <Text fill="#fafafa" layoutX="303.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="Añadir nuevo Paciente" wrappingWidth="386.9367370605469">
             <font>
-                <Font size="39.0" />
+                <Font size="39.0"/>
             </font>
         </Text>
     </children>

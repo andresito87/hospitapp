@@ -54,7 +54,9 @@
                 prefHeight="54.0" prefWidth="194.0" text="Salir"/>
         <FontAwesomeIcon fill="#65ef20" glyphName="PLUS_CIRCLE" layoutX="29.0" layoutY="220.0" size="5em"
                          onMouseClicked="#callCreateForm"/>
-        <FontAwesomeIcon fill="#21beed" glyphName="PENCIL_SQUARE" layoutX="29.0" layoutY="302.0" size="5em" onMouseClicked="#callModifyForm"/>
-        <FontAwesomeIcon fill="#fc1818" glyphName="TIMES_CIRCLE" layoutX="35.0" layoutY="390.0" size="5em" onMouseClicked="#callDelete"/>
+        <FontAwesomeIcon fill="#21beed" glyphName="PENCIL_SQUARE" layoutX="29.0" layoutY="302.0" size="5em"
+                         onMouseClicked="#callModifyForm"/>
+        <FontAwesomeIcon fill="#fc1818" glyphName="TIMES_CIRCLE" layoutX="35.0" layoutY="390.0" size="5em"
+                         onMouseClicked="#callDelete"/>
     </children>
 </AnchorPane>

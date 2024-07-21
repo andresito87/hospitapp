@@ -1,13 +1,11 @@
 package views;
 
-
-
-public class DiagnosticView {
+public class DiagnosticWithMediciansView {
     private  String codigo;
     private  String fecha;
     private  String medico;
 
-    public DiagnosticView(String codigo, String fecha, String medico) {
+    public DiagnosticWithMediciansView(String codigo, String fecha, String medico) {
         this.codigo = codigo;
         this.fecha = fecha;
         this.medico = medico;
