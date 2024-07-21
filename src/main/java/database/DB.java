@@ -1,7 +1,9 @@
 package database;
 
+import models.Diagnostico;
 import models.Medico;
 import models.Paciente;
+import models.VisitaMedica;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -159,6 +161,78 @@ public class DB {
         }
         return pacientes;
     }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Métodos para Diagnósticos">
+    public static List<Diagnostico> obtenerDiagnosticosPaciente(long id) {
+        String sql = "SELECT * FROM Diagnosticos WHERE idPaciente = ? AND eliminado IS NULL";
+        List<Diagnostico> diagnosticos = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                diagnosticos.add(new Diagnostico(resultSet.getLong("id"), connection));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener los diagnósticos del paciente de la base de datos");
+        }
+        return diagnosticos;
+    }
+
+    public static List<Diagnostico> obtenerDiagnosticosMedico(long id){
+        String sql = "SELECT * FROM Diagnosticos WHERE idMedico = ?";
+        List<Diagnostico> diagnosticos = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                diagnosticos.add(new Diagnostico(resultSet.getLong("id"), connection));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener los diagnósticos del médico de la base de datos");
+        }
+        return diagnosticos;
+    }
+
+    public static Medico obtenerMedico(long idMedico) {
+        String sql = "SELECT * FROM Medicos WHERE id = ? AND eliminado IS NULL";
+        Medico medico = null;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, idMedico);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                medico = new Medico(resultSet.getLong("id"), connection);
+                medico.inicializarDesdeBD();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener el médico de la base de datos");
+        }
+        return medico;
+    }
+
+    public static Connection getConnection() {
+        return connection;
+    }
+
+    public static List<VisitaMedica> obtenerVisitasMedicasPaciente(long id) {
+        String sql = "SELECT * FROM VisitasMedicas WHERE idPaciente = ? AND eliminado IS NULL";
+        List<VisitaMedica> visitasMedicas = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                visitasMedicas.add(new VisitaMedica(resultSet.getLong("id"), connection));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener las visitas médicas del paciente de la base de datos");
+        }
+        return visitasMedicas;
+    }
+
     // </editor-fold>
 
 }

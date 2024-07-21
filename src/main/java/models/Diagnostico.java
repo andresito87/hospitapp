@@ -28,6 +28,7 @@ public class Diagnostico {
         this.id = id;
         this.conexionBD = conexionBD;
     }
+
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Métodos GET y SET">

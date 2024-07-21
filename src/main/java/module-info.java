@@ -15,6 +15,7 @@ module es.aplicacion.hospitaljavafx {
     exports app;
     exports controllers;
     exports models;
+    exports views;
     exports database;
     opens app to javafx.fxml;
     opens controllers to javafx.fxml;
