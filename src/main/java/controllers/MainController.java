@@ -23,7 +23,11 @@ public class MainController  implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        DB.connect();
+        try {
+            DB.connect();
+        } catch (Exception e) {
+           System.out.println("Error al conectar a la base de datos");
+        }
     }
     
     @FXML
