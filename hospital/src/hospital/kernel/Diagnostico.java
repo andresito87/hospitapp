@@ -51,6 +51,15 @@ public class Diagnostico {
             String descripcion, String observaciones) {
 
         this.setId(id);
+        this.setData(fecha, idMedico, idPaciente, tipo, codigo, descripcion, observaciones);
+
+        return true;
+    }
+
+    public boolean setData(LocalDate fecha, long idMedico,
+            long idPaciente, int tipo, String codigo,
+            String descripcion, String observaciones) {
+
         this.setFecha(fecha);
         this.setIdMedico(idMedico);
         this.setIdPaciente(idPaciente);
@@ -319,7 +328,8 @@ public class Diagnostico {
 
         try {
 
-            resultado = getDiagnosticosBD(filtroFecha, fechaInicio, fechaFin,
+            resultado = getDiagnosticosBD(
+                    filtroFecha, fechaInicio, fechaFin,
                     filtroIdMedico, idMedico,
                     filtroIdPaciente, idPaciente,
                     filtroTipo, tipo,
@@ -338,15 +348,20 @@ public class Diagnostico {
     }
 
     public static ArrayList<Diagnostico> getTodosDiagnosticos(Connection conexionBD) {
-        ArrayList<Diagnostico> devolucion = null;
+        ArrayList<Diagnostico> devolucion;
         ResultSet resultado;
 
         try {
 
-            resultado = getDiagnosticosBD(false, null, null,
-                    false, 0, false, 0, false, 0,
-                    false, null, false, null,
-                    false, null, conexionBD);
+            resultado = getDiagnosticosBD(
+                    false, null, null,
+                    false, 0,
+                    false, 0,
+                    false, 0,
+                    false, null,
+                    false, null,
+                    false, null,
+                    conexionBD);
 
             devolucion = getDiagnosticos(resultado, conexionBD);
 
@@ -364,10 +379,15 @@ public class Diagnostico {
 
         try {
 
-            resultado = getDiagnosticosBD(false, null, null,
-                    false, 0, true, idPaciente,
-                    false, 0, false, null, false, null,
-                    false, null, conexionBD);
+            resultado = getDiagnosticosBD(
+                    false, null, null,
+                    false, 0,
+                    true, idPaciente,
+                    false, 0,
+                    false, null,
+                    false, null,
+                    false, null,
+                    conexionBD);
             devolucion = getDiagnosticos(resultado, conexionBD);
 
         } catch (Exception ex) {
@@ -384,10 +404,15 @@ public class Diagnostico {
 
         try {
 
-            resultado = getDiagnosticosBD(false, null, null,
-                    false, 0, true, idPaciente,
-                    true, tipo, false, null, false, null,
-                    false, null, conexionBD);
+            resultado = getDiagnosticosBD(
+                    false, null, null,
+                    false, 0,
+                    true, idPaciente,
+                    true, tipo,
+                    false, null,
+                    false, null,
+                    false, null,
+                    conexionBD);
 
             devolucion = getDiagnosticos(resultado, conexionBD);
 
@@ -404,10 +429,15 @@ public class Diagnostico {
 
         try {
 
-            resultado = getDiagnosticosBD(false, null, null,
-                    false, idMedico, false, 0,
-                    false, 0, false, null, false, null,
-                    false, null, conexionBD);
+            resultado = getDiagnosticosBD(
+                    false, null, null,
+                    false, idMedico,
+                    false, 0,
+                    false, 0,
+                    false, null,
+                    false, null,
+                    false, null,
+                    conexionBD);
 
             devolucion = getDiagnosticos(resultado, conexionBD);
 
@@ -424,9 +454,13 @@ public class Diagnostico {
 
         try {
 
-            resultado = getDiagnosticosBD(false, null, null,
-                    false, idMedico, false, 0,
-                    true, tipo, false, null, false, null,
+            resultado = getDiagnosticosBD(
+                    false, null, null,
+                    false, idMedico, 
+                    false, 0,
+                    true, tipo, 
+                    false, null, 
+                    false, null,
                     false, null, conexionBD);
 
             devolucion = getDiagnosticos(resultado, conexionBD);
@@ -481,8 +515,8 @@ public class Diagnostico {
         return devolucion;
     }
 
-    private static ResultSet getDiagnosticosBD(boolean filtroFecha,
-            LocalDate fechaInicio, LocalDate fechaFin,
+    private static ResultSet getDiagnosticosBD(
+            boolean filtroFecha, LocalDate fechaInicio, LocalDate fechaFin,
             boolean filtroIdMedico, long idMedico,
             boolean filtroIdPaciente, long idPaciente,
             boolean filtroTipo, int tipo,
@@ -498,7 +532,8 @@ public class Diagnostico {
                     + "FROM Diagnosticos "
                     + "WHERE Diagnosticos.eliminado IS NULL ";
 
-            cadenaSQL = cadenaSQL + getCadenaFiltrosSQL(filtroFecha, fechaInicio, fechaFin,
+            cadenaSQL = cadenaSQL + getCadenaFiltrosSQL(
+                    filtroFecha, fechaInicio, fechaFin,
                     filtroIdMedico, idMedico,
                     filtroIdPaciente, idPaciente,
                     filtroTipo, tipo,
@@ -518,8 +553,8 @@ public class Diagnostico {
         return devolucion;
     }
 
-    private static String getCadenaFiltrosSQL(boolean filtroFecha,
-            LocalDate fechaInicio, LocalDate fechaFin,
+    private static String getCadenaFiltrosSQL(
+            boolean filtroFecha, LocalDate fechaInicio, LocalDate fechaFin,
             boolean filtroIdMedico, long idMedico,
             boolean filtroIdPaciente, long idPaciente,
             boolean filtroTipo, int tipo,
@@ -563,7 +598,6 @@ public class Diagnostico {
         } catch (Exception ex) {
             devolucion = null;
         }
-
         return devolucion;
     }
 

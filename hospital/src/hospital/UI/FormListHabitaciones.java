@@ -43,27 +43,23 @@ public class FormListHabitaciones extends javax.swing.JDialog {
 
         try {
 
-            if (!this.textPlazas.getText().equals("")) {
-                plazas = Integer.parseInt(this.textPlazas.getText());
-            }
-
             if (!this.textNumHabitacion.getText().equals("")) {
                 numHabitacion = Integer.parseInt(this.textNumHabitacion.getText());
             }
 
             if (!this.textPlanta.getText().equals("")) {
-                plazas = Integer.parseInt(this.textPlanta.getText());
+                planta = Integer.parseInt(this.textPlanta.getText());
+            }
+
+            if (!this.textPlazas.getText().equals("")) {
+                plazas = Integer.parseInt(this.textPlazas.getText());
             }
 
             this.listaHabitaciones = Habitacion.getTodasHabitaciones(
-                    this.checkNumHabitacion.isSelected(),
-                    numHabitacion,
-                    this.checkPlanta.isSelected(),
-                    planta,
-                    this.checkPlazas.isSelected(),
-                    plazas,
-                    this.checkObservaciones.isSelected(),
-                    this.textObservaciones.getText(),
+                    this.checkNumHabitacion.isSelected(),numHabitacion,
+                    this.checkPlanta.isSelected(),planta,
+                    this.checkPlazas.isSelected(),plazas,
+                    this.checkObservaciones.isSelected(),this.textObservaciones.getText(),
                     conexionBD);
 
             devolucion = true;

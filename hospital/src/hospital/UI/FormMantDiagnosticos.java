@@ -5,6 +5,8 @@ import hospital.kernel.Medico;
 import hospital.kernel.Paciente;
 import hospital.kernel.VisitaMedica;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,14 +23,15 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
 
     private Connection conexionBD;
 
-    private Medico medicoActivo = null;
+    private Diagnostico diagnosticoActivo = null;
 
     private int operacionActiva = AGREGAR;
 
-    private ArrayList<Diagnostico> diagnosticos;
+    private ArrayList<Medico> medicos;
+    private ArrayList<Paciente> pacientes;
 
-    private ArrayList<VisitaMedica> visitasMedicas;
-    private VisitaMedica visitaSeleccionada = null;
+    private Paciente medicoSeleccionado = null;
+    private Paciente pacienteSeleccionado = null;
 
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
@@ -37,7 +40,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        this.setTitle("Información de Médico");
+        this.setTitle("Información de Diagnóstico");
         this.setLocation(300, 50);
         this.setSize(1000, 750);
 
@@ -48,17 +51,17 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
 
     }
 
-    public FormMantDiagnosticos(Medico medico, int operacion, Connection conexionBD,
+    public FormMantDiagnosticos(Diagnostico diagnostico, int operacion, Connection conexionBD,
             javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         initComponents();
 
-        this.setTitle("Información de Médico");
+        this.setTitle("Información de Diagnóstico");
         this.setLocation(300, 50);
         this.setSize(1000, 750);
 
         this.conexionBD = conexionBD;
-        this.medicoActivo = medico;
+        this.diagnosticoActivo = diagnostico;
         this.operacionActiva = operacion;
 
         this.desabilitarPestanhasEnModoAgregar();
@@ -69,9 +72,9 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
     private void desabilitarPestanhasEnModoAgregar() {
-        
+
         if (operacionActiva == FormMantDiagnosticos.AGREGAR) {
-            
+
             panelFichas.setEnabledAt(1, false);
             panelFichas.setEnabledAt(2, false);
         }
@@ -102,10 +105,10 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         boolean devolucion;
 
         try {
-            if (this.medicoActivo != null) {
+            if (this.diagnosticoActivo != null) {
                 devolucion = this.cargarDatosGeneralesInterfaz();
-                devolucion = this.cargarListaDiagnosticosInterfaz() && devolucion;
-                devolucion = this.cargarListaVisitasMedicasInterfaz() && devolucion;
+                //devolucion = this.cargarListaMedicosInterfaz() && devolucion;
+                //devolucion = this.cargarListaPacientesInterfaz() && devolucion;
             } else {
                 devolucion = false;
             }
@@ -118,13 +121,22 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
 
     public boolean cargarDatosGeneralesInterfaz() {
         boolean devolucion;
+        String fecha = null;
+        try {
+            fecha = LocalDate.parse(this.diagnosticoActivo.getFecha().toString())
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
 
         try {
-            this.textNumColegiado.setText(Long.toString(this.medicoActivo.getNumColegiado()));
-            this.textNombre.setText(this.medicoActivo.getNombre());
-            this.textApellido1.setText(this.medicoActivo.getApellido1());
-            this.textApellido2.setText(this.medicoActivo.getApellido2());
-            this.textObservaciones.setText(this.medicoActivo.getObservaciones());
+            this.textFecha.setText(fecha);
+            this.textIdMedico.setText(Long.toString(this.diagnosticoActivo.getIdMedico()));
+            this.textIdPaciente.setText(Long.toString(this.diagnosticoActivo.getIdPaciente()));
+            this.textTipo.setText(Integer.toString(this.diagnosticoActivo.getTipo()));
+            this.textCodigo.setText(this.diagnosticoActivo.getCodigo());
+            this.textDescripcion.setText(this.diagnosticoActivo.getDescripcion());
+            this.textObservaciones.setText(this.diagnosticoActivo.getObservaciones());
 
             devolucion = true;
         } catch (Exception ex) {
@@ -138,15 +150,19 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         boolean devolucion;
 
         try {
-            if (this.medicoActivo == null) {
-                this.medicoActivo = new Medico(this.conexionBD);
+            if (this.diagnosticoActivo == null) {
+                this.diagnosticoActivo = new Diagnostico(this.conexionBD);
             }
 
-            this.medicoActivo.setData(Long.parseLong(this.textNumColegiado.getText()),
-                    this.textNombre.getText(),
-                    this.textApellido1.getText(),
-                    this.textApellido2.getText(),
-                    this.textObservaciones.getText());
+            this.diagnosticoActivo.setData(
+                    LocalDate.parse(this.textFecha.getText()),
+                    Long.parseLong(this.textIdMedico.getText()),
+                    Long.parseLong(this.textIdPaciente.getText()),
+                    Integer.parseInt(this.textTipo.getText()),
+                    this.textCodigo.getText(),
+                    this.textDescripcion.getText(),
+                    this.textObservaciones.getText()
+            );
 
             devolucion = true;
         } catch (Exception ex) {
@@ -156,14 +172,14 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         return devolucion;
     }
 
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Diagnósticos">
-    public boolean cargarListaDiagnosticosInterfaz() {
+// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Médicos">
+    public boolean cargarListaMedicosInterfaz() {
         boolean devolucion;
 
         try {
-            this.diagnosticos = this.medicoActivo.getDiagnosticos();
+            // this.medicos = this.diagnosticoActivo.getMedicos();
 
-            this.visualizarListaDiagnosticos();
+            this.visualizarListaMedicos();
 
             devolucion = true;
         } catch (Exception ex) {
@@ -173,35 +189,27 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         return devolucion;
     }
 
-    private boolean visualizarListaDiagnosticos() {
+    private boolean visualizarListaMedicos() {
         boolean devolucion;
         int indice;
-        Diagnostico diagnosticoAux;
-        Paciente pacienteAux;
-        String[] linea = new String[3];
+        Medico medicoAux;
+        String[] linea = new String[2];
 
         DefaultTableModel modeloTabla;
 
         try {
             modeloTabla = this.configurarListaDiagnosticos();
 
-            for (indice = 0; indice < this.diagnosticos.size(); indice++) {
-                diagnosticoAux = this.diagnosticos.get(indice);
+            for (indice = 0; indice < this.medicos.size(); indice++) {
+                medicoAux = this.medicos.get(indice);
 
-                linea[0] = diagnosticoAux.getCodigo();
-                linea[1] = diagnosticoAux.getFecha().toString();
-
-                pacienteAux = diagnosticoAux.getPaciente();
-                if (pacienteAux != null) {
-                    linea[2] = pacienteAux.getNombreFormalCompleto();
-                } else {
-                    linea[2] = "";
-                }
+                linea[0] = Long.toHexString(medicoAux.getNumColegiado());
+                linea[1] = medicoAux.getNombreFormalCompleto();
 
                 modeloTabla.addRow(linea);
             }
 
-            this.tablaDiagnosticos.setModel(modeloTabla);
+            this.tablaMedicos.setModel(modeloTabla);
 
             devolucion = true;
         } catch (Exception ex) {
@@ -218,9 +226,8 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         try {
             devolucion = new DefaultTableModel();
 
-            devolucion.addColumn("Código");
-            devolucion.addColumn("Fecha");
-            devolucion.addColumn("Paciente");
+            devolucion.addColumn("Número Colegiado");
+            devolucion.addColumn("Nombre Completo");
 
         } catch (Exception ex) {
             devolucion = null;
@@ -231,13 +238,13 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
     }
 
 // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Visitas">
-    public boolean cargarListaVisitasMedicasInterfaz() {
+// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Pacientes">
+    public boolean cargarListaPacientesInterfaz() {
         boolean devolucion;
 
         try {
-            this.visitasMedicas = this.medicoActivo.getVisitasMedicas();
-            this.visualizarListaVisitasMedicas();
+            //this.pacientes = this.diagnosticoActivo.getPacientes();
+            this.visualizarListaPacientes();
 
             devolucion = true;
         } catch (Exception ex) {
@@ -247,33 +254,26 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         return devolucion;
     }
 
-    private boolean visualizarListaVisitasMedicas() {
+    private boolean visualizarListaPacientes() {
         boolean devolucion;
         int indice;
-        VisitaMedica visitaMedicaAux;
         Paciente pacienteAux;
-        String[] linea = new String[2];
+        String[] linea = new String[3];
 
         DefaultTableModel modeloTabla;
 
         try {
             modeloTabla = this.configurarListaVisitasMedicas();
 
-            for (indice = 0; indice < this.visitasMedicas.size(); indice++) {
-                visitaMedicaAux = this.visitasMedicas.get(indice);
+            for (indice = 0; indice < this.pacientes.size(); indice++) {
+                pacienteAux = this.pacientes.get(indice);
 
-                linea[0] = visitaMedicaAux.getFecha().toString();
-
-                pacienteAux = visitaMedicaAux.getPaciente();
-                if (pacienteAux != null) {
-                    linea[1] = pacienteAux.getNombreFormalCompleto();
-                } else {
-                    linea[1] = "";
-                }
+                linea[0] = pacienteAux.getDni();
+                linea[1] = pacienteAux.getNombreFormalCompleto();
 
                 modeloTabla.addRow(linea);
             }
-            this.tablaVisitasMedicas.setModel(modeloTabla);
+            this.tablaPacientes.setModel(modeloTabla);
 
             devolucion = true;
         } catch (Exception ex) {
@@ -290,8 +290,8 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         try {
             devolucion = new DefaultTableModel();
 
-            devolucion.addColumn("Fecha");
-            devolucion.addColumn("Paciente");
+            devolucion.addColumn("DNI");
+            devolucion.addColumn("Nombre Completo");
 
         } catch (Exception ex) {
             devolucion = null;
@@ -320,22 +320,26 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         panelFichas = new javax.swing.JTabbedPane();
         fichaDatosGenerales = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        textNombre = new javax.swing.JTextField();
-        textApellido1 = new javax.swing.JTextField();
+        textIdMedico = new javax.swing.JTextField();
+        textIdPaciente = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        textApellido2 = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        textNumColegiado = new javax.swing.JTextField();
+        textTipo = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         textObservaciones = new javax.swing.JTextArea();
-        fichaDiagnosticos = new javax.swing.JPanel();
+        textFecha = new javax.swing.JFormattedTextField();
+        jLabel8 = new javax.swing.JLabel();
+        textCodigo = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        textDescripcion = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        fichaMedicos = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tablaDiagnosticos = new javax.swing.JTable();
-        fichaVisitasMedicas = new javax.swing.JPanel();
+        tablaMedicos = new javax.swing.JTable();
+        fichaPacientes = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        tablaVisitasMedicas = new javax.swing.JTable();
+        tablaPacientes = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -393,21 +397,29 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         });
         jToolBar1.add(botonSalir);
 
-        jLabel1.setText("Nombre:");
+        jLabel1.setText("ID Médico:");
 
-        jLabel2.setText("1º Apellido:");
+        jLabel2.setText("ID Paciente:");
 
-        jLabel3.setText("2º Apellido:");
-
-        jLabel4.setText("Nº Colegiado:");
-
-        textNumColegiado.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel3.setText("Tipo:");
 
         jLabel5.setText("Observaciones:");
 
         textObservaciones.setColumns(20);
         textObservaciones.setRows(5);
         jScrollPane1.setViewportView(textObservaciones);
+
+        try {
+            textFecha.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        jLabel8.setText("Fecha:");
+
+        jLabel4.setText("Código");
+
+        jLabel6.setText("Descripción");
 
         javax.swing.GroupLayout fichaDatosGeneralesLayout = new javax.swing.GroupLayout(fichaDatosGenerales);
         fichaDatosGenerales.setLayout(fichaDatosGeneralesLayout);
@@ -419,22 +431,30 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
                         .addGap(19, 19, 19)
                         .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textApellido1, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(textIdPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textApellido2, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(textTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                                 .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textNumColegiado, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel5)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(textCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
+                                .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(textIdMedico, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(textFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel5)
+                            .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
+                                .addComponent(textDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                         .addGap(53, 53, 53)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -443,32 +463,40 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         fichaDatosGeneralesLayout.setVerticalGroup(
             fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addGap(19, 19, 19)
                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(textNumColegiado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(textFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(textNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(textIdMedico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(textApellido1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(textIdPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(textApellido2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(textTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(textCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(textDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         panelFichas.addTab("Datos Generales", fichaDatosGenerales);
 
-        tablaDiagnosticos.setModel(new javax.swing.table.DefaultTableModel(
+        tablaMedicos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -494,28 +522,33 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(tablaDiagnosticos);
+        tablaMedicos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaMedicosMousePressed(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tablaMedicos);
 
-        javax.swing.GroupLayout fichaDiagnosticosLayout = new javax.swing.GroupLayout(fichaDiagnosticos);
-        fichaDiagnosticos.setLayout(fichaDiagnosticosLayout);
-        fichaDiagnosticosLayout.setHorizontalGroup(
-            fichaDiagnosticosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(fichaDiagnosticosLayout.createSequentialGroup()
+        javax.swing.GroupLayout fichaMedicosLayout = new javax.swing.GroupLayout(fichaMedicos);
+        fichaMedicos.setLayout(fichaMedicosLayout);
+        fichaMedicosLayout.setHorizontalGroup(
+            fichaMedicosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fichaMedicosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        fichaDiagnosticosLayout.setVerticalGroup(
-            fichaDiagnosticosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(fichaDiagnosticosLayout.createSequentialGroup()
+        fichaMedicosLayout.setVerticalGroup(
+            fichaMedicosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fichaMedicosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
                 .addGap(15, 15, 15))
         );
 
-        panelFichas.addTab("Diagnósticos", fichaDiagnosticos);
+        panelFichas.addTab("Médicos", fichaMedicos);
 
-        tablaVisitasMedicas.setModel(new javax.swing.table.DefaultTableModel(
+        tablaPacientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -541,30 +574,30 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        tablaVisitasMedicas.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaPacientes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                tablaVisitasMedicasMousePressed(evt);
+                tablaPacientesMousePressed(evt);
             }
         });
-        jScrollPane3.setViewportView(tablaVisitasMedicas);
+        jScrollPane3.setViewportView(tablaPacientes);
 
-        javax.swing.GroupLayout fichaVisitasMedicasLayout = new javax.swing.GroupLayout(fichaVisitasMedicas);
-        fichaVisitasMedicas.setLayout(fichaVisitasMedicasLayout);
-        fichaVisitasMedicasLayout.setHorizontalGroup(
-            fichaVisitasMedicasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(fichaVisitasMedicasLayout.createSequentialGroup()
+        javax.swing.GroupLayout fichaPacientesLayout = new javax.swing.GroupLayout(fichaPacientes);
+        fichaPacientes.setLayout(fichaPacientesLayout);
+        fichaPacientesLayout.setHorizontalGroup(
+            fichaPacientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fichaPacientesLayout.createSequentialGroup()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        fichaVisitasMedicasLayout.setVerticalGroup(
-            fichaVisitasMedicasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(fichaVisitasMedicasLayout.createSequentialGroup()
+        fichaPacientesLayout.setVerticalGroup(
+            fichaPacientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fichaPacientesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        panelFichas.addTab("Visitas Médicas", fichaVisitasMedicas);
+        panelFichas.addTab("Pacientes", fichaPacientes);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -592,15 +625,15 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_botonSalirMouseClicked
 
-    private void tablaVisitasMedicasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaVisitasMedicasMousePressed
+    private void tablaPacientesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPacientesMousePressed
         // TODO add your handling code here:
         FormMantPacientes formularioPaciente;
 
-        if (this.visitasMedicas != null) {
-            this.visitaSeleccionada = this.visitasMedicas.get(this.tablaVisitasMedicas.getSelectedRow());
+        if (this.pacientes != null) {
+            this.pacienteSeleccionado = this.pacientes.get(this.tablaPacientes.getSelectedRow());
 
-            if (this.visitaSeleccionada.getPaciente() != null) {
-                formularioPaciente = new FormMantPacientes(this.visitaSeleccionada.getPaciente(),
+            if (Paciente.getPaciente(this.pacienteSeleccionado.getId(), conexionBD) != null) {
+                formularioPaciente = new FormMantPacientes(Paciente.getPaciente(this.pacienteSeleccionado.getId(), conexionBD),
                         FormMantPacientes.MODIFICAR,
                         this.conexionBD, this, true);
                 formularioPaciente.setVisible(true);
@@ -615,7 +648,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
             }
         }
 
-    }//GEN-LAST:event_tablaVisitasMedicasMousePressed
+    }//GEN-LAST:event_tablaPacientesMousePressed
 
     private void botonEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonEliminarMouseClicked
         // TODO add your handling code here:
@@ -627,7 +660,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         formularioAviso.setVisible(true);
 
         if (formularioAviso.esOperacionAceptada()) {
-            this.medicoActivo.eliminar();
+            this.diagnosticoActivo.eliminar();
             this.dispose();
             formularioAviso = new FormAvisoUsuario(
                     FormAvisoUsuario.OPERACION_EXITOSA,
@@ -640,16 +673,40 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.medicoActivo.agregar();
+            this.diagnosticoActivo.agregar();
         }
     }//GEN-LAST:event_botonAgregarMouseClicked
 
     private void botonModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonModificarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.medicoActivo.modificar();
+            this.diagnosticoActivo.modificar();
         }
     }//GEN-LAST:event_botonModificarMouseClicked
+
+    private void tablaMedicosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMedicosMousePressed
+        // TODO add your handling code here:
+        FormMantMedicos formularioMedico;
+
+        if (this.pacientes != null) {
+            this.pacienteSeleccionado = this.pacientes.get(this.tablaPacientes.getSelectedRow());
+
+            if (Medico.getMedico(this.pacienteSeleccionado.getId(), conexionBD) != null) {
+                formularioMedico = new FormMantMedicos(Medico.getMedico(this.pacienteSeleccionado.getId(), conexionBD),
+                        FormMantPacientes.MODIFICAR,
+                        this.conexionBD, this, true);
+                formularioMedico.setVisible(true);
+            } else {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.INFO_INEXISTENTE,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
+
+            }
+        }
+    }//GEN-LAST:event_tablaMedicosMousePressed
 
 // </editor-fold>
 
@@ -659,24 +716,28 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
     private javax.swing.JButton botonModificar;
     private javax.swing.JButton botonSalir;
     private javax.swing.JPanel fichaDatosGenerales;
-    private javax.swing.JPanel fichaDiagnosticos;
-    private javax.swing.JPanel fichaVisitasMedicas;
+    private javax.swing.JPanel fichaMedicos;
+    private javax.swing.JPanel fichaPacientes;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JTabbedPane panelFichas;
-    private javax.swing.JTable tablaDiagnosticos;
-    private javax.swing.JTable tablaVisitasMedicas;
-    private javax.swing.JTextField textApellido1;
-    private javax.swing.JTextField textApellido2;
-    private javax.swing.JTextField textNombre;
-    private javax.swing.JTextField textNumColegiado;
+    private javax.swing.JTable tablaMedicos;
+    private javax.swing.JTable tablaPacientes;
+    private javax.swing.JTextField textCodigo;
+    private javax.swing.JTextField textDescripcion;
+    private javax.swing.JFormattedTextField textFecha;
+    private javax.swing.JTextField textIdMedico;
+    private javax.swing.JTextField textIdPaciente;
     private javax.swing.JTextArea textObservaciones;
+    private javax.swing.JTextField textTipo;
     // End of variables declaration//GEN-END:variables
 }

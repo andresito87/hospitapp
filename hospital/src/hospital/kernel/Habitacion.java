@@ -1,6 +1,5 @@
 package hospital.kernel;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -229,14 +228,22 @@ public class Habitacion {
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Métodos Estáticos de la Clase">
 // <editor-fold defaultstate="collapsed" desc="Métodos para la Gestión Datos de Habitaciones">
-    public static ArrayList<Habitacion> getTodasHabitaciones(boolean selected, int numHabitacion, boolean selected0, int planta, boolean selected1, int plazas, boolean selected2, String text, Connection conexionBD) {
-        ArrayList<Habitacion> devolucion = null;
+    public static ArrayList<Habitacion> getTodasHabitaciones(
+            boolean filtroNumHabitacion, int numHabitacion,
+            boolean filtroPlanta, int planta,
+            boolean filtroPlazas, int plazas,
+            boolean filtroObservaciones, String observaciones,
+            Connection conexionBD) {
+        ArrayList<Habitacion> devolucion;
         ResultSet resultado;
 
         try {
-            resultado = getHabitacionesBD(false, 0, false, 0,
-                    false, 0,
-                    false, null, conexionBD);
+            resultado = getHabitacionesBD(
+                    filtroNumHabitacion, numHabitacion,
+                    filtroPlanta, planta,
+                    filtroPlazas, plazas,
+                    filtroObservaciones, observaciones,
+                    conexionBD);
 
             devolucion = getHabitaciones(resultado, conexionBD);
 
@@ -290,11 +297,11 @@ public class Habitacion {
             }
 
             if (filtroPlanta == true && planta >= 0) {
-                devolucion = devolucion + "AND planta LIKE '%" + planta + "%' ";
+                devolucion = devolucion + "AND numPlanta LIKE '%" + planta + "%' ";
             }
 
             if (filtroPlazas == true && plazas >= 0) {
-                devolucion = devolucion + "AND plazas = " + plazas + " ";
+                devolucion = devolucion + "AND numPlazas = " + plazas + " ";
             }
 
             if (filtroObservaciones == true && observaciones != null) {
@@ -341,6 +348,7 @@ public class Habitacion {
     }
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Métodos para la Gestión Datos de Pacientes">
+
     public static ArrayList<Paciente> getTodosPacientes(long idHabitacion, Connection conexionBD) {
         ArrayList<Paciente> devolucion = null;
         ResultSet resultado;
@@ -536,7 +544,6 @@ public class Habitacion {
 
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Métodos para la Gestión Datos de Camas">
-    
 // </editor-fold>
 // </editor-fold>
 }

@@ -80,7 +80,7 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
                     this.checkIdPaciente.isSelected(), idPaciente,
                     this.checkTipo.isSelected(), tipo,
                     this.checkCodigo.isSelected(), this.textCodigo.getText(),
-                    this.checkDescripcion.isSelected(), this.checkDescripcion.getText(),
+                    this.checkDescripcion.isSelected(), this.textDescripcion.getText(),
                     this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
                     conexionBD);
 
@@ -312,6 +312,11 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
         });
 
         checkDescripcion.setText("Descripción:");
+        checkDescripcion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkDescripcionActionPerformed(evt);
+            }
+        });
 
         try {
             textFechaInicio.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
@@ -431,9 +436,9 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
 
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
 
-        FormMantMedicos formulario;
+        FormMantDiagnosticos formulario;
 
-        formulario = new FormMantMedicos(this.conexionBD, this, true);
+        formulario = new FormMantDiagnosticos(this.conexionBD, this, true);
         formulario.setVisible(true);
 
     }//GEN-LAST:event_botonAgregarMouseClicked
@@ -449,11 +454,11 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
         FormMantDiagnosticos formulario;
         FormAvisoUsuario formularioAviso;
 
-        // Compruebo si hay un paciente seleccionado, evito errores en consola
+        // Compruebo si hay un diagnostico seleccionado, evito errores en consola
         if (this.diagnosticoSeleccionado != null) {
-            /*formulario = new FormMantDiagnosticos(this.diagnosticoSeleccionado, FormMantDiagnosticos.MODIFICAR,
+            formulario = new FormMantDiagnosticos(this.diagnosticoSeleccionado, FormMantDiagnosticos.MODIFICAR,
                     this.conexionBD, this, true);
-            formulario.setVisible(true);*/
+            formulario.setVisible(true);
         } else {
             // Sino hay paciente seleccionado, muestro aviso al usuario
             formularioAviso = new FormAvisoUsuario(
@@ -470,13 +475,13 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
         FormMantDiagnosticos formulario;
         FormAvisoUsuario formularioAviso;
 
-        // Compruebo si hay un paciente seleccionado, evito errores en consola
+        // Compruebo si hay un diagnostico seleccionado, evito errores en consola
         if (this.diagnosticoSeleccionado != null) {
-            /*formulario = new FormMantDiagnosticos(this.diagnosticoSeleccionado, FormMantDiagnosticos.ELIMINAR,
+            formulario = new FormMantDiagnosticos(this.diagnosticoSeleccionado, FormMantDiagnosticos.ELIMINAR,
                     this.conexionBD, this, true);
-            formulario.setVisible(true);*/
+            formulario.setVisible(true);
         } else {
-            // Sino hay paciente seleccionado, muestro aviso al usuario
+            // Sino hay diagnostico seleccionado, muestro aviso al usuario
             formularioAviso = new FormAvisoUsuario(
                     FormAvisoUsuario.NO_SELECCIONADO,
                     this,
@@ -497,6 +502,10 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
     private void checkIdMedicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkIdMedicoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_checkIdMedicoActionPerformed
+
+    private void checkDescripcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkDescripcionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_checkDescripcionActionPerformed
 
 // </editor-fold>
 
