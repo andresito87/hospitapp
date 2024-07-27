@@ -165,7 +165,10 @@ public class FormPrin extends javax.swing.JFrame {
 
     private void opcionDiagnosticosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionDiagnosticosMousePressed
         // TODO add your handling code here:
-
+        FormListDiagnosticos formulario;
+        
+        formulario = new FormListDiagnosticos(this.conexionBD, this, true);
+        formulario.setVisible(true);
     }//GEN-LAST:event_opcionDiagnosticosMousePressed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened

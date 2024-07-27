@@ -17,7 +17,7 @@ public class Diagnostico {
     public static final int MUY_GRAVE = 3;
     public static final int URGENTE = 4;
 
-    private Connection conexionBD;
+    private final Connection conexionBD;
 
     private long id;
     private LocalDate fecha;
@@ -305,8 +305,8 @@ public class Diagnostico {
         return devolucion;
     }
 
-    public static ArrayList<Diagnostico> getDiagnosticos(boolean filtroFecha,
-            LocalDate fechaInicio, LocalDate fechaFin,
+    public static ArrayList<Diagnostico> getDiagnosticos(
+            boolean filtroFecha, LocalDate fechaInicio, LocalDate fechaFin,
             boolean filtroIdMedico, long idMedico,
             boolean filtroIdPaciente, long idPaciente,
             boolean filtroTipo, int tipo,

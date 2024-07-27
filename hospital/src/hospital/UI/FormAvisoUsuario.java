@@ -6,6 +6,7 @@ package hospital.UI;
  */
 public class FormAvisoUsuario extends javax.swing.JDialog {
 
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
     public static final int NO_SELECCIONADO = 0;
     public static final int ERROR_OPERACION = 1;
     public static final int OPERACION_NO_REVERSIBLE = 2;
@@ -15,6 +16,7 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
     private final int tipoAviso;
     private String mensaje;
     private boolean operacionAceptada;
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
     public FormAvisoUsuario(int tipoAviso,

@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class RegistroHabitacion {
 
 // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private Connection conexionBD;
+    private final Connection conexionBD;
 
     private long id;
     private long idPaciente;

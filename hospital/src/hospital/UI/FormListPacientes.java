@@ -3,6 +3,7 @@ package hospital.UI;
 import hospital.kernel.Paciente;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -47,23 +48,46 @@ public class FormListPacientes extends javax.swing.JDialog {
             LocalDate fechaAltaInicio = null;
             LocalDate fechaAltaFin = null;
 
-            if (this.textFechaNacimientoInicio.getValue() != null) {
-                fechaNacimientoInicio = LocalDate.parse(this.textFechaNacimientoInicio.getText());
+            try {
+                fechaNacimientoInicio = LocalDate.parse(this.textFechaNacimientoInicio.getText(),
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception ex) {
+
             }
-            if (this.textFechaNacimientoFin.getValue() != null) {
-                fechaNacimientoFin = LocalDate.parse(this.textFechaNacimientoFin.getText());
+
+            try {
+                fechaNacimientoFin = LocalDate.parse(this.textFechaNacimientoFin.getText(),
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception ex) {
+
             }
-            if (this.textFechaIngresoInicio.getValue() != null) {
-                fechaIngresoInicio = LocalDate.parse(this.textFechaIngresoInicio.getText());
+
+            try {
+                fechaIngresoInicio = LocalDate.parse(this.textFechaIngresoInicio.getText(),
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception ex) {
+
             }
-            if (this.textFechaIngresoFin.getValue() != null) {
-                fechaIngresoFin = LocalDate.parse(this.textFechaIngresoFin.getText());
+
+            try {
+                fechaIngresoFin = LocalDate.parse(this.textFechaIngresoFin.getText(),
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception ex) {
+
             }
-            if (this.textFechaAltaInicio.getValue() != null) {
-                fechaAltaInicio = LocalDate.parse(this.textFechaAltaInicio.getText());
+
+            try {
+                fechaAltaInicio = LocalDate.parse(this.textFechaAltaInicio.getText(),
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception ex) {
+
             }
-            if (this.textFechaAltaFin.getValue() != null) {
-                fechaAltaFin = LocalDate.parse(this.textFechaAltaFin.getText());
+
+            try {
+                fechaAltaFin = LocalDate.parse(this.textFechaAltaFin.getText(),
+                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception ex) {
+
             }
 
             this.listaPacientes = Paciente.getPacientes(this.checkDni.isSelected(), this.textDni.getText(),
@@ -81,7 +105,6 @@ public class FormListPacientes extends javax.swing.JDialog {
                     false, 0,
                     this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
                     conexionBD);
-
             devolucion = true;
         } catch (Exception ex) {
             devolucion = false;
@@ -539,7 +562,7 @@ public class FormListPacientes extends javax.swing.JDialog {
     }//GEN-LAST:event_botonAgregarMouseClicked
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked
-      
+
         this.dispose();
     }//GEN-LAST:event_botonSalirMouseClicked
 

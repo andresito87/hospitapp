@@ -13,7 +13,7 @@ import java.util.HashSet;
 public class Paciente {
 
 // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private Connection conexionBD;
+    private final Connection conexionBD;
 
     private long id;
     private String dni;
@@ -768,7 +768,7 @@ public class Paciente {
             if (devolucion.next()) {
                 long numHabitacion = Long.valueOf(devolucion.getInt("numHabitacion"));
                 habitacion = new Habitacion(numHabitacion, conexionBD);
-                if(!habitacion.inicializarDesdeBD()){
+                if (!habitacion.inicializarDesdeBD()) {
                     habitacion = null;
                 }
             }
@@ -986,7 +986,7 @@ public class Paciente {
             if (filtroObservaciones == true && observaciones != null) {
                 devolucion = devolucion + "AND observaciones LIKE '%" + observaciones + "%' ";
             }
-
+            
         } catch (Exception ex) {
             devolucion = null;
         }

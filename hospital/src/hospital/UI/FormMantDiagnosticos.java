@@ -12,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author andres
  */
-public class FormMantMedicos extends javax.swing.JDialog {
+public class FormMantDiagnosticos extends javax.swing.JDialog {
 
 // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
     public static final int AGREGAR = 0;
@@ -32,7 +32,7 @@ public class FormMantMedicos extends javax.swing.JDialog {
 
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormMantMedicos(Connection conexionBD,
+    public FormMantDiagnosticos(Connection conexionBD,
             javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -48,7 +48,7 @@ public class FormMantMedicos extends javax.swing.JDialog {
 
     }
 
-    public FormMantMedicos(Medico medico, int operacion, Connection conexionBD,
+    public FormMantDiagnosticos(Medico medico, int operacion, Connection conexionBD,
             javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -70,7 +70,7 @@ public class FormMantMedicos extends javax.swing.JDialog {
 // <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
     private void desabilitarPestanhasEnModoAgregar() {
         
-        if (operacionActiva == FormMantMedicos.AGREGAR) {
+        if (operacionActiva == FormMantDiagnosticos.AGREGAR) {
             
             panelFichas.setEnabledAt(1, false);
             panelFichas.setEnabledAt(2, false);

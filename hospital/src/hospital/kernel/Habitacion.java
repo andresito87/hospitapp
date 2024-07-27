@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Habitacion {
 
 // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private Connection conexionBD;
+    private final Connection conexionBD;
 
     private long id;
     private int numHabitacion;

@@ -20,7 +20,7 @@ public class Cama {
     public static final int CAMA_UCI = 3;
     public static final int CAMA_INFANTIL = 4;
 
-    private Connection conexionBD;
+    private final Connection conexionBD;
 
     private long id;
     private String marca;
