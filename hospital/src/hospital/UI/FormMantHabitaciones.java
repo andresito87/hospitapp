@@ -26,6 +26,7 @@ public class FormMantHabitaciones extends javax.swing.JDialog {
 
     private ArrayList<Paciente> pacientes;
     private ArrayList<Habitacion> habitaciones;
+    private Paciente pacienteSeleccionado = null;
 
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
@@ -476,6 +477,11 @@ public class FormMantHabitaciones extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        tablaPacientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaPacientesMousePressed(evt);
+            }
+        });
         jScrollPane3.setViewportView(tablaPacientes);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -563,6 +569,30 @@ public class FormMantHabitaciones extends javax.swing.JDialog {
             this.habitacionActiva.modificar();
         }
     }//GEN-LAST:event_botonModificarMouseClicked
+
+    private void tablaPacientesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPacientesMousePressed
+        // TODO add your handling code here:
+        FormMantPacientes formularioPaciente;
+
+        if (this.pacientes != null) {
+            this.pacienteSeleccionado = this.pacientes.get(this.tablaPacientes.getSelectedRow());
+
+            if (Paciente.getPaciente(pacienteSeleccionado.getId(),conexionBD) != null) {
+                formularioPaciente = new FormMantPacientes(Paciente.getPaciente(pacienteSeleccionado.getId(),conexionBD),
+                        FormMantPacientes.MODIFICAR,
+                        this.conexionBD, this, true);
+                formularioPaciente.setVisible(true);
+            } else {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.INFO_INEXISTENTE,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
+
+            }
+        }
+    }//GEN-LAST:event_tablaPacientesMousePressed
 
 // </editor-fold>
 
