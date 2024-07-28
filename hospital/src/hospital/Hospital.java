@@ -21,6 +21,4 @@ public class Hospital {
         miFormulario.setVisible(true);
                 
     }
-    
-    
 }

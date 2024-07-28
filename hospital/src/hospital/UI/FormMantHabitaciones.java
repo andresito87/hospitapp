@@ -559,7 +559,25 @@ public class FormMantHabitaciones extends javax.swing.JDialog {
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.habitacionActiva.agregar();
+            if (this.habitacionActiva.agregar()) {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.OPERACION_EXITOSA,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
+
+                if (formularioAviso.esOperacionAceptada()) {
+                    this.dispose();
+                }
+            }
+        } else {
+            FormAvisoUsuario formularioAviso;
+            formularioAviso = new FormAvisoUsuario(
+                    FormAvisoUsuario.OPERACION_CON_DATOS_INCORRECTOS,
+                    this,
+                    true);
+            formularioAviso.setVisible(true);
         }
     }//GEN-LAST:event_botonAgregarMouseClicked
 

@@ -1,6 +1,5 @@
 package hospital.UI;
 
-import hospital.kernel.Diagnostico;
 import hospital.kernel.Medico;
 import hospital.kernel.Paciente;
 import hospital.kernel.VisitaMedica;
@@ -370,9 +369,9 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
 
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
 
-        FormMantDiagnosticos formulario;
+        FormMantVisitasMedicas formulario;
 
-        formulario = new FormMantDiagnosticos(this.conexionBD, this, true);
+        formulario = new FormMantVisitasMedicas(this.conexionBD, this, true);
         formulario.setVisible(true);
 
     }//GEN-LAST:event_botonAgregarMouseClicked

@@ -213,8 +213,7 @@ public class Paciente {
         boolean devolucion;
 
         try {
-            devolucion = this.setFechaNacimiento(LocalDate.parse(fechaNacimiento,
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            devolucion = this.setFechaNacimiento(LocalDate.parse(fechaNacimiento));
         } catch (Exception ex) {
             devolucion = false;
         }
@@ -284,8 +283,7 @@ public class Paciente {
         boolean devolucion;
 
         try {
-            devolucion = this.setFechaIngreso(LocalDate.parse(fechaIngreso,
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            devolucion = this.setFechaIngreso(LocalDate.parse(fechaIngreso));
         } catch (Exception ex) {
             devolucion = false;
         }
@@ -328,8 +326,7 @@ public class Paciente {
         boolean devolucion;
 
         try {
-            devolucion = this.setFechaIngreso(LocalDate.parse(fechaAlta,
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            devolucion = this.setFechaAlta(LocalDate.parse(fechaAlta));
         } catch (Exception ex) {
             devolucion = false;
         }
@@ -553,7 +550,7 @@ public class Paciente {
         ResultSet claveGenerada;
 
         try {
-
+           
             cadenaSQL = new String("INSERT INTO Pacientes "
                     + "(dni, ci, nombre, apellido1, apellido2, fechaNacimiento, "
                     + "numSegSocial, idCama, fechaIngreso, fechaAlta, observaciones) "
@@ -578,6 +575,7 @@ public class Paciente {
             }
 
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             devolucion = false;
         }
 

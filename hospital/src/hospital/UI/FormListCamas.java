@@ -378,9 +378,9 @@ public class FormListCamas extends javax.swing.JDialog {
 
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
-        FormMantPacientes formulario;
+        FormMantCamas formulario;
 
-        formulario = new FormMantPacientes(this.conexionBD, this, true);
+        formulario = new FormMantCamas(this.conexionBD, this, true);
         formulario.setVisible(true);
 
     }//GEN-LAST:event_botonAgregarMouseClicked

@@ -69,9 +69,9 @@ public class FormMantMedicos extends javax.swing.JDialog {
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
     private void desabilitarPestanhasEnModoAgregar() {
-        
+
         if (operacionActiva == FormMantMedicos.AGREGAR) {
-            
+
             panelFichas.setEnabledAt(1, false);
             panelFichas.setEnabledAt(2, false);
         }
@@ -120,6 +120,7 @@ public class FormMantMedicos extends javax.swing.JDialog {
         boolean devolucion;
 
         try {
+
             this.textNumColegiado.setText(Long.toString(this.medicoActivo.getNumColegiado()));
             this.textNombre.setText(this.medicoActivo.getNombre());
             this.textApellido1.setText(this.medicoActivo.getApellido1());
@@ -140,6 +141,21 @@ public class FormMantMedicos extends javax.swing.JDialog {
         try {
             if (this.medicoActivo == null) {
                 this.medicoActivo = new Medico(this.conexionBD);
+            }
+            
+            String nombre =  this.textNombre.getText();
+            String apellido1 = this.textApellido1.getText();
+            String apellido2 = this.textApellido2.getText();
+
+            // Verifica si los campos están vacíos
+            if (nombre == null || nombre.trim().isEmpty()) {
+                throw new Exception("El campo nombre es obligatorio.");
+            }
+            if (apellido1 == null || apellido1.trim().isEmpty()) {
+                throw new Exception("El campo apellido1 es obligatorio.");
+            }
+            if (apellido2 == null || apellido2.trim().isEmpty()) {
+                throw new Exception("El campo apellido2 es obligatorio.");
             }
 
             this.medicoActivo.setData(Long.parseLong(this.textNumColegiado.getText()),
@@ -640,7 +656,25 @@ public class FormMantMedicos extends javax.swing.JDialog {
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.medicoActivo.agregar();
+            if (this.medicoActivo.agregar()) {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.OPERACION_EXITOSA,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
+
+                if (formularioAviso.esOperacionAceptada()) {
+                    this.dispose();
+                }
+            }
+        } else {
+            FormAvisoUsuario formularioAviso;
+            formularioAviso = new FormAvisoUsuario(
+                    FormAvisoUsuario.OPERACION_CON_DATOS_INCORRECTOS,
+                    this,
+                    true);
+            formularioAviso.setVisible(true);
         }
     }//GEN-LAST:event_botonAgregarMouseClicked
 

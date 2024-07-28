@@ -473,11 +473,6 @@ public class Diagnostico {
     }
 
 // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Métodos de Consulta de Médicos">
-    public ArrayList<Medico> getMedicos() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-// </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Métodos de Consulta a la Base de Datos (Capa de Datos)">        
     private static ArrayList<Diagnostico> getDiagnosticos(ResultSet diagnosticos, Connection conexionBD) {
         ArrayList<Diagnostico> devolucion;

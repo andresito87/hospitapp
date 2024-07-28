@@ -12,6 +12,7 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
     public static final int OPERACION_NO_REVERSIBLE = 2;
     public static final int INFO_INEXISTENTE = 3;
     public static final int OPERACION_EXITOSA = 4;
+    public static final int OPERACION_CON_DATOS_INCORRECTOS = 5;
 
     private final int tipoAviso;
     private String mensaje;
@@ -69,22 +70,26 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
         String mensajeDevuelto;
         switch (this.tipoAviso) {
             case 0:
-                mensajeDevuelto = "No podemos procesar la información, selecciona un elemento de la lista";
+                mensajeDevuelto = "No podemos procesar la información, selecciona un elemento de la lista.";
                 noVisualizarBotonCancelar();
                 break;
             case 1:
-                mensajeDevuelto = "Error en la operación, vuelva a intentarlo";
+                mensajeDevuelto = "Error en la operación, vuelva a intentarlo.";
                 noVisualizarBotonCancelar();
                 break;
             case 2:
-                mensajeDevuelto = "Atención esta operación es irreversible. ¿Estás seguro que desea continuar?";
+                mensajeDevuelto = "Atención esta operación es irreversible. ¿Estás segur@ que deseas continuar?";
                 break;
             case 3:
-                mensajeDevuelto = "Lo sentimos pero no disponemos de esa información";
+                mensajeDevuelto = "Lo sentimos pero no disponemos de esa información.";
                 noVisualizarBotonCancelar();
                 break;
             case 4:
-                mensajeDevuelto = "Genial, Operación realizada con éxito";
+                mensajeDevuelto = "Genial, Operación realizada con éxito.";
+                noVisualizarBotonCancelar();
+                break;
+            case 5:
+                mensajeDevuelto = "Uy, parece que hay datos incorrectos. Revisa y vuelve a intentarlo.";
                 noVisualizarBotonCancelar();
                 break;
             default:

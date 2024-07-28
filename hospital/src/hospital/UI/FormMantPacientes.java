@@ -5,6 +5,8 @@ import hospital.kernel.Cama;
 import hospital.kernel.Paciente;
 import hospital.kernel.VisitaMedica;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -213,26 +215,51 @@ public class FormMantPacientes extends javax.swing.JDialog {
     }
 
     private boolean recogerDatosInterfaz() {
-        boolean devolucion;
+        boolean devolucion = false;
 
         try {
             if (this.pacienteActivo == null) {
                 this.pacienteActivo = new Paciente(this.conexionBD);
             }
 
-            this.pacienteActivo.setData(this.textDni.getText(),
-                    this.textCi.getText(),
-                    this.textNombre.getText(),
-                    this.textApellido1.getText(),
-                    this.textApellido2.getText(),
-                    this.textFechaNacimiento.getText(),
-                    this.textNumSeguridadSocial.getText(),
-                    this.textFechaIngreso.getText(),
-                    this.textFechaAlta.getText(),
-                    this.camaSeleccionada,
-                    this.textObservaciones.getText());
+            String fechaNacimiento = null;
+            String fechaIngreso = null;
+            String fechaAlta = null;
+            try {
+                fechaNacimiento = LocalDate.parse(this.textFechaNacimiento.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString();
+                fechaIngreso = LocalDate.parse(this.textFechaIngreso.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString();
+                fechaAlta = LocalDate.parse(this.textFechaAlta.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString();
+            } catch (Exception ex) {
 
-            devolucion = true;
+            }
+
+            if (fechaNacimiento != null && fechaIngreso != null) {
+                String ci = this.textCi.getText().equals("") ? null : this.textCi.getText();
+                String nombre = this.textNombre.getText().equals("") ? null : this.textNombre.getText();
+                String apellido1 = this.textApellido1.getText().equals("") ? null : this.textApellido1.getText();
+                String apellido2 = this.textApellido2.getText().equals("") ? null : this.textApellido2.getText();
+                String numSegSocial = this.textNumSeguridadSocial.getText().equals("") ? null : this.textNumSeguridadSocial.getText();
+
+                if (ci != null && nombre != null && apellido1 != null
+                        && apellido2 != null && numSegSocial != null
+                        && this.camaSeleccionada != null) {
+
+                    this.pacienteActivo.setData(this.textDni.getText(),
+                            ci,
+                            nombre,
+                            apellido1,
+                            apellido2,
+                            fechaNacimiento,
+                            numSegSocial,
+                            fechaIngreso,
+                            fechaAlta,
+                            this.camaSeleccionada,
+                            this.textObservaciones.getText());
+                    devolucion = true;
+                }
+            } else {
+                devolucion = false;
+            }
         } catch (Exception ex) {
             devolucion = false;
         }
@@ -751,9 +778,26 @@ public class FormMantPacientes extends javax.swing.JDialog {
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.pacienteActivo.agregar();
-        }
+            if (this.pacienteActivo.agregar()) {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.OPERACION_EXITOSA,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
 
+                if (formularioAviso.esOperacionAceptada()) {
+                    this.dispose();
+                }
+            }
+        } else {
+            FormAvisoUsuario formularioAviso;
+            formularioAviso = new FormAvisoUsuario(
+                    FormAvisoUsuario.OPERACION_CON_DATOS_INCORRECTOS,
+                    this,
+                    true);
+            formularioAviso.setVisible(true);
+        }
     }//GEN-LAST:event_botonAgregarMouseClicked
 
     private void botonModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonModificarMouseClicked

@@ -221,7 +221,7 @@ public class FormMantCamas extends javax.swing.JDialog {
 
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Carga de datos de las habitaciones">
-   public boolean cargarListaHabitacionesInterfaz() {
+    public boolean cargarListaHabitacionesInterfaz() {
         boolean devolucion;
 
         try {
@@ -235,7 +235,7 @@ public class FormMantCamas extends javax.swing.JDialog {
         }
 
         return devolucion;
-   }
+    }
 
     private boolean visualizarListaHabitaciones() {
         boolean devolucion;
@@ -284,6 +284,7 @@ public class FormMantCamas extends javax.swing.JDialog {
     }
 // </editor-fold>
 // </editor-fold>
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -615,7 +616,25 @@ public class FormMantCamas extends javax.swing.JDialog {
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.camaActiva.agregar();
+            if (this.camaActiva.agregar()) {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.OPERACION_EXITOSA,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
+
+                if (formularioAviso.esOperacionAceptada()) {
+                    this.dispose();
+                }
+            }
+        } else {
+            FormAvisoUsuario formularioAviso;
+            formularioAviso = new FormAvisoUsuario(
+                    FormAvisoUsuario.OPERACION_CON_DATOS_INCORRECTOS,
+                    this,
+                    true);
+            formularioAviso.setVisible(true);
         }
     }//GEN-LAST:event_botonAgregarMouseClicked
 

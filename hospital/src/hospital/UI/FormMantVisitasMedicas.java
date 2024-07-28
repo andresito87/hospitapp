@@ -1,6 +1,5 @@
 package hospital.UI;
 
-import hospital.kernel.Diagnostico;
 import hospital.kernel.Medico;
 import hospital.kernel.Paciente;
 import hospital.kernel.VisitaMedica;
@@ -40,7 +39,7 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        this.setTitle("Información de Diagnóstico");
+        this.setTitle("Información de Visita Médica");
         this.setLocation(300, 50);
         this.setSize(1000, 750);
 
@@ -56,7 +55,7 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        this.setTitle("Información de Diagnóstico");
+        this.setTitle("Información de Visita Médica");
         this.setLocation(300, 50);
         this.setSize(1000, 750);
 
@@ -144,21 +143,27 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
     }
 
     private boolean recogerDatosInterfaz() {
-        boolean devolucion;
+        boolean devolucion = false;
 
         try {
             if (this.visitaMedicaActiva == null) {
                 this.visitaMedicaActiva = new VisitaMedica(this.conexionBD);
             }
 
-            this.visitaMedicaActiva.setData(
-                    Long.parseLong(this.textIdMedico.getText()),
-                    Long.parseLong(this.textIdPaciente.getText()),
-                    LocalDate.parse(this.textFecha.getText()),
-                    this.textObservaciones.getText()
-            );
+            Long idMedico = Long.valueOf(this.textIdMedico.getText());
+            Long idPaciente = Long.valueOf(this.textIdPaciente.getText());
+            LocalDate fecha = LocalDate.parse(this.textFecha.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-            devolucion = true;
+            if (idMedico != 0 && idPaciente != 0 && fecha != null) {
+                this.visitaMedicaActiva.setData(
+                        idMedico,
+                        idPaciente,
+                        fecha,
+                        this.textObservaciones.getText()
+                );
+
+                devolucion = true;
+            }
         } catch (Exception ex) {
             devolucion = false;
         }
@@ -631,7 +636,25 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.visitaMedicaActiva.agregar();
+            if (this.visitaMedicaActiva.agregar()) {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.OPERACION_EXITOSA,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
+
+                if (formularioAviso.esOperacionAceptada()) {
+                    this.dispose();
+                }
+            }
+        } else {
+            FormAvisoUsuario formularioAviso;
+            formularioAviso = new FormAvisoUsuario(
+                    FormAvisoUsuario.OPERACION_CON_DATOS_INCORRECTOS,
+                    this,
+                    true);
+            formularioAviso.setVisible(true);
         }
     }//GEN-LAST:event_botonAgregarMouseClicked
 

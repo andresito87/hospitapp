@@ -125,7 +125,6 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
             fecha = LocalDate.parse(this.diagnosticoActivo.getFecha().toString())
                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
         }
 
         try {
@@ -154,7 +153,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
             }
 
             this.diagnosticoActivo.setData(
-                    LocalDate.parse(this.textFecha.getText()),
+                    LocalDate.parse(this.textFecha.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                     Long.parseLong(this.textIdMedico.getText()),
                     Long.parseLong(this.textIdPaciente.getText()),
                     Integer.parseInt(this.textTipo.getText()),
@@ -672,7 +671,25 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
     private void botonAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonAgregarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.diagnosticoActivo.agregar();
+            if (this.diagnosticoActivo.agregar()) {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.OPERACION_EXITOSA,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
+
+                if (formularioAviso.esOperacionAceptada()) {
+                    this.dispose();
+                }
+            }
+        } else {
+            FormAvisoUsuario formularioAviso;
+            formularioAviso = new FormAvisoUsuario(
+                    FormAvisoUsuario.OPERACION_CON_DATOS_INCORRECTOS,
+                    this,
+                    true);
+            formularioAviso.setVisible(true);
         }
     }//GEN-LAST:event_botonAgregarMouseClicked
 
