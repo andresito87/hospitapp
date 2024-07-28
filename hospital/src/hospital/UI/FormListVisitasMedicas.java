@@ -30,7 +30,7 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        this.setTitle("Listado de Diagnósticos");
+        this.setTitle("Listado de Visitas Médicas");
         this.setLocation(300, 50);
         this.setSize(1000, 750);
 
@@ -46,7 +46,6 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
         LocalDate fechaFin = null;
         long idMedico = 0;
         long idPaciente = 0;
-        int tipo = 0;
 
         try {
 
@@ -127,9 +126,9 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
         try {
             devolucion = new DefaultTableModel();
 
-            devolucion.addColumn("Médico");
-            devolucion.addColumn("Paciente");
             devolucion.addColumn("Fecha");
+            devolucion.addColumn("Paciente");
+            devolucion.addColumn("Médico");
             devolucion.addColumn("Observaciones");
 
         } catch (Exception ex) {

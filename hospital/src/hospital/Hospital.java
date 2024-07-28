@@ -1,6 +1,6 @@
 package hospital;
 
-import hospital.UI.FormPrin;
+import hospital.UI.FormPrincipal;
 
 /**
  *
@@ -15,9 +15,9 @@ public class Hospital {
     
     public static void main(String[] args) {
 
-        FormPrin miFormulario;
+        FormPrincipal miFormulario;
         
-        miFormulario = new FormPrin();
+        miFormulario = new FormPrincipal();
         miFormulario.setVisible(true);
                 
     }
