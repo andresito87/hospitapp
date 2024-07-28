@@ -88,6 +88,11 @@ public class FormPrin extends javax.swing.JFrame {
         menujMantenimientos.add(opcionDiagnosticos);
 
         opcionVisitasMedicas.setText("Visitas Médicas");
+        opcionVisitasMedicas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                opcionVisitasMedicasMousePressed(evt);
+            }
+        });
         menujMantenimientos.add(opcionVisitasMedicas);
         menujMantenimientos.add(jSeparator1);
 
@@ -204,6 +209,14 @@ public class FormPrin extends javax.swing.JFrame {
         formulario = new FormListHabitaciones(this.conexionBD, this, true);
         formulario.setVisible(true);
     }//GEN-LAST:event_opcionHabitacionesMousePressed
+
+    private void opcionVisitasMedicasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionVisitasMedicasMousePressed
+        // TODO add your handling code here:
+        FormListVisitasMedicas formulario;
+
+        formulario = new FormListVisitasMedicas(this.conexionBD, this, true);
+        formulario.setVisible(true);
+    }//GEN-LAST:event_opcionVisitasMedicasMousePressed
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Métodos de Conexión a la Base de Datos">
     public Connection conectarBD(String direccionServer, String puertoServer,

@@ -197,7 +197,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         DefaultTableModel modeloTabla;
 
         try {
-            modeloTabla = this.configurarListaDiagnosticos();
+            modeloTabla = this.configurarListaMedicos();
 
             for (indice = 0; indice < this.medicos.size(); indice++) {
                 medicoAux = this.medicos.get(indice);
@@ -218,7 +218,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         return devolucion;
     }
 
-    private DefaultTableModel configurarListaDiagnosticos() {
+    private DefaultTableModel configurarListaMedicos() {
 
         DefaultTableModel devolucion;
 
@@ -262,7 +262,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         DefaultTableModel modeloTabla;
 
         try {
-            modeloTabla = this.configurarListaVisitasMedicas();
+            modeloTabla = this.configurarListaPacientes();
 
             for (indice = 0; indice < this.pacientes.size(); indice++) {
                 pacienteAux = this.pacientes.get(indice);
@@ -282,7 +282,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         return devolucion;
     }
 
-    private DefaultTableModel configurarListaVisitasMedicas() {
+    private DefaultTableModel configurarListaPacientes() {
 
         DefaultTableModel devolucion;
 
@@ -497,20 +497,20 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
 
         tablaMedicos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Código", "Fecha", "Paciente"
+                "Número Colegiado", "Nombre Completo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, false
+                false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -555,7 +555,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
                 {null, null}
             },
             new String [] {
-                "Fecha", "Paciente"
+                "DNI", "Nombre Completo"
             }
         ) {
             Class[] types = new Class [] {

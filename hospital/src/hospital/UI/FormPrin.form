@@ -37,6 +37,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Visitas M&#xe9;dicas"/>
               </Properties>
+              <Events>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="opcionVisitasMedicasMousePressed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>

@@ -434,6 +434,30 @@ public class Medico {
 
         return medicos;
     }
+    
+    public static ArrayList<Medico> getMedicosConVisMed(long id, Connection conexionBD) {
+        ResultSet devolucion;
+        String cadenaSQL;
+        ArrayList<Medico> medicos = null;
+
+        try {
+            cadenaSQL = "SELECT * "
+                    + "FROM Medicos, Visitasmedicas "
+                    + "WHERE Medicos.eliminado IS NULL "
+                    + "AND Medicos.id=Visitasmedicas.idMedico "
+                    + "AND Visitasmedicas.id=" + id;
+            cadenaSQL = cadenaSQL + " ORDER BY apellido1,apellido2,nombre";
+
+            Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            devolucion = Vinculo.executeQuery(cadenaSQL);
+            medicos = Medico.getMedicos(devolucion, conexionBD);
+
+        } catch (Exception ex) {
+
+        }
+
+        return medicos;
+    }
 
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Métodos de Consulta a la Base de Datos (Capa de Datos)">
