@@ -734,6 +734,30 @@ public class Paciente {
 
         return devolucion;
     }
+    
+    public static ArrayList<Paciente> getPacientesConDiag(long id, Connection conexionBD) {
+        ResultSet devolucion;
+        String cadenaSQL;
+        ArrayList<Paciente> pacientes = null;
+
+        try {
+            cadenaSQL = "SELECT * "
+                    + "FROM Pacientes, Diagnosticos "
+                    + "WHERE Pacientes.eliminado IS NULL "
+                    + "AND Pacientes.id=Diagnosticos.idMedico "
+                    + "AND Diagnosticos.id=" + id;
+            cadenaSQL = cadenaSQL + " ORDER BY apellido1,apellido2,nombre";
+
+            Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            devolucion = Vinculo.executeQuery(cadenaSQL);
+            pacientes = Paciente.getPacientes(devolucion, conexionBD);
+
+        } catch (Exception ex) {
+
+        }
+
+        return pacientes;
+    }
 
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Métodos de Consulta de Habitaciones">

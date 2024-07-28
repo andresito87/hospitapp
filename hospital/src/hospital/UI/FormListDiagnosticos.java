@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import utils.Utils;
 
 /**
  *
@@ -274,8 +275,8 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
         });
         tablaDiagnosticos.setComponentPopupMenu(menuTablaMedicos);
         tablaDiagnosticos.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaDiagnosticosMouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaDiagnosticosMousePressed(evt);
             }
         });
         jScrollPane1.setViewportView(tablaDiagnosticos);
@@ -443,19 +444,15 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
 
     }//GEN-LAST:event_botonAgregarMouseClicked
 
-    private void tablaDiagnosticosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaDiagnosticosMouseClicked
-
-        this.diagnosticoSeleccionado = listaDiagnosticos.get(tablaDiagnosticos.getSelectedRow());
-
-    }//GEN-LAST:event_tablaDiagnosticosMouseClicked
-
     private void opcionModificarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionModificarMousePressed
 
         FormMantDiagnosticos formulario;
         FormAvisoUsuario formularioAviso;
 
         // Compruebo si hay un diagnostico seleccionado, evito errores en consola
-        if (this.diagnosticoSeleccionado != null) {
+        if (this.diagnosticoSeleccionado != null
+                || tablaDiagnosticos.getSelectedRow() != -1
+                && !Utils.isRowEmpty(tablaDiagnosticos.getSelectedRow(), tablaDiagnosticos)) {
             formulario = new FormMantDiagnosticos(this.diagnosticoSeleccionado, FormMantDiagnosticos.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
@@ -506,6 +503,18 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
     private void checkDescripcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkDescripcionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_checkDescripcionActionPerformed
+
+    private void tablaDiagnosticosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaDiagnosticosMousePressed
+        // TODO add your handling code here:
+        int lineaSeleccionada;
+
+        lineaSeleccionada = this.tablaDiagnosticos.getSelectedRow();
+
+        // Evito errores de consola, comprobando que la línea está seleccionada
+        if (lineaSeleccionada >= 0 && !Utils.isRowEmpty(lineaSeleccionada, tablaDiagnosticos)) {
+            this.diagnosticoSeleccionado = this.listaDiagnosticos.get(lineaSeleccionada);
+        }
+    }//GEN-LAST:event_tablaDiagnosticosMousePressed
 
 // </editor-fold>
 

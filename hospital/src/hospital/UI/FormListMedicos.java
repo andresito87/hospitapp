@@ -4,6 +4,7 @@ import hospital.kernel.Medico;
 import java.sql.*;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import utils.Utils;
 
 /**
  *
@@ -23,7 +24,7 @@ public class FormListMedicos extends javax.swing.JDialog {
             java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+
         this.setTitle("Listado de Medicos");
         this.setLocation(300, 50);
         this.setSize(1000, 750);
@@ -228,8 +229,8 @@ public class FormListMedicos extends javax.swing.JDialog {
         });
         tablaMedicos.setComponentPopupMenu(menuTablaMedicos);
         tablaMedicos.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaMedicosMouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablaMedicosMousePressed(evt);
             }
         });
         jScrollPane1.setViewportView(tablaMedicos);
@@ -330,19 +331,15 @@ public class FormListMedicos extends javax.swing.JDialog {
 
     }//GEN-LAST:event_botonAgregarMouseClicked
 
-    private void tablaMedicosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMedicosMouseClicked
-
-        this.medicoSeleccionado = listaMedicos.get(tablaMedicos.getSelectedRow());
-
-    }//GEN-LAST:event_tablaMedicosMouseClicked
-
     private void opcionModificarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionModificarMousePressed
 
         FormMantMedicos formulario;
         FormAvisoUsuario formularioAviso;
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
-        if (this.medicoSeleccionado != null) {
+        if (this.medicoSeleccionado != null
+                || tablaMedicos.getSelectedRow() != -1
+                && !Utils.isRowEmpty(tablaMedicos.getSelectedRow(), tablaMedicos)) {
             formulario = new FormMantMedicos(this.medicoSeleccionado, FormMantMedicos.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
@@ -377,6 +374,18 @@ public class FormListMedicos extends javax.swing.JDialog {
         }
 
     }//GEN-LAST:event_opcionEliminarMousePressed
+
+    private void tablaMedicosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMedicosMousePressed
+        // TODO add your handling code here:
+        int lineaSeleccionada;
+
+        lineaSeleccionada = this.tablaMedicos.getSelectedRow();
+
+        // Evito errores de consola, comprobando que la línea está seleccionada
+        if (lineaSeleccionada >= 0 && !Utils.isRowEmpty(lineaSeleccionada, tablaMedicos)) {
+            this.medicoSeleccionado = this.listaMedicos.get(lineaSeleccionada);
+        }
+    }//GEN-LAST:event_tablaMedicosMousePressed
 
 // </editor-fold>
 

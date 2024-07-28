@@ -4,6 +4,7 @@ import hospital.kernel.Cama;
 import java.sql.*;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import utils.Utils;
 
 /**
  *
@@ -325,7 +326,7 @@ public class FormListCamas extends javax.swing.JDialog {
         lineaSeleccionada = this.tablaCamas.getSelectedRow();
 
         // Evito errores de consola, comprobando que la línea está selecc
-        if (lineaSeleccionada >= 0) {
+        if (lineaSeleccionada >= 0 && !Utils.isRowEmpty(lineaSeleccionada, tablaCamas)) {
             this.camaSeleccionada = this.listaCamas.get(lineaSeleccionada);
         }
 
@@ -337,7 +338,9 @@ public class FormListCamas extends javax.swing.JDialog {
         FormAvisoUsuario formularioAviso;
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
-        if (this.camaSeleccionada != null) {
+        if (this.camaSeleccionada != null
+                 || tablaCamas.getSelectedRow() != -1
+                && !Utils.isRowEmpty(tablaCamas.getSelectedRow(), tablaCamas)) {
             formulario = new FormMantCamas(this.camaSeleccionada, FormMantCamas.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);

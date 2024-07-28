@@ -3,7 +3,6 @@ package hospital.UI;
 import hospital.kernel.Diagnostico;
 import hospital.kernel.Medico;
 import hospital.kernel.Paciente;
-import hospital.kernel.VisitaMedica;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +29,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
     private ArrayList<Medico> medicos;
     private ArrayList<Paciente> pacientes;
 
-    private Paciente medicoSeleccionado = null;
+    private Medico medicoSeleccionado = null;
     private Paciente pacienteSeleccionado = null;
 
 // </editor-fold>
@@ -107,8 +106,8 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         try {
             if (this.diagnosticoActivo != null) {
                 devolucion = this.cargarDatosGeneralesInterfaz();
-                //devolucion = this.cargarListaMedicosInterfaz() && devolucion;
-                //devolucion = this.cargarListaPacientesInterfaz() && devolucion;
+                devolucion = this.cargarListaMedicosInterfaz() && devolucion;
+                devolucion = this.cargarListaPacientesInterfaz() && devolucion;
             } else {
                 devolucion = false;
             }
@@ -177,7 +176,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         boolean devolucion;
 
         try {
-            // this.medicos = this.diagnosticoActivo.getMedicos();
+            this.medicos = Medico.getMedicosConDiag(this.diagnosticoActivo.getId(), conexionBD);
 
             this.visualizarListaMedicos();
 
@@ -203,7 +202,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
             for (indice = 0; indice < this.medicos.size(); indice++) {
                 medicoAux = this.medicos.get(indice);
 
-                linea[0] = Long.toHexString(medicoAux.getNumColegiado());
+                linea[0] = Long.toString(medicoAux.getNumColegiado());
                 linea[1] = medicoAux.getNombreFormalCompleto();
 
                 modeloTabla.addRow(linea);
@@ -243,7 +242,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         boolean devolucion;
 
         try {
-            //this.pacientes = this.diagnosticoActivo.getPacientes();
+            this.pacientes = Paciente.getPacientesConDiag(this.diagnosticoActivo.getId(), conexionBD);
             this.visualizarListaPacientes();
 
             devolucion = true;
@@ -688,12 +687,12 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         // TODO add your handling code here:
         FormMantMedicos formularioMedico;
 
-        if (this.pacientes != null) {
-            this.pacienteSeleccionado = this.pacientes.get(this.tablaPacientes.getSelectedRow());
+        if (this.medicos != null) {
+            this.medicoSeleccionado = this.medicos.get(this.tablaMedicos.getSelectedRow());
 
-            if (Medico.getMedico(this.pacienteSeleccionado.getId(), conexionBD) != null) {
-                formularioMedico = new FormMantMedicos(Medico.getMedico(this.pacienteSeleccionado.getId(), conexionBD),
-                        FormMantPacientes.MODIFICAR,
+            if (Medico.getMedico(this.medicoSeleccionado.getId(), conexionBD) != null) {
+                formularioMedico = new FormMantMedicos(Medico.getMedico(this.medicoSeleccionado.getId(), conexionBD),
+                        FormMantMedicos.MODIFICAR,
                         this.conexionBD, this, true);
                 formularioMedico.setVisible(true);
             } else {

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import utils.Utils;
 
 /**
  *
@@ -502,8 +503,8 @@ public class FormListPacientes extends javax.swing.JDialog {
 
         lineaSeleccionada = this.tablaPacientes.getSelectedRow();
 
-        // Evito errores de consola, comprobando que la línea está selecc
-        if (lineaSeleccionada >= 0) {
+        // Evito errores de consola, comprobando que la línea está seleccionada
+        if (lineaSeleccionada >= 0 && !Utils.isRowEmpty(lineaSeleccionada, tablaPacientes)) {
             this.pacienteSeleccionado = this.listaPacientes.get(lineaSeleccionada);
         }
 
@@ -515,7 +516,9 @@ public class FormListPacientes extends javax.swing.JDialog {
         FormAvisoUsuario formularioAviso;
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
-        if (this.pacienteSeleccionado != null) {
+        if (this.pacienteSeleccionado != null
+                || tablaPacientes.getSelectedRow() != -1
+                && !Utils.isRowEmpty(tablaPacientes.getSelectedRow(), tablaPacientes)) {
             formulario = new FormMantPacientes(this.pacienteSeleccionado, FormMantPacientes.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);

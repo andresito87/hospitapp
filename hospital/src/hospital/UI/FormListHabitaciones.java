@@ -4,6 +4,7 @@ import hospital.kernel.Habitacion;
 import java.sql.*;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import utils.Utils;
 
 /**
  *
@@ -56,10 +57,10 @@ public class FormListHabitaciones extends javax.swing.JDialog {
             }
 
             this.listaHabitaciones = Habitacion.getTodasHabitaciones(
-                    this.checkNumHabitacion.isSelected(),numHabitacion,
-                    this.checkPlanta.isSelected(),planta,
-                    this.checkPlazas.isSelected(),plazas,
-                    this.checkObservaciones.isSelected(),this.textObservaciones.getText(),
+                    this.checkNumHabitacion.isSelected(), numHabitacion,
+                    this.checkPlanta.isSelected(), planta,
+                    this.checkPlazas.isSelected(), plazas,
+                    this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
                     conexionBD);
 
             devolucion = true;
@@ -336,7 +337,7 @@ public class FormListHabitaciones extends javax.swing.JDialog {
         lineaSeleccionada = this.tablaHabitaciones.getSelectedRow();
 
         // Evito errores de consola, comprobando que la línea está selecc
-        if (lineaSeleccionada >= 0) {
+        if (lineaSeleccionada >= 0 && !Utils.isRowEmpty(lineaSeleccionada, tablaHabitaciones)) {
             this.habitacionSeleccionada = this.listaHabitaciones.get(lineaSeleccionada);
         }
 
@@ -348,7 +349,9 @@ public class FormListHabitaciones extends javax.swing.JDialog {
         FormAvisoUsuario formularioAviso;
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
-        if (this.habitacionSeleccionada != null) {
+        if (this.habitacionSeleccionada != null
+                || tablaHabitaciones.getSelectedRow() != -1
+                && !Utils.isRowEmpty(tablaHabitaciones.getSelectedRow(), tablaHabitaciones)) {
             formulario = new FormMantHabitaciones(this.habitacionSeleccionada, FormMantHabitaciones.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);

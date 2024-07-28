@@ -363,9 +363,8 @@ public class Medico {
     }
 
     public static ArrayList<Medico> getTodosMedicos(Connection conexionBD) {
-        ArrayList<Medico> devolucion = null;
+        ArrayList<Medico> devolucion;
         ResultSet resultado;
-        Medico medicoAux;
 
         try {
 
@@ -410,6 +409,30 @@ public class Medico {
         }
 
         return devolucion;
+    }
+
+    public static ArrayList<Medico> getMedicosConDiag(long id, Connection conexionBD) {
+        ResultSet devolucion;
+        String cadenaSQL;
+        ArrayList<Medico> medicos = null;
+
+        try {
+            cadenaSQL = "SELECT * "
+                    + "FROM Medicos, Diagnosticos "
+                    + "WHERE Medicos.eliminado IS NULL "
+                    + "AND Medicos.id=Diagnosticos.idMedico "
+                    + "AND Diagnosticos.id=" + id;
+            cadenaSQL = cadenaSQL + " ORDER BY apellido1,apellido2,nombre";
+
+            Statement Vinculo = conexionBD.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            devolucion = Vinculo.executeQuery(cadenaSQL);
+            medicos = Medico.getMedicos(devolucion, conexionBD);
+
+        } catch (Exception ex) {
+
+        }
+
+        return medicos;
     }
 
 // </editor-fold>
