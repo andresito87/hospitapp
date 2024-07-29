@@ -13,6 +13,7 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
     public static final int INFO_INEXISTENTE = 3;
     public static final int OPERACION_EXITOSA = 4;
     public static final int OPERACION_CON_DATOS_INCORRECTOS = 5;
+    public static final int OPERACION_SALIR = 6;
 
     private final int tipoAviso;
     private String mensaje;
@@ -91,6 +92,9 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
             case 5:
                 mensajeDevuelto = "Uy, parece que hay datos incorrectos. Revisa y vuelve a intentarlo.";
                 noVisualizarBotonCancelar();
+                break;
+            case 6:
+                mensajeDevuelto = "¿Estás segur@ que deseas cerrar la aplicación?";
                 break;
             default:
                 mensajeDevuelto = "Hubo algún problema. Revisa la información suministrada.";

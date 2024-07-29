@@ -696,7 +696,25 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
     private void botonModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonModificarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            this.diagnosticoActivo.modificar();
+            if (this.diagnosticoActivo.modificar()) {
+                FormAvisoUsuario formularioAviso;
+                formularioAviso = new FormAvisoUsuario(
+                        FormAvisoUsuario.OPERACION_EXITOSA,
+                        this,
+                        true);
+                formularioAviso.setVisible(true);
+
+                if (formularioAviso.esOperacionAceptada()) {
+                    this.dispose();
+                }
+            }
+        } else {
+            FormAvisoUsuario formularioAviso;
+            formularioAviso = new FormAvisoUsuario(
+                    FormAvisoUsuario.OPERACION_CON_DATOS_INCORRECTOS,
+                    this,
+                    true);
+            formularioAviso.setVisible(true);
         }
     }//GEN-LAST:event_botonModificarMouseClicked
 

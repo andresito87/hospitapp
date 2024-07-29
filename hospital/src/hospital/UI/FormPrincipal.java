@@ -7,7 +7,8 @@ import java.sql.*;
  * @author andres
  */
 public class FormPrincipal extends javax.swing.JFrame {
-
+    
+// <editor-fold defaultstate="collapsed" desc="Método Principal - Inicio">
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -31,7 +32,6 @@ public class FormPrincipal extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -40,18 +40,18 @@ public class FormPrincipal extends javax.swing.JFrame {
             }
         });
     }
-    
-    // <editor-fold defaultstate="collapsed" desc="Atributos de la clase">
+// </editor-fold>
+// <editor-fold defaultstate="collapsed" desc="Atributos de la clase">
     public final String SERVIDOR = "localhost";
     public final String PUERTO = "3306";
     public final String BASE_DATOS = "Hospital";
     public final String USUARIO = "root";
     public final String CONTRASENHA = "";
-    
+
     private Connection conexionBD;
 
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Constructores de la clase">
+// <editor-fold defaultstate="collapsed" desc="Constructores de la clase">
     public FormPrincipal() {
         initComponents();
         this.setTitle("Hospitalator: Gestión de hospitales");
@@ -173,21 +173,30 @@ public class FormPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    // <editor-fold defaultstate="collapsed" desc="Eventos del formulario">    
+// <editor-fold defaultstate="collapsed" desc="Eventos del formulario">    
     private void opcionSalirMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionSalirMousePressed
         // TODO add your handling code here:
 
-        this.dispose();
+        FormAvisoUsuario formularioAviso;
+        formularioAviso = new FormAvisoUsuario(
+                FormAvisoUsuario.OPERACION_SALIR,
+                null,
+                true);
+        formularioAviso.setVisible(true);
+
+        if (formularioAviso.esOperacionAceptada()) {
+            this.dispose();
+        }
     }//GEN-LAST:event_opcionSalirMousePressed
 
     private void opcionPacientesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionPacientesMousePressed
         // TODO add your handling code here:
 
         FormListPacientes formulario;
-        
+
         formulario = new FormListPacientes(conexionBD, this, true);
         formulario.setVisible(true);
-        
+
 
     }//GEN-LAST:event_opcionPacientesMousePressed
 
@@ -195,7 +204,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         FormListMedicos formulario;
-        
+
         formulario = new FormListMedicos(this.conexionBD, this, true);
         formulario.setVisible(true);
 
@@ -204,7 +213,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     private void opcionDiagnosticosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionDiagnosticosMousePressed
         // TODO add your handling code here:
         FormListDiagnosticos formulario;
-        
+
         formulario = new FormListDiagnosticos(this.conexionBD, this, true);
         formulario.setVisible(true);
     }//GEN-LAST:event_opcionDiagnosticosMousePressed
@@ -251,29 +260,29 @@ public class FormPrincipal extends javax.swing.JFrame {
         formulario.setVisible(true);
     }//GEN-LAST:event_opcionVisitasMedicasMousePressed
     // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Métodos de Conexión a la Base de Datos">
+// <editor-fold defaultstate="collapsed" desc="Métodos de Conexión a la Base de Datos">
     public Connection conectarBD(String direccionServer, String puertoServer,
             String baseDatos, String usuario, String password) {
         Connection devolucion;
         String cadenaConexion;
-        
+
         try {
-            
+
             cadenaConexion = "jdbc:mysql://" + direccionServer + ":" + puertoServer + "/" + baseDatos;
-            
+
             devolucion = conectarBD("com.mysql.cj.jdbc.Driver", cadenaConexion, usuario, password);
-            
+
         } catch (Exception ex) {
             devolucion = null;
         }
-        
+
         return devolucion;
     }
-    
+
     public Connection conectarBD(String PDriver, String PCadena_Conexion,
             String PUsuario, String PContrasenha) {
         Connection VDevolucion;
-        
+
         try {
             Class.forName(PDriver);
             VDevolucion = DriverManager.getConnection(PCadena_Conexion, PUsuario, PContrasenha);
@@ -282,20 +291,20 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
         return VDevolucion;
     }
-    
+
     public boolean cerrarConexionBD() {
         boolean VDevolucion;
-        
+
         try {
             this.conexionBD.close();
-            
+
             VDevolucion = true;
         } catch (Exception ex) {
             VDevolucion = false;
         }
-        
+
         return VDevolucion;
-        
+
     }
     // </editor-fold>
 

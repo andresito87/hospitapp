@@ -8,8 +8,8 @@ import hospital.UI.FormPrincipal;
  */
 public class Hospital {
     
-
     /**
+     * Método Main - Punto de inicio de la aplicacion
      * @param args the command line arguments
      */
     
