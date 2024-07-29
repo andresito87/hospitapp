@@ -1,6 +1,7 @@
 package hospital.UI;
 
 import hospital.kernel.Cama;
+import hospital.kernel.TipoCama;
 import java.sql.*;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -74,9 +75,10 @@ public class FormListCamas extends javax.swing.JDialog {
             for (VIndice = 0; VIndice < this.listaCamas.size(); VIndice++) {
                 camaAux = this.listaCamas.get(VIndice);
 
+                String descripcionCama = TipoCama.fromCodigo(camaAux.getTipo()).getDescripcion();
                 Linea[0] = camaAux.getMarca();
                 Linea[1] = camaAux.getModelo();
-                Linea[2] = Long.toString(camaAux.getTipo());
+                Linea[2] = Long.toString(camaAux.getTipo()) +" - "+ descripcionCama;
                 Linea[3] = camaAux.getObservaciones();
 
                 modeloTabla.addRow(Linea);
@@ -86,6 +88,7 @@ public class FormListCamas extends javax.swing.JDialog {
 
             devolucion = true;
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             devolucion = false;
         }
 
@@ -339,7 +342,7 @@ public class FormListCamas extends javax.swing.JDialog {
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
         if (this.camaSeleccionada != null
-                 || tablaCamas.getSelectedRow() != -1
+                || tablaCamas.getSelectedRow() != -1
                 && !Utils.isRowEmpty(tablaCamas.getSelectedRow(), tablaCamas)) {
             formulario = new FormMantCamas(this.camaSeleccionada, FormMantCamas.MODIFICAR,
                     this.conexionBD, this, true);

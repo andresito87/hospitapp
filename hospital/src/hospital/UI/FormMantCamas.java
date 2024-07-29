@@ -3,6 +3,7 @@ package hospital.UI;
 import hospital.kernel.Cama;
 import hospital.kernel.Habitacion;
 import hospital.kernel.Paciente;
+import hospital.kernel.TipoCama;
 import java.sql.*;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -83,6 +84,7 @@ public class FormMantCamas extends javax.swing.JDialog {
             this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
             this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
 
+            this.cargarDatosComboCamaInterfaz();
             if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
                 devolucion = this.cargarDatosInterfaz();
             } else {
@@ -120,7 +122,8 @@ public class FormMantCamas extends javax.swing.JDialog {
         try {
             this.textMarca.setText(this.camaActiva.getMarca());
             this.textModelo.setText(this.camaActiva.getModelo());
-            this.textTipo.setText(Integer.toString(this.camaActiva.getTipo()));
+            // Resto 1 al tipo para acoplar los datos de la BD al enum TipoCama
+            this.comboBoxTipoCama.setSelectedIndex(this.camaActiva.getTipo() - 1);
             this.textObservaciones.setText(this.camaActiva.getObservaciones());
 
             devolucion = true;
@@ -141,8 +144,36 @@ public class FormMantCamas extends javax.swing.JDialog {
 
             this.camaActiva.setData(this.textMarca.getText(),
                     this.textModelo.getText(),
-                    Integer.parseInt(this.textTipo.getText()),
+                    this.comboBoxTipoCama.getSelectedIndex() + 1,
                     this.textObservaciones.getText());
+
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
+        }
+
+        return devolucion;
+    }
+
+    private boolean cargarDatosComboCamaInterfaz() {
+        boolean devolucion;
+        try {
+            comboBoxTipoCama.removeAllItems(); // Limpiar el combo box antes de rellenar
+
+            for (TipoCama tipo : TipoCama.values()) {
+                comboBoxTipoCama.addItem(tipo.getCodigo() + " - " + tipo.getDescripcion());
+            }
+
+            // Si necesitas seleccionar un valor específico en el combo box
+            long camaSeleccionada = 0; // Esto debería ser el valor que quieres seleccionar
+            TipoCama tipoSeleccionado = TipoCama.fromCodigo((int) camaSeleccionada);
+
+            for (int i = 0; i < comboBoxTipoCama.getItemCount(); i++) {
+                if (comboBoxTipoCama.getItemAt(i).startsWith(tipoSeleccionado.getCodigo() + " -")) {
+                    comboBoxTipoCama.setSelectedIndex(i);
+                    break;
+                }
+            }
 
             devolucion = true;
         } catch (Exception ex) {
@@ -309,8 +340,8 @@ public class FormMantCamas extends javax.swing.JDialog {
         labelObservaciones = new javax.swing.JLabel();
         textModelo = new javax.swing.JTextField();
         labelModelo = new javax.swing.JLabel();
-        textTipo = new javax.swing.JTextField();
         labelTipo = new javax.swing.JLabel();
+        comboBoxTipoCama = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaPacientes = new javax.swing.JTable();
@@ -387,33 +418,33 @@ public class FormMantCamas extends javax.swing.JDialog {
 
         labelTipo.setText("Tipo:");
 
+        comboBoxTipoCama.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 633, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(labelModelo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 17, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 633, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(labelObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(labelMarca)
+                                .addGap(12, 12, 12)
+                                .addComponent(textMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(labelModelo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(textModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(labelMarca)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(labelTipo)
                         .addGap(18, 18, 18)
-                        .addComponent(textTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(comboBoxTipoCama, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(423, 423, 423))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -428,8 +459,8 @@ public class FormMantCamas extends javax.swing.JDialog {
                     .addComponent(labelModelo))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(textTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelTipo))
+                    .addComponent(labelTipo)
+                    .addComponent(comboBoxTipoCama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(labelObservaciones)
                 .addGap(18, 18, 18)
@@ -451,7 +482,7 @@ public class FormMantCamas extends javax.swing.JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         panelFichas.addTab("Datos Generales", jPanel2);
@@ -698,6 +729,7 @@ public class FormMantCamas extends javax.swing.JDialog {
     private javax.swing.JButton botonEliminar;
     private javax.swing.JButton botonModificar;
     private javax.swing.JButton botonSalir;
+    private javax.swing.JComboBox<String> comboBoxTipoCama;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -716,6 +748,5 @@ public class FormMantCamas extends javax.swing.JDialog {
     private javax.swing.JTextField textMarca;
     private javax.swing.JTextField textModelo;
     private javax.swing.JTextArea textObservaciones;
-    private javax.swing.JTextField textTipo;
     // End of variables declaration//GEN-END:variables
 }
