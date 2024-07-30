@@ -46,7 +46,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     public final String PUERTO = "3306";
     public final String BASE_DATOS = "Hospital";
     public final String USUARIO = "root";
-    public final String CONTRASENHA = "";
+    public final String CONTRASENHA = "tiger";
 
     private Connection conexionBD;
 
@@ -91,7 +91,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hospital/images/imagenBienvenida.jpeg"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hospital/images/imagenBienvenida2.jpeg"))); // NOI18N
         jLabel1.setText("jLabel1");
 
         menujMantenimientos.setText("Mantenimientos");

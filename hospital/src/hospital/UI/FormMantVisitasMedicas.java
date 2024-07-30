@@ -32,6 +32,9 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
     private Medico medicoSeleccionado = null;
     private Paciente pacienteSeleccionado = null;
 
+    private int indiceMedicoSeleccionado;
+    private int indicePacienteSeleccionado;
+
 // </editor-fold>
 // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
     public FormMantVisitasMedicas(Connection conexionBD,
@@ -90,6 +93,8 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
             if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
                 devolucion = this.cargarDatosInterfaz();
             } else {
+                this.cargarDatosComboBoxMedicosInterfaz();
+                this.cargarDatosComboBoxPacientesInterfaz();
                 devolucion = true;
             }
 
@@ -106,6 +111,8 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
         try {
             if (this.visitaMedicaActiva != null) {
                 devolucion = this.cargarDatosGeneralesInterfaz();
+                devolucion = this.cargarDatosComboBoxMedicosInterfaz() && devolucion;
+                devolucion = this.cargarDatosComboBoxPacientesInterfaz() && devolucion;
                 devolucion = this.cargarListaMedicosInterfaz() && devolucion;
                 devolucion = this.cargarListaPacientesInterfaz() && devolucion;
             } else {
@@ -129,9 +136,10 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
         }
 
         try {
+
             this.textFecha.setText(fecha);
-            this.textIdMedico.setText(Long.toString(this.visitaMedicaActiva.getIdMedico()));
-            this.textIdPaciente.setText(Long.toString(this.visitaMedicaActiva.getIdPaciente()));
+            this.comboBoxPacientes.setSelectedIndex(this.indicePacienteSeleccionado);
+            this.comboBoxMedicos.setSelectedIndex(this.indiceMedicoSeleccionado);
             this.textObservaciones.setText(this.visitaMedicaActiva.getObservaciones());
 
             devolucion = true;
@@ -149,9 +157,9 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
             if (this.visitaMedicaActiva == null) {
                 this.visitaMedicaActiva = new VisitaMedica(this.conexionBD);
             }
-
-            Long idMedico = Long.valueOf(this.textIdMedico.getText());
-            Long idPaciente = Long.valueOf(this.textIdPaciente.getText());
+            
+            Long idMedico =Medico.getTodosMedicos(conexionBD).get(indiceMedicoSeleccionado).getId();
+            Long idPaciente = Paciente.getTodosPacientes(conexionBD).get(indicePacienteSeleccionado).getId();
             LocalDate fecha = LocalDate.parse(this.textFecha.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
             if (idMedico != 0 && idPaciente != 0 && fecha != null) {
@@ -164,6 +172,82 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
 
                 devolucion = true;
             }
+        } catch (Exception ex) {
+            devolucion = false;
+        }
+
+        return devolucion;
+    }
+
+    public boolean cargarDatosComboBoxMedicosInterfaz() {
+        boolean devolucion;
+        Medico medicoAux;
+        int indice;
+        String cadenaComboAux;
+        long medicoSeleccionado = 0;
+        int indiceSeleccionado = 0;
+
+        this.comboBoxMedicos.removeAllItems(); // Limpiar el combo box antes de rellenar
+
+        try {
+            if (this.visitaMedicaActiva != null) {
+                medicoSeleccionado = this.visitaMedicaActiva.getIdMedico();
+            }
+            medicos = Medico.getTodosMedicos(this.conexionBD);
+
+            if (medicos != null) {
+                for (indice = 0; indice < medicos.size(); indice++) {
+                    medicoAux = medicos.get(indice);
+
+                    cadenaComboAux = medicoAux.getNumColegiado() + " - " + medicoAux.getNombreFormalCompleto();
+                    this.comboBoxMedicos.addItem(cadenaComboAux);
+
+                    if (medicoAux.getId() == medicoSeleccionado) {
+                        indiceSeleccionado = indice;
+                    }
+                }
+                this.comboBoxMedicos.setSelectedIndex(indiceSeleccionado);
+            }
+
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
+        }
+
+        return devolucion;
+    }
+
+    public boolean cargarDatosComboBoxPacientesInterfaz() {
+        boolean devolucion;
+        Paciente pacienteAux;
+        int indice;
+        String cadenaComboAux;
+        long pacienteSeleccionado = 0;
+        int indiceSeleccionado = 0;
+
+        this.comboBoxPacientes.removeAllItems(); // Limpiar el combo box antes de rellenar
+
+        try {
+            if (this.visitaMedicaActiva != null) {
+                pacienteSeleccionado = this.visitaMedicaActiva.getIdPaciente();
+            }
+            pacientes = Paciente.getTodosPacientes(this.conexionBD);
+
+            if (pacientes != null) {
+                for (indice = 0; indice < pacientes.size(); indice++) {
+                    pacienteAux = pacientes.get(indice);
+
+                    cadenaComboAux = pacienteAux.getDni() + " - " + pacienteAux.getNombreFormalCompleto();
+                    this.comboBoxPacientes.addItem(cadenaComboAux);
+
+                    if (pacienteAux.getId() == pacienteSeleccionado) {
+                        indiceSeleccionado = indice;
+                    }
+                }
+                this.comboBoxPacientes.setSelectedIndex(indiceSeleccionado);
+            }
+
+            devolucion = true;
         } catch (Exception ex) {
             devolucion = false;
         }
@@ -319,14 +403,14 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
         panelFichas = new javax.swing.JTabbedPane();
         fichaDatosGenerales = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        textIdMedico = new javax.swing.JTextField();
-        textIdPaciente = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         textObservaciones = new javax.swing.JTextArea();
         textFecha = new javax.swing.JFormattedTextField();
         jLabel8 = new javax.swing.JLabel();
+        comboBoxMedicos = new javax.swing.JComboBox<>();
+        comboBoxPacientes = new javax.swing.JComboBox<>();
         fichaMedicos = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaMedicos = new javax.swing.JTable();
@@ -408,6 +492,20 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
 
         jLabel8.setText("Fecha:");
 
+        comboBoxMedicos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboBoxMedicos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboBoxMedicosItemStateChanged(evt);
+            }
+        });
+
+        comboBoxPacientes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboBoxPacientes.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboBoxPacientesItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout fichaDatosGeneralesLayout = new javax.swing.GroupLayout(fichaDatosGenerales);
         fichaDatosGenerales.setLayout(fichaDatosGeneralesLayout);
         fichaDatosGeneralesLayout.setHorizontalGroup(
@@ -417,35 +515,35 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
                     .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                         .addGap(19, 19, 19)
                         .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
                             .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textIdPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(comboBoxPacientes, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(18, 18, 18)
                                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(textIdMedico, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(textFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel5)))
+                                    .addComponent(textFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(comboBoxMedicos, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                         .addGap(56, 56, 56)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(85, Short.MAX_VALUE))
         );
         fichaDatosGeneralesLayout.setVerticalGroup(
             fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(29, 29, 29)
                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(textIdMedico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
+                    .addComponent(comboBoxMedicos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(textIdPaciente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboBoxPacientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(textFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -454,7 +552,7 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         panelFichas.addTab("Datos Generales", fichaDatosGenerales);
@@ -498,7 +596,7 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
             fichaMedicosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fichaMedicosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 722, Short.MAX_VALUE)
                 .addContainerGap())
         );
         fichaMedicosLayout.setVerticalGroup(
@@ -549,7 +647,7 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
         fichaPacientesLayout.setHorizontalGroup(
             fichaPacientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fichaPacientesLayout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 728, Short.MAX_VALUE)
                 .addContainerGap())
         );
         fichaPacientesLayout.setVerticalGroup(
@@ -706,6 +804,16 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_tablaMedicosMousePressed
 
+    private void comboBoxMedicosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBoxMedicosItemStateChanged
+        // TODO add your handling code here:
+        this.indiceMedicoSeleccionado = this.comboBoxMedicos.getSelectedIndex();
+    }//GEN-LAST:event_comboBoxMedicosItemStateChanged
+
+    private void comboBoxPacientesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboBoxPacientesItemStateChanged
+        // TODO add your handling code here:
+        this.indicePacienteSeleccionado = this.comboBoxPacientes.getSelectedIndex();
+    }//GEN-LAST:event_comboBoxPacientesItemStateChanged
+
 // </editor-fold>
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -713,6 +821,8 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
     private javax.swing.JButton botonEliminar;
     private javax.swing.JButton botonModificar;
     private javax.swing.JButton botonSalir;
+    private javax.swing.JComboBox<String> comboBoxMedicos;
+    private javax.swing.JComboBox<String> comboBoxPacientes;
     private javax.swing.JPanel fichaDatosGenerales;
     private javax.swing.JPanel fichaMedicos;
     private javax.swing.JPanel fichaPacientes;
@@ -728,8 +838,6 @@ public class FormMantVisitasMedicas extends javax.swing.JDialog {
     private javax.swing.JTable tablaMedicos;
     private javax.swing.JTable tablaPacientes;
     private javax.swing.JFormattedTextField textFecha;
-    private javax.swing.JTextField textIdMedico;
-    private javax.swing.JTextField textIdPaciente;
     private javax.swing.JTextArea textObservaciones;
     // End of variables declaration//GEN-END:variables
 }

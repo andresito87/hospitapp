@@ -21,7 +21,7 @@ public class FormMantPacientes extends javax.swing.JDialog {
     public static final int MODIFICAR = 1;
     public static final int ELIMINAR = 2;
 
-    private Connection conexionBD;
+    private final Connection conexionBD;
 
     private Paciente pacienteActivo = null;
     private int operacionActiva = AGREGAR;

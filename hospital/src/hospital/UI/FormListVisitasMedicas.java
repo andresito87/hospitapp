@@ -70,7 +70,6 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
                 idPaciente = Long.parseLong(this.textIdPaciente.getText());
             }
 
-
             this.listaVisitasMedicas = VisitaMedica.getVisitasMedicas(
                     this.checkFecha.isSelected(), fechaInicio, fechaFin,
                     this.checkIdMedico.isSelected(), idMedico,
@@ -90,7 +89,7 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
         boolean devolucion;
         int indice;
         VisitaMedica visitaMedicaAux;
-        String[] linea = new String[7];
+        String[] linea = new String[4];
 
         DefaultTableModel modeloTabla;
 
@@ -103,7 +102,7 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
 
                 linea[0] = visitaMedicaAux.getFecha().toString();
                 linea[1] = Medico.getMedico(visitaMedicaAux.getIdMedico(), conexionBD).getNombreFormalCompleto();
-                linea[2] = Paciente.getPaciente(visitaMedicaAux.getIdMedico(), conexionBD).getNombreFormalCompleto();
+                linea[2] = Paciente.getPaciente(visitaMedicaAux.getIdPaciente(), conexionBD).getNombreFormalCompleto();
                 linea[3] = visitaMedicaAux.getObservaciones();
 
                 modeloTabla.addRow(linea);
@@ -126,8 +125,8 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
             devolucion = new DefaultTableModel();
 
             devolucion.addColumn("Fecha");
-            devolucion.addColumn("Paciente");
             devolucion.addColumn("Médico");
+            devolucion.addColumn("Paciente");
             devolucion.addColumn("Observaciones");
 
         } catch (Exception ex) {
