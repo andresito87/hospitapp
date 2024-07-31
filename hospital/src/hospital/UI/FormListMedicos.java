@@ -10,108 +10,116 @@ import utils.Utils;
  *
  * @author andres
  */
-public class FormListMedicos extends javax.swing.JDialog {
+public class FormListMedicos extends javax.swing.JDialog implements FormularioListener {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private Connection conexionBD;
-    private ArrayList<Medico> listaMedicos;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        private Connection conexionBD;
+        private ArrayList<Medico> listaMedicos;
 
-    private Medico medicoSeleccionado = null;
+        private Medico medicoSeleccionado = null;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormListMedicos(Connection conexionBD,
-            java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormListMedicos(Connection conexionBD,
+                java.awt.Frame parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.setTitle("Listado de Medicos");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+            this.setTitle("Listado de Medicos");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.conexionBD = conexionBD;
+            this.conexionBD = conexionBD;
 
-    }
+        }
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
-    private boolean realizarConsulta() {
-        boolean devolucion;
-        long numeroColegiado;
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
+        private boolean realizarConsulta() {
+            boolean devolucion;
+            long numeroColegiado;
 
-        try {
-            if (!this.textNumColegiado.getText().equals("")) {
-                numeroColegiado = Long.valueOf(this.textNumColegiado.getText()).longValue();
-            } else {
-                numeroColegiado = 0;
+            try {
+                if (!this.textNumColegiado.getText().equals("")) {
+                    numeroColegiado = Long.valueOf(this.textNumColegiado.getText()).longValue();
+                } else {
+                    numeroColegiado = 0;
+                }
+
+                this.listaMedicos = Medico.getMedicos(this.checkNumColegiado.isSelected(), numeroColegiado,
+                        this.checkNombre.isSelected(), this.textNombre.getText(),
+                        this.checkApellido1.isSelected(), this.textApellido1.getText(),
+                        this.checkApellido2.isSelected(), this.textApellido2.getText(),
+                        this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
+                        conexionBD);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            this.listaMedicos = Medico.getMedicos(this.checkNumColegiado.isSelected(), numeroColegiado,
-                    this.checkNombre.isSelected(), this.textNombre.getText(),
-                    this.checkApellido1.isSelected(), this.textApellido1.getText(),
-                    this.checkApellido2.isSelected(), this.textApellido2.getText(),
-                    this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
-                    conexionBD);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        private boolean visualizarListaMedicos() {
+            boolean devolucion;
+            int indice;
+            Medico medicoAux;
+            String[] linea = new String[3];
 
-    private boolean visualizarListaMedicos() {
-        boolean devolucion;
-        int indice;
-        Medico medicoAux;
-        String[] linea = new String[3];
+            DefaultTableModel modeloTabla;
 
-        DefaultTableModel modeloTabla;
+            try {
 
-        try {
+                modeloTabla = this.configurarListaMedicos();
 
-            modeloTabla = this.configurarListaMedicos();
+                for (indice = 0; indice < this.listaMedicos.size(); indice++) {
+                    medicoAux = this.listaMedicos.get(indice);
 
-            for (indice = 0; indice < this.listaMedicos.size(); indice++) {
-                medicoAux = this.listaMedicos.get(indice);
+                    linea[0] = medicoAux.getApellido1();
+                    linea[1] = medicoAux.getApellido2();
+                    linea[2] = medicoAux.getNombre();
 
-                linea[0] = medicoAux.getApellido1();
-                linea[1] = medicoAux.getApellido2();
-                linea[2] = medicoAux.getNombre();
+                    modeloTabla.addRow(linea);
+                }
+                this.tablaMedicos.setModel(modeloTabla);
 
-                modeloTabla.addRow(linea);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
-            this.tablaMedicos.setModel(modeloTabla);
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        private DefaultTableModel configurarListaMedicos() {
 
-    private DefaultTableModel configurarListaMedicos() {
+            DefaultTableModel devolucion;
 
-        DefaultTableModel devolucion;
+            try {
+                devolucion = new DefaultTableModel();
 
-        try {
-            devolucion = new DefaultTableModel();
+                devolucion.addColumn("1º Apellido");
+                devolucion.addColumn("2º Apellido");
+                devolucion.addColumn("Nombre");
 
-            devolucion.addColumn("1º Apellido");
-            devolucion.addColumn("2º Apellido");
-            devolucion.addColumn("Nombre");
+            } catch (Exception ex) {
+                devolucion = null;
+            }
 
-        } catch (Exception ex) {
-            devolucion = null;
+            return devolucion;
+
         }
 
-        return devolucion;
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Métodos de Interfaz">
+        @Override
+        public void cuandoCierraFormulario() {
+            this.realizarConsulta();
+            this.visualizarListaMedicos();
+        }
+    // </editor-fold>
 
-    }
-
-// </editor-fold>
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -308,7 +316,7 @@ public class FormListMedicos extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked
 
@@ -326,7 +334,7 @@ public class FormListMedicos extends javax.swing.JDialog {
 
         FormMantMedicos formulario;
 
-        formulario = new FormMantMedicos(this.conexionBD, this, true);
+        formulario = new FormMantMedicos(this, this.conexionBD, this, true);
         formulario.setVisible(true);
 
     }//GEN-LAST:event_botonAgregarMouseClicked
@@ -340,7 +348,7 @@ public class FormListMedicos extends javax.swing.JDialog {
         if (this.medicoSeleccionado != null
                 || tablaMedicos.getSelectedRow() != -1
                 && !Utils.isRowEmpty(tablaMedicos.getSelectedRow(), tablaMedicos)) {
-            formulario = new FormMantMedicos(this.medicoSeleccionado, FormMantMedicos.MODIFICAR,
+            formulario = new FormMantMedicos(this, this.medicoSeleccionado, FormMantMedicos.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -361,7 +369,7 @@ public class FormListMedicos extends javax.swing.JDialog {
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
         if (this.medicoSeleccionado != null) {
-            formulario = new FormMantMedicos(this.medicoSeleccionado, FormMantMedicos.ELIMINAR,
+            formulario = new FormMantMedicos(this, this.medicoSeleccionado, FormMantMedicos.ELIMINAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {

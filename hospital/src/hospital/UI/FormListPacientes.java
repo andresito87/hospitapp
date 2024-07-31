@@ -12,162 +12,170 @@ import utils.Utils;
  *
  * @author andres
  */
-public class FormListPacientes extends javax.swing.JDialog {
+public class FormListPacientes extends javax.swing.JDialog implements FormularioListener {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private Connection conexionBD;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        private Connection conexionBD;
 
-    ArrayList<Paciente> listaPacientes;
+        ArrayList<Paciente> listaPacientes;
 
-    Paciente pacienteSeleccionado = null;
+        Paciente pacienteSeleccionado = null;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormListPacientes(Connection conexionBD,
-            java.awt.Frame parent,
-            boolean modal) {
-        super(parent, modal);
-        initComponents();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormListPacientes(Connection conexionBD,
+                java.awt.Frame parent,
+                boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.setTitle("Listado de Pacientes");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+            this.setTitle("Listado de Pacientes");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.conexionBD = conexionBD;
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
-    private boolean realizarConsulta() {
-        boolean devolucion;
-
-        try {
-            LocalDate fechaNacimientoInicio = null;
-            LocalDate fechaNacimientoFin = null;
-            LocalDate fechaIngresoInicio = null;
-            LocalDate fechaIngresoFin = null;
-            LocalDate fechaAltaInicio = null;
-            LocalDate fechaAltaFin = null;
-
-            try {
-                fechaNacimientoInicio = LocalDate.parse(this.textFechaNacimientoInicio.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
-
-            }
-
-            try {
-                fechaNacimientoFin = LocalDate.parse(this.textFechaNacimientoFin.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
-
-            }
-
-            try {
-                fechaIngresoInicio = LocalDate.parse(this.textFechaIngresoInicio.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
-
-            }
-
-            try {
-                fechaIngresoFin = LocalDate.parse(this.textFechaIngresoFin.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
-
-            }
-
-            try {
-                fechaAltaInicio = LocalDate.parse(this.textFechaAltaInicio.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
-
-            }
-
-            try {
-                fechaAltaFin = LocalDate.parse(this.textFechaAltaFin.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
-
-            }
-
-            this.listaPacientes = Paciente.getPacientes(this.checkDni.isSelected(), this.textDni.getText(),
-                    this.checkCi.isSelected(), this.textCi.getText(),
-                    this.checkNombre.isSelected(), this.textNombre.getText(),
-                    this.checkApellido1.isSelected(), this.textApellido1.getText(),
-                    this.checkApellido2.isSelected(), this.textApellido2.getText(),
-                    this.checkFechaNacimiento.isSelected(),
-                    fechaNacimientoInicio, fechaNacimientoFin,
-                    this.checkNumeroSeguridadSocial.isSelected(), this.textNumSeguridadSocial.getText(),
-                    this.checkFechaIngreso.isSelected(),
-                    fechaIngresoInicio, fechaIngresoFin,
-                    this.checkFechaAlta.isSelected(),
-                    fechaAltaInicio, fechaAltaFin,
-                    false, 0,
-                    this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
-                    conexionBD);
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            this.conexionBD = conexionBD;
         }
 
-        return devolucion;
-    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
+        private boolean realizarConsulta() {
+            boolean devolucion;
 
-    private boolean visualizarListaPacientes() {
-        boolean devolucion;
-        int VIndice;
-        Paciente pacienteAux;
-        String[] Linea = new String[4];
+            try {
+                LocalDate fechaNacimientoInicio = null;
+                LocalDate fechaNacimientoFin = null;
+                LocalDate fechaIngresoInicio = null;
+                LocalDate fechaIngresoFin = null;
+                LocalDate fechaAltaInicio = null;
+                LocalDate fechaAltaFin = null;
 
-        DefaultTableModel modeloTabla;
+                try {
+                    fechaNacimientoInicio = LocalDate.parse(this.textFechaNacimientoInicio.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
 
-        try {
+                }
 
-            modeloTabla = this.configurarListaPacientes();
+                try {
+                    fechaNacimientoFin = LocalDate.parse(this.textFechaNacimientoFin.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
 
-            for (VIndice = 0; VIndice < this.listaPacientes.size(); VIndice++) {
-                pacienteAux = this.listaPacientes.get(VIndice);
+                }
 
-                Linea[0] = pacienteAux.getCi();
-                Linea[1] = pacienteAux.getApellido1();
-                Linea[2] = pacienteAux.getApellido2();
-                Linea[3] = pacienteAux.getNombre();
+                try {
+                    fechaIngresoInicio = LocalDate.parse(this.textFechaIngresoInicio.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
 
-                modeloTabla.addRow(Linea);
+                }
+
+                try {
+                    fechaIngresoFin = LocalDate.parse(this.textFechaIngresoFin.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
+
+                }
+
+                try {
+                    fechaAltaInicio = LocalDate.parse(this.textFechaAltaInicio.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
+
+                }
+
+                try {
+                    fechaAltaFin = LocalDate.parse(this.textFechaAltaFin.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
+
+                }
+
+                this.listaPacientes = Paciente.getPacientes(this.checkDni.isSelected(), this.textDni.getText(),
+                        this.checkCi.isSelected(), this.textCi.getText(),
+                        this.checkNombre.isSelected(), this.textNombre.getText(),
+                        this.checkApellido1.isSelected(), this.textApellido1.getText(),
+                        this.checkApellido2.isSelected(), this.textApellido2.getText(),
+                        this.checkFechaNacimiento.isSelected(),
+                        fechaNacimientoInicio, fechaNacimientoFin,
+                        this.checkNumeroSeguridadSocial.isSelected(), this.textNumSeguridadSocial.getText(),
+                        this.checkFechaIngreso.isSelected(),
+                        fechaIngresoInicio, fechaIngresoFin,
+                        this.checkFechaAlta.isSelected(),
+                        fechaAltaInicio, fechaAltaFin,
+                        false, 0,
+                        this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
+                        conexionBD);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            this.tablaPacientes.setModel(modeloTabla);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        private boolean visualizarListaPacientes() {
+            boolean devolucion;
+            int VIndice;
+            Paciente pacienteAux;
+            String[] Linea = new String[4];
 
-    private DefaultTableModel configurarListaPacientes() {
+            DefaultTableModel modeloTabla;
 
-        DefaultTableModel devolucion;
+            try {
 
-        try {
-            devolucion = new DefaultTableModel();
+                modeloTabla = this.configurarListaPacientes();
 
-            devolucion.addColumn("CI");
-            devolucion.addColumn("1º apellido");
-            devolucion.addColumn("2º Apellido");
-            devolucion.addColumn("Nombre");
+                for (VIndice = 0; VIndice < this.listaPacientes.size(); VIndice++) {
+                    pacienteAux = this.listaPacientes.get(VIndice);
 
-        } catch (Exception ex) {
-            devolucion = null;
+                    Linea[0] = pacienteAux.getCi();
+                    Linea[1] = pacienteAux.getApellido1();
+                    Linea[2] = pacienteAux.getApellido2();
+                    Linea[3] = pacienteAux.getNombre();
+
+                    modeloTabla.addRow(Linea);
+                }
+
+                this.tablaPacientes.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
         }
 
-        return devolucion;
+        private DefaultTableModel configurarListaPacientes() {
 
-    }
+            DefaultTableModel devolucion;
 
-// </editor-fold>
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("CI");
+                devolucion.addColumn("1º apellido");
+                devolucion.addColumn("2º Apellido");
+                devolucion.addColumn("Nombre");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Métodos de Interfaz">
+        @Override
+        public void cuandoCierraFormulario() {
+            this.realizarConsulta();
+            this.visualizarListaPacientes();
+        }
+    // </editor-fold>
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -487,7 +495,7 @@ public class FormListPacientes extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonConsultarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonConsultarMouseClicked
         // TODO add your handling code here:
@@ -519,7 +527,7 @@ public class FormListPacientes extends javax.swing.JDialog {
         if (this.pacienteSeleccionado != null
                 || tablaPacientes.getSelectedRow() != -1
                 && !Utils.isRowEmpty(tablaPacientes.getSelectedRow(), tablaPacientes)) {
-            formulario = new FormMantPacientes(this.pacienteSeleccionado, FormMantPacientes.MODIFICAR,
+            formulario = new FormMantPacientes(this, this.pacienteSeleccionado, FormMantPacientes.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -540,7 +548,7 @@ public class FormListPacientes extends javax.swing.JDialog {
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
         if (this.pacienteSeleccionado != null) {
-            formulario = new FormMantPacientes(this.pacienteSeleccionado, FormMantPacientes.ELIMINAR,
+            formulario = new FormMantPacientes(this, this.pacienteSeleccionado, FormMantPacientes.ELIMINAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -558,10 +566,8 @@ public class FormListPacientes extends javax.swing.JDialog {
         // TODO add your handling code here:
         FormMantPacientes formulario;
 
-        formulario = new FormMantPacientes(this.conexionBD, this, true);
+        formulario = new FormMantPacientes(this, this.conexionBD, this, true);
         formulario.setVisible(true);
-
-
     }//GEN-LAST:event_botonAgregarMouseClicked
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked

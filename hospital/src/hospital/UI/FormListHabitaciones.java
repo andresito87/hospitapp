@@ -10,120 +10,128 @@ import utils.Utils;
  *
  * @author andres
  */
-public class FormListHabitaciones extends javax.swing.JDialog {
+public class FormListHabitaciones extends javax.swing.JDialog implements FormularioListener {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private final Connection conexionBD;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        private final Connection conexionBD;
 
-    ArrayList<Habitacion> listaHabitaciones;
+        ArrayList<Habitacion> listaHabitaciones;
 
-    Habitacion habitacionSeleccionada = null;
+        Habitacion habitacionSeleccionada = null;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormListHabitaciones(Connection conexionBD,
-            java.awt.Frame parent,
-            boolean modal) {
-        super(parent, modal);
-        initComponents();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormListHabitaciones(Connection conexionBD,
+                java.awt.Frame parent,
+                boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.setTitle("Listado de Habitaciones");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+            this.setTitle("Listado de Habitaciones");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.conexionBD = conexionBD;
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
-    private boolean realizarConsulta() {
-        boolean devolucion;
-        int plazas = 0;
-        int numHabitacion = 0;
-        int planta = 0;
-
-        try {
-
-            if (!this.textNumHabitacion.getText().equals("")) {
-                numHabitacion = Integer.parseInt(this.textNumHabitacion.getText());
-            }
-
-            if (!this.textPlanta.getText().equals("")) {
-                planta = Integer.parseInt(this.textPlanta.getText());
-            }
-
-            if (!this.textPlazas.getText().equals("")) {
-                plazas = Integer.parseInt(this.textPlazas.getText());
-            }
-
-            this.listaHabitaciones = Habitacion.getTodasHabitaciones(
-                    this.checkNumHabitacion.isSelected(), numHabitacion,
-                    this.checkPlanta.isSelected(), planta,
-                    this.checkPlazas.isSelected(), plazas,
-                    this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
-                    conexionBD);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-        return devolucion;
-    }
-
-    private boolean visualizarListaHabitaciones() {
-        boolean devolucion;
-        int VIndice;
-        Habitacion habitacionAux;
-        String[] Linea = new String[4];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-
-            modeloTabla = this.configurarListaHabitaciones();
-
-            for (VIndice = 0; VIndice < this.listaHabitaciones.size(); VIndice++) {
-                habitacionAux = this.listaHabitaciones.get(VIndice);
-
-                Linea[0] = Integer.toString(habitacionAux.getNumHabitacion());
-                Linea[1] = Integer.toString(habitacionAux.getNumPlanta());
-                Linea[2] = Integer.toString(habitacionAux.getNumPlazas());
-                Linea[3] = habitacionAux.getObservaciones();
-
-                modeloTabla.addRow(Linea);
-            }
-
-            this.tablaHabitaciones.setModel(modeloTabla);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            this.conexionBD = conexionBD;
         }
 
-        return devolucion;
-    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
+        private boolean realizarConsulta() {
+            boolean devolucion;
+            int plazas = 0;
+            int numHabitacion = 0;
+            int planta = 0;
 
-    private DefaultTableModel configurarListaHabitaciones() {
+            try {
 
-        DefaultTableModel devolucion;
+                if (!this.textNumHabitacion.getText().equals("")) {
+                    numHabitacion = Integer.parseInt(this.textNumHabitacion.getText());
+                }
 
-        try {
-            devolucion = new DefaultTableModel();
+                if (!this.textPlanta.getText().equals("")) {
+                    planta = Integer.parseInt(this.textPlanta.getText());
+                }
 
-            devolucion.addColumn("Número");
-            devolucion.addColumn("Planta");
-            devolucion.addColumn("Plazas");
-            devolucion.addColumn("Observaciones");
+                if (!this.textPlazas.getText().equals("")) {
+                    plazas = Integer.parseInt(this.textPlazas.getText());
+                }
 
-        } catch (Exception ex) {
-            devolucion = null;
+                this.listaHabitaciones = Habitacion.getTodasHabitaciones(
+                        this.checkNumHabitacion.isSelected(), numHabitacion,
+                        this.checkPlanta.isSelected(), planta,
+                        this.checkPlazas.isSelected(), plazas,
+                        this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
+                        conexionBD);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+            return devolucion;
         }
 
-        return devolucion;
+        private boolean visualizarListaHabitaciones() {
+            boolean devolucion;
+            int VIndice;
+            Habitacion habitacionAux;
+            String[] Linea = new String[4];
 
-    }
+            DefaultTableModel modeloTabla;
 
-// </editor-fold>
+            try {
+
+                modeloTabla = this.configurarListaHabitaciones();
+
+                for (VIndice = 0; VIndice < this.listaHabitaciones.size(); VIndice++) {
+                    habitacionAux = this.listaHabitaciones.get(VIndice);
+
+                    Linea[0] = Integer.toString(habitacionAux.getNumHabitacion());
+                    Linea[1] = Integer.toString(habitacionAux.getNumPlanta());
+                    Linea[2] = Integer.toString(habitacionAux.getNumPlazas());
+                    Linea[3] = habitacionAux.getObservaciones();
+
+                    modeloTabla.addRow(Linea);
+                }
+
+                this.tablaHabitaciones.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaHabitaciones() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("Número");
+                devolucion.addColumn("Planta");
+                devolucion.addColumn("Plazas");
+                devolucion.addColumn("Observaciones");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Métodos de Interfaz">
+        @Override
+        public void cuandoCierraFormulario() {
+            this.realizarConsulta();
+            this.visualizarListaHabitaciones();
+        }
+    // </editor-fold>
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -320,7 +328,7 @@ public class FormListHabitaciones extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonConsultarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonConsultarMouseClicked
         // TODO add your handling code here:
@@ -352,7 +360,7 @@ public class FormListHabitaciones extends javax.swing.JDialog {
         if (this.habitacionSeleccionada != null
                 || tablaHabitaciones.getSelectedRow() != -1
                 && !Utils.isRowEmpty(tablaHabitaciones.getSelectedRow(), tablaHabitaciones)) {
-            formulario = new FormMantHabitaciones(this.habitacionSeleccionada, FormMantHabitaciones.MODIFICAR,
+            formulario = new FormMantHabitaciones(this, this.habitacionSeleccionada, FormMantHabitaciones.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -373,7 +381,7 @@ public class FormListHabitaciones extends javax.swing.JDialog {
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
         if (this.habitacionSeleccionada != null) {
-            formulario = new FormMantHabitaciones(this.habitacionSeleccionada, FormMantHabitaciones.ELIMINAR,
+            formulario = new FormMantHabitaciones(this, this.habitacionSeleccionada, FormMantHabitaciones.ELIMINAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -391,7 +399,7 @@ public class FormListHabitaciones extends javax.swing.JDialog {
         // TODO add your handling code here:
         FormMantHabitaciones formulario;
 
-        formulario = new FormMantHabitaciones(this.conexionBD, this, true);
+        formulario = new FormMantHabitaciones(this, this.conexionBD, this, true);
         formulario.setVisible(true);
 
     }//GEN-LAST:event_botonAgregarMouseClicked

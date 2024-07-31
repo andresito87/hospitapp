@@ -31,6 +31,8 @@ public class FormMantPacientes extends javax.swing.JDialog {
     private ArrayList<VisitaMedica> visitasMedicas;
     private VisitaMedica visitaSeleccionada = null;
 
+    private FormularioListener listener;
+
 // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
     public FormMantPacientes(Connection conexionBD,
@@ -77,6 +79,61 @@ public class FormMantPacientes extends javax.swing.JDialog {
         this.setLocation(300, 50);
         this.setSize(1000, 750);
 
+        this.conexionBD = conexionBD;
+
+        this.pacienteActivo = paciente;
+        this.operacionActiva = operacion;
+
+        this.prepararFormulario();
+    }
+
+    public FormMantPacientes(FormularioListener listener, Connection conexionBD,
+            javax.swing.JDialog parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
+
+        this.setTitle("Información de Paciente");
+        this.setLocation(300, 50);
+        this.setSize(1000, 750);
+
+        this.listener = listener;
+        this.conexionBD = conexionBD;
+
+        this.desabilitarPestanhasEnModoAgregar();
+        this.prepararFormulario();
+
+    }
+
+    public FormMantPacientes(FormularioListener listener, long id, int operacion, Connection conexionBD,
+            javax.swing.JDialog parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
+
+        this.setTitle("Información de Paciente");
+        this.setLocation(300, 50);
+        this.setSize(1000, 750);
+
+        this.listener = listener;
+        this.conexionBD = conexionBD;
+
+        this.pacienteActivo = Paciente.getPaciente(id, conexionBD);
+        this.operacionActiva = operacion;
+
+        this.desabilitarPestanhasEnModoAgregar();
+        this.prepararFormulario();
+
+    }
+
+    public FormMantPacientes(FormularioListener listener, Paciente paciente, int operacion, Connection conexionBD,
+            javax.swing.JDialog parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
+
+        this.setTitle("Información de Paciente");
+        this.setLocation(300, 50);
+        this.setSize(1000, 750);
+
+        this.listener = listener;
         this.conexionBD = conexionBD;
 
         this.pacienteActivo = paciente;
@@ -265,6 +322,14 @@ public class FormMantPacientes extends javax.swing.JDialog {
         }
 
         return devolucion;
+    }
+    
+    @Override
+    public void dispose(){
+        super.dispose();
+        if(listener != null){
+            listener.cuandoCierraFormulario();
+        }
     }
 
     // </editor-fold>

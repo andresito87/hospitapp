@@ -19,7 +19,6 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
     private String mensaje;
     private boolean operacionAceptada;
     // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
     public FormAvisoUsuario(int tipoAviso,
             java.awt.Dialog parent,
@@ -41,7 +40,6 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
 
     }
     // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Métodos GET">
     public int getTipoAviso() {
         return tipoAviso;
@@ -55,7 +53,6 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
         return operacionAceptada;
     }
     // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Métodos SET">
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
@@ -65,7 +62,6 @@ public class FormAvisoUsuario extends javax.swing.JDialog {
         this.operacionAceptada = operacionAceptada;
     }
     // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Métodos personalizados">
     private String generarMensaje() {
         String mensajeDevuelto;

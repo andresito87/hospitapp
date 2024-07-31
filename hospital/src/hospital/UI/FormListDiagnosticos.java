@@ -14,144 +14,153 @@ import utils.Utils;
  *
  * @author andres
  */
-public class FormListDiagnosticos extends javax.swing.JDialog {
+public class FormListDiagnosticos extends javax.swing.JDialog implements FormularioListener {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private final Connection conexionBD;
-    private ArrayList<Diagnostico> listaDiagnosticos;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        private final Connection conexionBD;
+        private ArrayList<Diagnostico> listaDiagnosticos;
 
-    private Diagnostico diagnosticoSeleccionado = null;
+        private Diagnostico diagnosticoSeleccionado = null;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormListDiagnosticos(Connection conexionBD,
-            java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormListDiagnosticos(Connection conexionBD,
+                java.awt.Frame parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.setTitle("Listado de Diagnósticos");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+            this.setTitle("Listado de Diagnósticos");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.conexionBD = conexionBD;
+            this.conexionBD = conexionBD;
 
-    }
+        }
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
-    private boolean realizarConsulta() {
-        boolean devolucion;
-        LocalDate fechaInicio = null;
-        LocalDate fechaFin = null;
-        long idMedico = 0;
-        long idPaciente = 0;
-        int tipo = 0;
-
-        try {
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
+        private boolean realizarConsulta() {
+            boolean devolucion;
+            LocalDate fechaInicio = null;
+            LocalDate fechaFin = null;
+            long idMedico = 0;
+            long idPaciente = 0;
+            int tipo = 0;
 
             try {
-                fechaInicio = LocalDate.parse(this.textFechaInicio.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
 
+                try {
+                    fechaInicio = LocalDate.parse(this.textFechaInicio.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
+
+                }
+
+                try {
+                    fechaFin = LocalDate.parse(this.textFechaFin.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
+
+                }
+
+                if (!this.textIdMedico.getText().equals("")) {
+                    idMedico = Long.parseLong(this.textIdMedico.getText());
+                }
+
+                if (!this.textIdPaciente.getText().equals("")) {
+                    idPaciente = Long.parseLong(this.textIdPaciente.getText());
+                }
+
+                if (!this.textTipo.getText().equals("")) {
+                    tipo = Integer.parseInt(this.textTipo.getText());
+                }
+
+                this.listaDiagnosticos = Diagnostico.getDiagnosticos(
+                        this.checkFecha.isSelected(), fechaInicio, fechaFin,
+                        this.checkIdMedico.isSelected(), idMedico,
+                        this.checkIdPaciente.isSelected(), idPaciente,
+                        this.checkTipo.isSelected(), tipo,
+                        this.checkCodigo.isSelected(), this.textCodigo.getText(),
+                        this.checkDescripcion.isSelected(), this.textDescripcion.getText(),
+                        this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
+                        conexionBD);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaDiagnosticos() {
+            boolean devolucion;
+            int indice;
+            Diagnostico diagnosticoAux;
+            String[] linea = new String[7];
+
+            DefaultTableModel modeloTabla;
 
             try {
-                fechaFin = LocalDate.parse(this.textFechaFin.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                modeloTabla = this.configurarListaDiagnosticos();
+
+                for (indice = 0; indice < this.listaDiagnosticos.size(); indice++) {
+                    diagnosticoAux = this.listaDiagnosticos.get(indice);
+
+                    linea[0] = diagnosticoAux.getFecha().toString();
+                    linea[1] = Medico.getMedico(diagnosticoAux.getIdMedico(), conexionBD) == null ? null : Medico.getMedico(diagnosticoAux.getIdMedico(), conexionBD).getNombreFormalCompleto();
+                    linea[2] = Paciente.getPaciente(diagnosticoAux.getIdPaciente(), conexionBD) == null ? null : Paciente.getPaciente(diagnosticoAux.getIdPaciente(), conexionBD).getNombreFormalCompleto();
+                    linea[3] = Integer.toString(diagnosticoAux.getTipo());
+                    linea[4] = diagnosticoAux.getCodigo();
+                    linea[5] = diagnosticoAux.getDescripcion();
+                    linea[6] = diagnosticoAux.getObservaciones();
+
+                    modeloTabla.addRow(linea);
+                }
+                this.tablaDiagnosticos.setModel(modeloTabla);
+
+                devolucion = true;
             } catch (Exception ex) {
-
+                System.out.println(ex.getMessage());
+                devolucion = false;
             }
 
-            if (!this.textIdMedico.getText().equals("")) {
-                idMedico = Long.parseLong(this.textIdMedico.getText());
-            }
-
-            if (!this.textIdPaciente.getText().equals("")) {
-                idPaciente = Long.parseLong(this.textIdPaciente.getText());
-            }
-
-            if (!this.textTipo.getText().equals("")) {
-                tipo = Integer.parseInt(this.textTipo.getText());
-            }
-
-            this.listaDiagnosticos = Diagnostico.getDiagnosticos(
-                    this.checkFecha.isSelected(), fechaInicio, fechaFin,
-                    this.checkIdMedico.isSelected(), idMedico,
-                    this.checkIdPaciente.isSelected(), idPaciente,
-                    this.checkTipo.isSelected(), tipo,
-                    this.checkCodigo.isSelected(), this.textCodigo.getText(),
-                    this.checkDescripcion.isSelected(), this.textDescripcion.getText(),
-                    this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
-                    conexionBD);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        private DefaultTableModel configurarListaDiagnosticos() {
 
-    private boolean visualizarListaMedicos() {
-        boolean devolucion;
-        int indice;
-        Diagnostico diagnosticoAux;
-        String[] linea = new String[7];
+            DefaultTableModel devolucion;
 
-        DefaultTableModel modeloTabla;
+            try {
+                devolucion = new DefaultTableModel();
 
-        try {
+                devolucion.addColumn("Fecha");
+                devolucion.addColumn("Médico");
+                devolucion.addColumn("Paciente");
+                devolucion.addColumn("Tipo");
+                devolucion.addColumn("Código");
+                devolucion.addColumn("Descripción");
+                devolucion.addColumn("Observaciones");
 
-            modeloTabla = this.configurarListaDiagnosticos();
-
-            for (indice = 0; indice < this.listaDiagnosticos.size(); indice++) {
-                diagnosticoAux = this.listaDiagnosticos.get(indice);
-
-                linea[0] = diagnosticoAux.getFecha().toString();
-                linea[1] = Medico.getMedico(diagnosticoAux.getIdMedico(), conexionBD).getNombreFormalCompleto();
-                linea[2] = Paciente.getPaciente(diagnosticoAux.getIdMedico(), conexionBD).getNombreFormalCompleto();
-                linea[3] = Integer.toString(diagnosticoAux.getTipo());
-                linea[4] = diagnosticoAux.getCodigo();
-                linea[5] = diagnosticoAux.getDescripcion();
-                linea[6] = diagnosticoAux.getObservaciones();
-
-                modeloTabla.addRow(linea);
+            } catch (Exception ex) {
+                devolucion = null;
             }
-            this.tablaDiagnosticos.setModel(modeloTabla);
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
+
         }
 
-        return devolucion;
-    }
-
-    private DefaultTableModel configurarListaDiagnosticos() {
-
-        DefaultTableModel devolucion;
-
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("Fecha");
-            devolucion.addColumn("Médico");
-            devolucion.addColumn("Paciente");
-            devolucion.addColumn("Tipo");
-            devolucion.addColumn("Código");
-            devolucion.addColumn("Descripción");
-            devolucion.addColumn("Observaciones");
-
-        } catch (Exception ex) {
-            devolucion = null;
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Métodos de Interfaz">
+        @Override
+        public void cuandoCierraFormulario() {
+            this.realizarConsulta();
+            this.visualizarListaDiagnosticos();
         }
+    // </editor-fold>
 
-        return devolucion;
-
-    }
-
-// </editor-fold>
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -421,7 +430,7 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked
 
@@ -431,7 +440,7 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
     private void botonBuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonBuscarMouseClicked
 
         this.realizarConsulta();
-        this.visualizarListaMedicos();
+        this.visualizarListaDiagnosticos();
 
     }//GEN-LAST:event_botonBuscarMouseClicked
 
@@ -439,7 +448,7 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
 
         FormMantDiagnosticos formulario;
 
-        formulario = new FormMantDiagnosticos(this.conexionBD, this, true);
+        formulario = new FormMantDiagnosticos(this, this.conexionBD, this, true);
         formulario.setVisible(true);
 
     }//GEN-LAST:event_botonAgregarMouseClicked
@@ -453,7 +462,7 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
         if (this.diagnosticoSeleccionado != null
                 || tablaDiagnosticos.getSelectedRow() != -1
                 && !Utils.isRowEmpty(tablaDiagnosticos.getSelectedRow(), tablaDiagnosticos)) {
-            formulario = new FormMantDiagnosticos(this.diagnosticoSeleccionado, FormMantDiagnosticos.MODIFICAR,
+            formulario = new FormMantDiagnosticos(this, this.diagnosticoSeleccionado, FormMantDiagnosticos.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -474,7 +483,7 @@ public class FormListDiagnosticos extends javax.swing.JDialog {
 
         // Compruebo si hay un diagnostico seleccionado, evito errores en consola
         if (this.diagnosticoSeleccionado != null) {
-            formulario = new FormMantDiagnosticos(this.diagnosticoSeleccionado, FormMantDiagnosticos.ELIMINAR,
+            formulario = new FormMantDiagnosticos(this, this.diagnosticoSeleccionado, FormMantDiagnosticos.ELIMINAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {

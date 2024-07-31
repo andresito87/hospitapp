@@ -14,130 +14,138 @@ import utils.Utils;
  *
  * @author andres
  */
-public class FormListVisitasMedicas extends javax.swing.JDialog {
+public class FormListVisitasMedicas extends javax.swing.JDialog implements FormularioListener {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private final Connection conexionBD;
-    private ArrayList<VisitaMedica> listaVisitasMedicas;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        private final Connection conexionBD;
+        private ArrayList<VisitaMedica> listaVisitasMedicas;
 
-    private VisitaMedica visitaMedicaSelecionada = null;
+        private VisitaMedica visitaMedicaSelecionada = null;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormListVisitasMedicas(Connection conexionBD,
-            java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormListVisitasMedicas(Connection conexionBD,
+                java.awt.Frame parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.setTitle("Listado de Visitas Médicas");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+            this.setTitle("Listado de Visitas Médicas");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.conexionBD = conexionBD;
+            this.conexionBD = conexionBD;
 
-    }
+        }
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
-    private boolean realizarConsulta() {
-        boolean devolucion;
-        LocalDate fechaInicio = null;
-        LocalDate fechaFin = null;
-        long idMedico = 0;
-        long idPaciente = 0;
-
-        try {
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
+        private boolean realizarConsulta() {
+            boolean devolucion;
+            LocalDate fechaInicio = null;
+            LocalDate fechaFin = null;
+            long idMedico = 0;
+            long idPaciente = 0;
 
             try {
-                fechaInicio = LocalDate.parse(this.textFechaInicio.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
 
+                try {
+                    fechaInicio = LocalDate.parse(this.textFechaInicio.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
+
+                }
+
+                try {
+                    fechaFin = LocalDate.parse(this.textFechaFin.getText(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                } catch (Exception ex) {
+
+                }
+
+                if (!this.textIdMedico.getText().equals("")) {
+                    idMedico = Long.parseLong(this.textIdMedico.getText());
+                }
+
+                if (!this.textIdPaciente.getText().equals("")) {
+                    idPaciente = Long.parseLong(this.textIdPaciente.getText());
+                }
+
+                this.listaVisitasMedicas = VisitaMedica.getVisitasMedicas(
+                        this.checkFecha.isSelected(), fechaInicio, fechaFin,
+                        this.checkIdMedico.isSelected(), idMedico,
+                        this.checkIdPaciente.isSelected(), idPaciente,
+                        this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
+                        conexionBD);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaVisitasMedicas() {
+            boolean devolucion;
+            int indice;
+            VisitaMedica visitaMedicaAux;
+            String[] linea = new String[4];
+
+            DefaultTableModel modeloTabla;
 
             try {
-                fechaFin = LocalDate.parse(this.textFechaFin.getText(),
-                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                modeloTabla = this.configurarListaVisitasMedicas();
+
+                for (indice = 0; indice < this.listaVisitasMedicas.size(); indice++) {
+                    visitaMedicaAux = this.listaVisitasMedicas.get(indice);
+
+                    linea[0] = visitaMedicaAux.getFecha().toString();
+                    linea[1] = Medico.getMedico(visitaMedicaAux.getIdMedico(), conexionBD).getNombreFormalCompleto();
+                    linea[2] = Paciente.getPaciente(visitaMedicaAux.getIdPaciente(), conexionBD).getNombreFormalCompleto();
+                    linea[3] = visitaMedicaAux.getObservaciones();
+
+                    modeloTabla.addRow(linea);
+                }
+                this.tablaVisitasMedicas.setModel(modeloTabla);
+
+                devolucion = true;
             } catch (Exception ex) {
-
+                devolucion = false;
             }
 
-            if (!this.textIdMedico.getText().equals("")) {
-                idMedico = Long.parseLong(this.textIdMedico.getText());
-            }
-
-            if (!this.textIdPaciente.getText().equals("")) {
-                idPaciente = Long.parseLong(this.textIdPaciente.getText());
-            }
-
-            this.listaVisitasMedicas = VisitaMedica.getVisitasMedicas(
-                    this.checkFecha.isSelected(), fechaInicio, fechaFin,
-                    this.checkIdMedico.isSelected(), idMedico,
-                    this.checkIdPaciente.isSelected(), idPaciente,
-                    this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
-                    conexionBD);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        private DefaultTableModel configurarListaVisitasMedicas() {
 
-    private boolean visualizarListaVisitasMedicas() {
-        boolean devolucion;
-        int indice;
-        VisitaMedica visitaMedicaAux;
-        String[] linea = new String[4];
+            DefaultTableModel devolucion;
 
-        DefaultTableModel modeloTabla;
+            try {
+                devolucion = new DefaultTableModel();
 
-        try {
+                devolucion.addColumn("Fecha");
+                devolucion.addColumn("Médico");
+                devolucion.addColumn("Paciente");
+                devolucion.addColumn("Observaciones");
 
-            modeloTabla = this.configurarListaVisitasMedicas();
-
-            for (indice = 0; indice < this.listaVisitasMedicas.size(); indice++) {
-                visitaMedicaAux = this.listaVisitasMedicas.get(indice);
-
-                linea[0] = visitaMedicaAux.getFecha().toString();
-                linea[1] = Medico.getMedico(visitaMedicaAux.getIdMedico(), conexionBD).getNombreFormalCompleto();
-                linea[2] = Paciente.getPaciente(visitaMedicaAux.getIdPaciente(), conexionBD).getNombreFormalCompleto();
-                linea[3] = visitaMedicaAux.getObservaciones();
-
-                modeloTabla.addRow(linea);
+            } catch (Exception ex) {
+                devolucion = null;
             }
-            this.tablaVisitasMedicas.setModel(modeloTabla);
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
+
         }
 
-        return devolucion;
-    }
-
-    private DefaultTableModel configurarListaVisitasMedicas() {
-
-        DefaultTableModel devolucion;
-
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("Fecha");
-            devolucion.addColumn("Médico");
-            devolucion.addColumn("Paciente");
-            devolucion.addColumn("Observaciones");
-
-        } catch (Exception ex) {
-            devolucion = null;
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Métodos de Interfaz">
+        @Override
+        public void cuandoCierraFormulario() {
+            this.realizarConsulta();
+            this.visualizarListaVisitasMedicas();
         }
+    // </editor-fold>
 
-        return devolucion;
-
-    }
-
-// </editor-fold>
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -352,7 +360,7 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked
 
@@ -370,7 +378,7 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
 
         FormMantVisitasMedicas formulario;
 
-        formulario = new FormMantVisitasMedicas(this.conexionBD, this, true);
+        formulario = new FormMantVisitasMedicas(this, this.conexionBD, this, true);
         formulario.setVisible(true);
 
     }//GEN-LAST:event_botonAgregarMouseClicked
@@ -384,7 +392,7 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
         if (this.visitaMedicaSelecionada != null
                 || tablaVisitasMedicas.getSelectedRow() != -1
                 && !Utils.isRowEmpty(tablaVisitasMedicas.getSelectedRow(), tablaVisitasMedicas)) {
-            formulario = new FormMantVisitasMedicas(this.visitaMedicaSelecionada, FormMantVisitasMedicas.MODIFICAR,
+            formulario = new FormMantVisitasMedicas(this, this.visitaMedicaSelecionada, FormMantVisitasMedicas.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -405,7 +413,7 @@ public class FormListVisitasMedicas extends javax.swing.JDialog {
 
         // Compruebo si hay un visita medica seleccionada, evito errores en consola
         if (this.visitaMedicaSelecionada != null) {
-            formulario = new FormMantVisitasMedicas(this.visitaMedicaSelecionada, FormMantVisitasMedicas.ELIMINAR,
+            formulario = new FormMantVisitasMedicas(this, this.visitaMedicaSelecionada, FormMantVisitasMedicas.ELIMINAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {

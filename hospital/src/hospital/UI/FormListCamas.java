@@ -11,111 +11,119 @@ import utils.Utils;
  *
  * @author andres
  */
-public class FormListCamas extends javax.swing.JDialog {
+public class FormListCamas extends javax.swing.JDialog implements FormularioListener{
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    private final Connection conexionBD;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        private final Connection conexionBD;
 
-    ArrayList<Cama> listaCamas;
+        ArrayList<Cama> listaCamas;
 
-    Cama camaSeleccionada = null;
+        Cama camaSeleccionada = null;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormListCamas(Connection conexionBD,
-            java.awt.Frame parent,
-            boolean modal) {
-        super(parent, modal);
-        initComponents();
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormListCamas(Connection conexionBD,
+                java.awt.Frame parent,
+                boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.setTitle("Listado de Camas");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+            this.setTitle("Listado de Camas");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.conexionBD = conexionBD;
-    }
+            this.conexionBD = conexionBD;
+        }
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
-    private boolean realizarConsulta() {
-        boolean devolucion;
-        int tipo = -1;
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Realización de las consultas">
+        private boolean realizarConsulta() {
+            boolean devolucion;
+            int tipo = -1;
 
-        try {
+            try {
 
-            if (!this.textTipo.getText().equals("")) {
-                tipo = Integer.parseInt(this.textTipo.getText());
+                if (!this.textTipo.getText().equals("")) {
+                    tipo = Integer.parseInt(this.textTipo.getText());
+                }
+
+                this.listaCamas = Cama.getCamas(this.checkMarca.isSelected(), this.textMarca.getText(),
+                        this.checkModelo.isSelected(), this.textModelo.getText(),
+                        this.checkTipo.isSelected(), tipo,
+                        this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
+                        conexionBD);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+            return devolucion;
+        }
+
+        private boolean visualizarListaCamas() {
+            boolean devolucion;
+            int VIndice;
+            Cama camaAux;
+            String[] Linea = new String[4];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+
+                modeloTabla = this.configurarListaCamas();
+
+                for (VIndice = 0; VIndice < this.listaCamas.size(); VIndice++) {
+                    camaAux = this.listaCamas.get(VIndice);
+
+                    String descripcionCama = TipoCama.fromCodigo(camaAux.getTipo()).getDescripcion();
+                    Linea[0] = camaAux.getMarca();
+                    Linea[1] = camaAux.getModelo();
+                    Linea[2] = Long.toString(camaAux.getTipo()) + " - " + descripcionCama;
+                    Linea[3] = camaAux.getObservaciones();
+
+                    modeloTabla.addRow(Linea);
+                }
+
+                this.tablaCamas.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+                devolucion = false;
             }
 
-            this.listaCamas = Cama.getCamas(this.checkMarca.isSelected(), this.textMarca.getText(),
-                    this.checkModelo.isSelected(), this.textModelo.getText(),
-                    this.checkTipo.isSelected(), tipo,
-                    this.checkObservaciones.isSelected(), this.textObservaciones.getText(),
-                    conexionBD);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
-        return devolucion;
-    }
 
-    private boolean visualizarListaCamas() {
-        boolean devolucion;
-        int VIndice;
-        Cama camaAux;
-        String[] Linea = new String[4];
+        private DefaultTableModel configurarListaCamas() {
 
-        DefaultTableModel modeloTabla;
+            DefaultTableModel devolucion;
 
-        try {
+            try {
+                devolucion = new DefaultTableModel();
 
-            modeloTabla = this.configurarListaCamas();
+                devolucion.addColumn("Marca");
+                devolucion.addColumn("Modelo");
+                devolucion.addColumn("Tipo");
+                devolucion.addColumn("Observaciones");
 
-            for (VIndice = 0; VIndice < this.listaCamas.size(); VIndice++) {
-                camaAux = this.listaCamas.get(VIndice);
-
-                String descripcionCama = TipoCama.fromCodigo(camaAux.getTipo()).getDescripcion();
-                Linea[0] = camaAux.getMarca();
-                Linea[1] = camaAux.getModelo();
-                Linea[2] = Long.toString(camaAux.getTipo()) +" - "+ descripcionCama;
-                Linea[3] = camaAux.getObservaciones();
-
-                modeloTabla.addRow(Linea);
+            } catch (Exception ex) {
+                devolucion = null;
             }
 
-            this.tablaCamas.setModel(modeloTabla);
+            return devolucion;
 
-            devolucion = true;
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            devolucion = false;
         }
 
-        return devolucion;
-    }
-
-    private DefaultTableModel configurarListaCamas() {
-
-        DefaultTableModel devolucion;
-
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("Marca");
-            devolucion.addColumn("Modelo");
-            devolucion.addColumn("Tipo");
-            devolucion.addColumn("Observaciones");
-
-        } catch (Exception ex) {
-            devolucion = null;
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Métodos de Interfaz">
+        @Override
+        public void cuandoCierraFormulario() {
+            this.realizarConsulta();
+            this.visualizarListaCamas();
         }
+    // </editor-fold>
 
-        return devolucion;
-
-    }
-
-// </editor-fold>
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -312,7 +320,7 @@ public class FormListCamas extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonConsultarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonConsultarMouseClicked
         // TODO add your handling code here:
@@ -344,7 +352,7 @@ public class FormListCamas extends javax.swing.JDialog {
         if (this.camaSeleccionada != null
                 || tablaCamas.getSelectedRow() != -1
                 && !Utils.isRowEmpty(tablaCamas.getSelectedRow(), tablaCamas)) {
-            formulario = new FormMantCamas(this.camaSeleccionada, FormMantCamas.MODIFICAR,
+            formulario = new FormMantCamas(this, this.camaSeleccionada, FormMantCamas.MODIFICAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -365,7 +373,7 @@ public class FormListCamas extends javax.swing.JDialog {
 
         // Compruebo si hay un paciente seleccionado, evito errores en consola
         if (this.camaSeleccionada != null) {
-            formulario = new FormMantCamas(this.camaSeleccionada, FormMantCamas.ELIMINAR,
+            formulario = new FormMantCamas(this, this.camaSeleccionada, FormMantCamas.ELIMINAR,
                     this.conexionBD, this, true);
             formulario.setVisible(true);
         } else {
@@ -383,7 +391,7 @@ public class FormListCamas extends javax.swing.JDialog {
         // TODO add your handling code here:
         FormMantCamas formulario;
 
-        formulario = new FormMantCamas(this.conexionBD, this, true);
+        formulario = new FormMantCamas(this, this.conexionBD, this, true);
         formulario.setVisible(true);
 
     }//GEN-LAST:event_botonAgregarMouseClicked

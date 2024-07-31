@@ -14,307 +14,319 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FormMantCamas extends javax.swing.JDialog {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    public static final int AGREGAR = 0;
-    public static final int MODIFICAR = 1;
-    public static final int ELIMINAR = 2;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        public static final int AGREGAR = 0;
+        public static final int MODIFICAR = 1;
+        public static final int ELIMINAR = 2;
 
-    private final Connection conexionBD;
+        private final Connection conexionBD;
 
-    private Cama camaActiva = null;
+        private Cama camaActiva = null;
 
-    private int operacionActiva = AGREGAR;
+        private int operacionActiva = AGREGAR;
 
-    private ArrayList<Paciente> pacientes;
-    private ArrayList<Habitacion> habitaciones;
-    private Paciente pacienteSeleccionado;
+        private ArrayList<Paciente> pacientes;
+        private ArrayList<Habitacion> habitaciones;
+        private Paciente pacienteSeleccionado;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormMantCamas(Connection conexionBD,
-            javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
+        private final FormularioListener listener;
 
-        this.setTitle("Información de Cama");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormMantCamas(FormularioListener listener, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.conexionBD = conexionBD;
+            this.setTitle("Información de Cama");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.desabilitarPestanhasEnModoAgregar();
-        this.prepararFormulario();
+            this.listener = listener;
+            this.conexionBD = conexionBD;
 
-    }
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
 
-    public FormMantCamas(Cama cama, int operacion, Connection conexionBD,
-            javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-
-        this.setTitle("Información de Cama");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
-
-        this.conexionBD = conexionBD;
-        this.camaActiva = cama;
-        this.operacionActiva = operacion;
-
-        this.desabilitarPestanhasEnModoAgregar();
-        this.prepararFormulario();
-
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
-    private void desabilitarPestanhasEnModoAgregar() {
-
-        if (operacionActiva == FormMantCamas.AGREGAR) {
-
-            panelFichas.setEnabledAt(1, false);
-            panelFichas.setEnabledAt(2, false);
         }
-    }
 
-    private boolean prepararFormulario() {
-        boolean devolucion;
+        public FormMantCamas(FormularioListener listener, Cama cama, int operacion, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        try {
-            this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
-            this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
-            this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
+            this.setTitle("Información de Cama");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-            this.cargarDatosComboCamaInterfaz();
-            if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
-                devolucion = this.cargarDatosInterfaz();
-            } else {
-                devolucion = true;
+            this.listener = listener;
+            this.conexionBD = conexionBD;
+            this.camaActiva = cama;
+            this.operacionActiva = operacion;
+
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
+        private void desabilitarPestanhasEnModoAgregar() {
+
+            if (operacionActiva == FormMantCamas.AGREGAR) {
+
+                panelFichas.setEnabledAt(1, false);
+                panelFichas.setEnabledAt(2, false);
             }
-
-        } catch (Exception ex) {
-            devolucion = false;
         }
 
-        return devolucion;
-    }
+        private boolean prepararFormulario() {
+            boolean devolucion;
 
-    public boolean cargarDatosInterfaz() {
-        boolean devolucion;
+            try {
+                this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
+                this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
+                this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
 
-        try {
-            if (this.camaActiva != null) {
-                devolucion = this.cargarDatosGeneralesInterfaz();
-                devolucion = this.cargarListaPacientesInterfaz() && devolucion;
-                devolucion = this.cargarListaHabitacionesInterfaz() && devolucion;
-            } else {
+                this.cargarDatosComboCamaInterfaz();
+                if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
+                    devolucion = this.cargarDatosInterfaz();
+                } else {
+                    devolucion = true;
+                }
+
+            } catch (Exception ex) {
                 devolucion = false;
             }
-        } catch (Exception ex) {
-            devolucion = false;
+
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        public boolean cargarDatosInterfaz() {
+            boolean devolucion;
 
-    public boolean cargarDatosGeneralesInterfaz() {
-        boolean devolucion;
-
-        try {
-            this.textMarca.setText(this.camaActiva.getMarca());
-            this.textModelo.setText(this.camaActiva.getModelo());
-            // Resto 1 al tipo para acoplar los datos de la BD al enum TipoCama
-            this.comboBoxTipoCama.setSelectedIndex(this.camaActiva.getTipo() - 1);
-            this.textObservaciones.setText(this.camaActiva.getObservaciones());
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean recogerDatosInterfaz() {
-        boolean devolucion;
-
-        try {
-            if (this.camaActiva == null) {
-                this.camaActiva = new Cama(this.conexionBD);
-            }
-
-            this.camaActiva.setData(this.textMarca.getText(),
-                    this.textModelo.getText(),
-                    this.comboBoxTipoCama.getSelectedIndex() + 1,
-                    this.textObservaciones.getText());
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean cargarDatosComboCamaInterfaz() {
-        boolean devolucion;
-        try {
-            comboBoxTipoCama.removeAllItems(); // Limpiar el combo box antes de rellenar
-
-            for (TipoCama tipo : TipoCama.values()) {
-                comboBoxTipoCama.addItem(tipo.getCodigo() + " - " + tipo.getDescripcion());
-            }
-
-            // Si necesitas seleccionar un valor específico en el combo box
-            long camaSeleccionada = 0; // Esto debería ser el valor que quieres seleccionar
-            TipoCama tipoSeleccionado = TipoCama.fromCodigo((int) camaSeleccionada);
-
-            for (int i = 0; i < comboBoxTipoCama.getItemCount(); i++) {
-                if (comboBoxTipoCama.getItemAt(i).startsWith(tipoSeleccionado.getCodigo() + " -")) {
-                    comboBoxTipoCama.setSelectedIndex(i);
-                    break;
+            try {
+                if (this.camaActiva != null) {
+                    devolucion = this.cargarDatosGeneralesInterfaz();
+                    devolucion = this.cargarListaPacientesInterfaz() && devolucion;
+                    devolucion = this.cargarListaHabitacionesInterfaz() && devolucion;
+                } else {
+                    devolucion = false;
                 }
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        public boolean cargarDatosGeneralesInterfaz() {
+            boolean devolucion;
 
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Pacientes">
-    public boolean cargarListaPacientesInterfaz() {
-        boolean devolucion;
+            try {
+                this.textMarca.setText(this.camaActiva.getMarca());
+                this.textModelo.setText(this.camaActiva.getModelo());
+                // Resto 1 al tipo para acoplar los datos de la BD al enum TipoCama
+                this.comboBoxTipoCama.setSelectedIndex(this.camaActiva.getTipo() - 1);
+                this.textObservaciones.setText(this.camaActiva.getObservaciones());
 
-        try {
-            this.pacientes = this.camaActiva.getTodosPacientes();
-
-            this.visualizarListaPacientes();
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean visualizarListaPacientes() {
-        boolean devolucion;
-        int indice;
-        Paciente pacienteAux;
-        String[] linea = new String[3];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-            modeloTabla = this.configurarListaPacientes();
-
-            for (indice = 0; indice < this.pacientes.size(); indice++) {
-                pacienteAux = this.pacientes.get(indice);
-
-                linea[0] = pacienteAux.getNombre();
-                linea[1] = pacienteAux.getApellido1();
-                linea[2] = pacienteAux.getApellido2();
-
-                modeloTabla.addRow(linea);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            this.tablaPacientes.setModel(modeloTabla);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        private boolean recogerDatosInterfaz() {
+            boolean devolucion;
 
-    private DefaultTableModel configurarListaPacientes() {
+            try {
+                if (this.camaActiva == null) {
+                    this.camaActiva = new Cama(this.conexionBD);
+                }
 
-        DefaultTableModel devolucion;
+                this.camaActiva.setData(this.textMarca.getText(),
+                        this.textModelo.getText(),
+                        this.comboBoxTipoCama.getSelectedIndex() + 1,
+                        this.textObservaciones.getText());
 
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("Nombre");
-            devolucion.addColumn("Primer Apellido");
-            devolucion.addColumn("Segundo Apellido");
-
-        } catch (Exception ex) {
-            devolucion = null;
-        }
-
-        return devolucion;
-
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de las habitaciones">
-    public boolean cargarListaHabitacionesInterfaz() {
-        boolean devolucion;
-
-        try {
-            this.habitaciones = Paciente.getHabitaciones(pacientes);
-
-            this.visualizarListaHabitaciones();
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean visualizarListaHabitaciones() {
-        boolean devolucion;
-        int indice;
-        Habitacion habitacionAux;
-        String[] linea = new String[2];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-            modeloTabla = this.configurarListaHabitaciones();
-
-            for (indice = 0; indice < this.habitaciones.size(); indice++) {
-                habitacionAux = this.habitaciones.get(indice);
-
-                linea[0] = String.valueOf(habitacionAux.getNumHabitacion());
-                linea[1] = String.valueOf(habitacionAux.getNumPlanta());
-                modeloTabla.addRow(linea);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
-            this.tablaHabitaciones.setModel(modeloTabla);
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        private boolean cargarDatosComboCamaInterfaz() {
+            boolean devolucion;
+            try {
+                comboBoxTipoCama.removeAllItems(); // Limpiar el combo box antes de rellenar
 
-    private DefaultTableModel configurarListaHabitaciones() {
+                for (TipoCama tipo : TipoCama.values()) {
+                    comboBoxTipoCama.addItem(tipo.getCodigo() + " - " + tipo.getDescripcion());
+                }
 
-        DefaultTableModel devolucion;
+                // Si necesitas seleccionar un valor específico en el combo box
+                long camaSeleccionada = 0; // Esto debería ser el valor que quieres seleccionar
+                TipoCama tipoSeleccionado = TipoCama.fromCodigo((int) camaSeleccionada);
 
-        try {
-            devolucion = new DefaultTableModel();
+                for (int i = 0; i < comboBoxTipoCama.getItemCount(); i++) {
+                    if (comboBoxTipoCama.getItemAt(i).startsWith(tipoSeleccionado.getCodigo() + " -")) {
+                        comboBoxTipoCama.setSelectedIndex(i);
+                        break;
+                    }
+                }
 
-            devolucion.addColumn("Número");
-            devolucion.addColumn("Planta");
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
 
-        } catch (Exception ex) {
-            devolucion = null;
+            return devolucion;
         }
 
-        return devolucion;
+        @Override
+        public void dispose(){
+            super.dispose();
+            if(listener != null){
+                listener.cuandoCierraFormulario();
+            }
+        }
 
-    }
-// </editor-fold>
-// </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Carga de datos de los Pacientes">
+        public boolean cargarListaPacientesInterfaz() {
+            boolean devolucion;
+
+            try {
+                this.pacientes = this.camaActiva.getTodosPacientes();
+
+                this.visualizarListaPacientes();
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaPacientes() {
+            boolean devolucion;
+            int indice;
+            Paciente pacienteAux;
+            String[] linea = new String[3];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+                modeloTabla = this.configurarListaPacientes();
+
+                for (indice = 0; indice < this.pacientes.size(); indice++) {
+                    pacienteAux = this.pacientes.get(indice);
+
+                    linea[0] = pacienteAux.getNombre();
+                    linea[1] = pacienteAux.getApellido1();
+                    linea[2] = pacienteAux.getApellido2();
+
+                    modeloTabla.addRow(linea);
+                }
+
+                this.tablaPacientes.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaPacientes() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("Nombre");
+                devolucion.addColumn("Primer Apellido");
+                devolucion.addColumn("Segundo Apellido");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Carga de datos de las habitaciones">
+        public boolean cargarListaHabitacionesInterfaz() {
+            boolean devolucion;
+
+            try {
+                this.habitaciones = Paciente.getHabitaciones(pacientes);
+
+                this.visualizarListaHabitaciones();
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaHabitaciones() {
+            boolean devolucion;
+            int indice;
+            Habitacion habitacionAux;
+            String[] linea = new String[2];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+                modeloTabla = this.configurarListaHabitaciones();
+
+                for (indice = 0; indice < this.habitaciones.size(); indice++) {
+                    habitacionAux = this.habitaciones.get(indice);
+
+                    linea[0] = String.valueOf(habitacionAux.getNumHabitacion());
+                    linea[1] = String.valueOf(habitacionAux.getNumPlanta());
+                    modeloTabla.addRow(linea);
+                }
+                this.tablaHabitaciones.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaHabitaciones() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("Número");
+                devolucion.addColumn("Planta");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+    // </editor-fold>
+    // </editor-fold>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -611,7 +623,7 @@ public class FormMantCamas extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked
         // TODO add your handling code here:

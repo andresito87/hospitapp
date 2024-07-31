@@ -15,378 +15,390 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FormMantDiagnosticos extends javax.swing.JDialog {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    public static final int AGREGAR = 0;
-    public static final int MODIFICAR = 1;
-    public static final int ELIMINAR = 2;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        public static final int AGREGAR = 0;
+        public static final int MODIFICAR = 1;
+        public static final int ELIMINAR = 2;
 
-    private final Connection conexionBD;
+        private final Connection conexionBD;
 
-    private Diagnostico diagnosticoActivo = null;
+        private Diagnostico diagnosticoActivo = null;
 
-    private int operacionActiva = AGREGAR;
+        private int operacionActiva = AGREGAR;
 
-    private ArrayList<Medico> medicos;
-    private ArrayList<Paciente> pacientes;
+        private ArrayList<Medico> medicos;
+        private ArrayList<Paciente> pacientes;
 
-    private Medico medicoSeleccionado = null;
-    private Paciente pacienteSeleccionado = null;
+        private Medico medicoSeleccionado = null;
+        private Paciente pacienteSeleccionado = null;
 
-    private int indiceMedicoSeleccionado;
-    private int indicePacienteSeleccionado;
+        private int indiceMedicoSeleccionado;
+        private int indicePacienteSeleccionado;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormMantDiagnosticos(Connection conexionBD,
-            javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
+        private final FormularioListener listener;
 
-        this.setTitle("Información de Diagnóstico");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormMantDiagnosticos(FormularioListener listener, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.conexionBD = conexionBD;
+            this.setTitle("Información de Diagnóstico");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.desabilitarPestanhasEnModoAgregar();
-        this.prepararFormulario();
+            this.listener = listener;
+            this.conexionBD = conexionBD;
 
-    }
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
 
-    public FormMantDiagnosticos(Diagnostico diagnostico, int operacion, Connection conexionBD,
-            javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-
-        this.setTitle("Información de Diagnóstico");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
-
-        this.conexionBD = conexionBD;
-        this.diagnosticoActivo = diagnostico;
-        this.operacionActiva = operacion;
-
-        this.desabilitarPestanhasEnModoAgregar();
-        this.prepararFormulario();
-
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
-    private void desabilitarPestanhasEnModoAgregar() {
-
-        if (operacionActiva == FormMantDiagnosticos.AGREGAR) {
-
-            panelFichas.setEnabledAt(1, false);
-            panelFichas.setEnabledAt(2, false);
         }
-    }
 
-    private boolean prepararFormulario() {
-        boolean devolucion;
+        public FormMantDiagnosticos(FormularioListener listener, Diagnostico diagnostico, int operacion, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        try {
-            this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
-            this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
-            this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
+            this.setTitle("Información de Diagnóstico");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-            if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
-                devolucion = this.cargarDatosInterfaz();
-            } else {
-                this.cargarDatosComboBoxMedicosInterfaz();
-                this.cargarDatosComboBoxPacientesInterfaz();
-                devolucion = true;
+            this.listener = listener;
+            this.conexionBD = conexionBD;
+            this.diagnosticoActivo = diagnostico;
+            this.operacionActiva = operacion;
+
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
+        private void desabilitarPestanhasEnModoAgregar() {
+
+            if (operacionActiva == FormMantDiagnosticos.AGREGAR) {
+
+                panelFichas.setEnabledAt(1, false);
+                panelFichas.setEnabledAt(2, false);
             }
-
-        } catch (Exception ex) {
-            devolucion = false;
         }
 
-        return devolucion;
-    }
+        private boolean prepararFormulario() {
+            boolean devolucion;
 
-    public boolean cargarDatosInterfaz() {
-        boolean devolucion;
+            try {
+                this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
+                this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
+                this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
 
-        try {
-            if (this.diagnosticoActivo != null) {
-                devolucion = this.cargarDatosGeneralesInterfaz();
-                devolucion = this.cargarDatosComboBoxMedicosInterfaz() && devolucion;
-                devolucion = this.cargarDatosComboBoxPacientesInterfaz() && devolucion;
-                devolucion = this.cargarListaMedicosInterfaz() && devolucion;
-                devolucion = this.cargarListaPacientesInterfaz() && devolucion;
-            } else {
+                if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
+                    devolucion = this.cargarDatosInterfaz();
+                } else {
+                    this.cargarDatosComboBoxMedicosInterfaz();
+                    this.cargarDatosComboBoxPacientesInterfaz();
+                    devolucion = true;
+                }
+
+            } catch (Exception ex) {
                 devolucion = false;
             }
-        } catch (Exception ex) {
-            devolucion = false;
+
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        public boolean cargarDatosInterfaz() {
+            boolean devolucion;
 
-    public boolean cargarDatosGeneralesInterfaz() {
-        boolean devolucion;
-        String fecha = null;
-        try {
-            fecha = LocalDate.parse(this.diagnosticoActivo.getFecha().toString())
-                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        } catch (Exception ex) {
-        }
-
-        try {
-            this.textFecha.setText(fecha);
-            this.comboBoxPacientes.setSelectedIndex(this.indicePacienteSeleccionado);
-            this.comboBoxMedicos.setSelectedIndex(this.indiceMedicoSeleccionado);
-            this.textTipo.setText(Integer.toString(this.diagnosticoActivo.getTipo()));
-            this.textCodigo.setText(this.diagnosticoActivo.getCodigo());
-            this.textDescripcion.setText(this.diagnosticoActivo.getDescripcion());
-            this.textObservaciones.setText(this.diagnosticoActivo.getObservaciones());
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean recogerDatosInterfaz() {
-        boolean devolucion;
-
-        try {
-            if (this.diagnosticoActivo == null) {
-                this.diagnosticoActivo = new Diagnostico(this.conexionBD);
-            }
-
-            medicoSeleccionado = Medico.getTodosMedicos(conexionBD).get(indiceMedicoSeleccionado);
-            pacienteSeleccionado = Paciente.getTodosPacientes(conexionBD).get(indicePacienteSeleccionado);
-
-            this.diagnosticoActivo.setData(
-                    LocalDate.parse(this.textFecha.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                    this.medicoSeleccionado.getId(),
-                    this.pacienteSeleccionado.getId(),
-                    Integer.parseInt(this.textTipo.getText()),
-                    this.textCodigo.getText(),
-                    this.textDescripcion.getText(),
-                    this.textObservaciones.getText()
-            );
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    public boolean cargarDatosComboBoxMedicosInterfaz() {
-        boolean devolucion;
-        Medico medicoAux;
-        int indice;
-        String cadenaComboAux;
-        long medicoSeleccionado = 0;
-        int indiceSeleccionado = 0;
-
-        this.comboBoxMedicos.removeAllItems(); // Limpiar el combo box antes de rellenar
-
-        try {
-            if (this.diagnosticoActivo != null) {
-                medicoSeleccionado = this.diagnosticoActivo.getIdMedico();
-            }
-            medicos = Medico.getTodosMedicos(this.conexionBD);
-
-            if (medicos != null) {
-                for (indice = 0; indice < medicos.size(); indice++) {
-                    medicoAux = medicos.get(indice);
-
-                    cadenaComboAux = medicoAux.getNumColegiado() + " - " + medicoAux.getNombreFormalCompleto();
-                    this.comboBoxMedicos.addItem(cadenaComboAux);
-
-                    if (medicoAux.getId() == medicoSeleccionado) {
-                        indiceSeleccionado = indice;
-                    }
+            try {
+                if (this.diagnosticoActivo != null) {
+                    devolucion = this.cargarDatosGeneralesInterfaz();
+                    devolucion = this.cargarDatosComboBoxMedicosInterfaz() && devolucion;
+                    devolucion = this.cargarDatosComboBoxPacientesInterfaz() && devolucion;
+                    devolucion = this.cargarListaMedicosInterfaz() && devolucion;
+                    devolucion = this.cargarListaPacientesInterfaz() && devolucion;
+                } else {
+                    devolucion = false;
                 }
-                this.comboBoxMedicos.setSelectedIndex(indiceSeleccionado);
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
-
-    public boolean cargarDatosComboBoxPacientesInterfaz() {
-        boolean devolucion;
-        Paciente pacienteAux;
-        int indice;
-        String cadenaComboAux;
-        long pacienteSeleccionado = 0;
-        int indiceSeleccionado = 0;
-
-        this.comboBoxPacientes.removeAllItems(); // Limpiar el combo box antes de rellenar
-
-        try {
-            if (this.diagnosticoActivo != null) {
-                pacienteSeleccionado = this.diagnosticoActivo.getIdPaciente();
+        public boolean cargarDatosGeneralesInterfaz() {
+            boolean devolucion;
+            String fecha = null;
+            try {
+                fecha = LocalDate.parse(this.diagnosticoActivo.getFecha().toString())
+                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (Exception ex) {
             }
-            pacientes = Paciente.getTodosPacientes(this.conexionBD);
 
-            if (pacientes != null) {
-                for (indice = 0; indice < pacientes.size(); indice++) {
-                    pacienteAux = pacientes.get(indice);
+            try {
+                this.textFecha.setText(fecha);
+                this.comboBoxPacientes.setSelectedIndex(this.indicePacienteSeleccionado);
+                this.comboBoxMedicos.setSelectedIndex(this.indiceMedicoSeleccionado);
+                this.textTipo.setText(Integer.toString(this.diagnosticoActivo.getTipo()));
+                this.textCodigo.setText(this.diagnosticoActivo.getCodigo());
+                this.textDescripcion.setText(this.diagnosticoActivo.getDescripcion());
+                this.textObservaciones.setText(this.diagnosticoActivo.getObservaciones());
 
-                    cadenaComboAux = pacienteAux.getDni() + " - " + pacienteAux.getNombreFormalCompleto();
-                    this.comboBoxPacientes.addItem(cadenaComboAux);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
 
-                    if (pacienteAux.getId() == pacienteSeleccionado) {
-                        indiceSeleccionado = indice;
-                    }
+            return devolucion;
+        }
+
+        private boolean recogerDatosInterfaz() {
+            boolean devolucion;
+
+            try {
+                if (this.diagnosticoActivo == null) {
+                    this.diagnosticoActivo = new Diagnostico(this.conexionBD);
                 }
-                this.comboBoxPacientes.setSelectedIndex(indiceSeleccionado);
+
+                medicoSeleccionado = Medico.getTodosMedicos(conexionBD).get(indiceMedicoSeleccionado);
+                pacienteSeleccionado = Paciente.getTodosPacientes(conexionBD).get(indicePacienteSeleccionado);
+
+                this.diagnosticoActivo.setData(
+                        LocalDate.parse(this.textFecha.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        this.medicoSeleccionado.getId(),
+                        this.pacienteSeleccionado.getId(),
+                        Integer.parseInt(this.textTipo.getText()),
+                        this.textCodigo.getText(),
+                        this.textDescripcion.getText(),
+                        this.textObservaciones.getText()
+                );
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        public boolean cargarDatosComboBoxMedicosInterfaz() {
+            boolean devolucion;
+            Medico medicoAux;
+            int indice;
+            String cadenaComboAux;
+            long medicoSeleccionado = 0;
+            int indiceSeleccionado = 0;
 
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Médicos">
-    public boolean cargarListaMedicosInterfaz() {
-        boolean devolucion;
+            this.comboBoxMedicos.removeAllItems(); // Limpiar el combo box antes de rellenar
 
-        try {
-            this.medicos = Medico.getMedicosConDiag(this.diagnosticoActivo.getId(), conexionBD);
+            try {
+                if (this.diagnosticoActivo != null) {
+                    medicoSeleccionado = this.diagnosticoActivo.getIdMedico();
+                }
+                medicos = Medico.getTodosMedicos(this.conexionBD);
 
-            this.visualizarListaMedicos();
+                if (medicos != null) {
+                    for (indice = 0; indice < medicos.size(); indice++) {
+                        medicoAux = medicos.get(indice);
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
+                        cadenaComboAux = medicoAux.getNumColegiado() + " - " + medicoAux.getNombreFormalCompleto();
+                        this.comboBoxMedicos.addItem(cadenaComboAux);
 
-        return devolucion;
-    }
+                        if (medicoAux.getId() == medicoSeleccionado) {
+                            indiceSeleccionado = indice;
+                        }
+                    }
+                    this.comboBoxMedicos.setSelectedIndex(indiceSeleccionado);
+                }
 
-    private boolean visualizarListaMedicos() {
-        boolean devolucion;
-        int indice;
-        Medico medicoAux;
-        String[] linea = new String[2];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-            modeloTabla = this.configurarListaMedicos();
-
-            for (indice = 0; indice < this.medicos.size(); indice++) {
-                medicoAux = this.medicos.get(indice);
-
-                linea[0] = Long.toString(medicoAux.getNumColegiado());
-                linea[1] = medicoAux.getNombreFormalCompleto();
-
-                modeloTabla.addRow(linea);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            this.tablaMedicos.setModel(modeloTabla);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        public boolean cargarDatosComboBoxPacientesInterfaz() {
+            boolean devolucion;
+            Paciente pacienteAux;
+            int indice;
+            String cadenaComboAux;
+            long pacienteSeleccionado = 0;
+            int indiceSeleccionado = 0;
 
-    private DefaultTableModel configurarListaMedicos() {
+            this.comboBoxPacientes.removeAllItems(); // Limpiar el combo box antes de rellenar
 
-        DefaultTableModel devolucion;
+            try {
+                if (this.diagnosticoActivo != null) {
+                    pacienteSeleccionado = this.diagnosticoActivo.getIdPaciente();
+                }
+                pacientes = Paciente.getTodosPacientes(this.conexionBD);
 
-        try {
-            devolucion = new DefaultTableModel();
+                if (pacientes != null) {
+                    for (indice = 0; indice < pacientes.size(); indice++) {
+                        pacienteAux = pacientes.get(indice);
 
-            devolucion.addColumn("Número Colegiado");
-            devolucion.addColumn("Nombre Completo");
+                        cadenaComboAux = pacienteAux.getDni() + " - " + pacienteAux.getNombreFormalCompleto();
+                        this.comboBoxPacientes.addItem(cadenaComboAux);
 
-        } catch (Exception ex) {
-            devolucion = null;
-        }
+                        if (pacienteAux.getId() == pacienteSeleccionado) {
+                            indiceSeleccionado = indice;
+                        }
+                    }
+                    this.comboBoxPacientes.setSelectedIndex(indiceSeleccionado);
+                }
 
-        return devolucion;
-
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Pacientes">
-    public boolean cargarListaPacientesInterfaz() {
-        boolean devolucion;
-
-        try {
-            this.pacientes = Paciente.getPacientesConDiag(this.diagnosticoActivo.getId(), conexionBD);
-            this.visualizarListaPacientes();
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean visualizarListaPacientes() {
-        boolean devolucion;
-        int indice;
-        Paciente pacienteAux;
-        String[] linea = new String[3];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-            modeloTabla = this.configurarListaPacientes();
-
-            for (indice = 0; indice < this.pacientes.size(); indice++) {
-                pacienteAux = this.pacientes.get(indice);
-
-                linea[0] = pacienteAux.getDni();
-                linea[1] = pacienteAux.getNombreFormalCompleto();
-
-                modeloTabla.addRow(linea);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
-            this.tablaPacientes.setModel(modeloTabla);
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
-
-    private DefaultTableModel configurarListaPacientes() {
-
-        DefaultTableModel devolucion;
-
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("DNI");
-            devolucion.addColumn("Nombre Completo");
-
-        } catch (Exception ex) {
-            devolucion = null;
+        @Override
+        public void dispose() {
+            super.dispose();
+            if (listener != null) {
+                listener.cuandoCierraFormulario();
+            }
         }
 
-        return devolucion;
+    // <editor-fold defaultstate="collapsed" desc="Carga de datos de los Médicos">
+        public boolean cargarListaMedicosInterfaz() {
+            boolean devolucion;
 
-    }
+            try {
+                this.medicos = Medico.getMedicosConDiag(this.diagnosticoActivo.getId(), conexionBD);
 
-// </editor-fold>
-// </editor-fold>
+                this.visualizarListaMedicos();
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaMedicos() {
+            boolean devolucion;
+            int indice;
+            Medico medicoAux;
+            String[] linea = new String[2];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+                modeloTabla = this.configurarListaMedicos();
+
+                for (indice = 0; indice < this.medicos.size(); indice++) {
+                    medicoAux = this.medicos.get(indice);
+
+                    linea[0] = Long.toString(medicoAux.getNumColegiado());
+                    linea[1] = medicoAux.getNombreFormalCompleto();
+
+                    modeloTabla.addRow(linea);
+                }
+
+                this.tablaMedicos.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaMedicos() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("Número Colegiado");
+                devolucion.addColumn("Nombre Completo");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Carga de datos de los Pacientes">
+        public boolean cargarListaPacientesInterfaz() {
+            boolean devolucion;
+
+            try {
+                this.pacientes = Paciente.getPacientesConDiag(this.diagnosticoActivo.getId(), conexionBD);
+                this.visualizarListaPacientes();
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaPacientes() {
+            boolean devolucion;
+            int indice;
+            Paciente pacienteAux;
+            String[] linea = new String[3];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+                modeloTabla = this.configurarListaPacientes();
+
+                for (indice = 0; indice < this.pacientes.size(); indice++) {
+                    pacienteAux = this.pacientes.get(indice);
+
+                    linea[0] = pacienteAux.getDni();
+                    linea[1] = pacienteAux.getNombreFormalCompleto();
+
+                    modeloTabla.addRow(linea);
+                }
+                this.tablaPacientes.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaPacientes() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("DNI");
+                devolucion.addColumn("Nombre Completo");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+
+    // </editor-fold>
+    // </editor-fold>
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -715,7 +727,7 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked
         // TODO add your handling code here:

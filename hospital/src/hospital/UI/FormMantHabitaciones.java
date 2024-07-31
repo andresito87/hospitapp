@@ -1,6 +1,5 @@
 package hospital.UI;
 
-import hospital.kernel.Cama;
 import hospital.kernel.Habitacion;
 import hospital.kernel.Paciente;
 import java.sql.*;
@@ -13,276 +12,288 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FormMantHabitaciones extends javax.swing.JDialog {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    public static final int AGREGAR = 0;
-    public static final int MODIFICAR = 1;
-    public static final int ELIMINAR = 2;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        public static final int AGREGAR = 0;
+        public static final int MODIFICAR = 1;
+        public static final int ELIMINAR = 2;
 
-    private final Connection conexionBD;
+        private final Connection conexionBD;
 
-    private Habitacion habitacionActiva = null;
+        private Habitacion habitacionActiva = null;
 
-    private int operacionActiva = AGREGAR;
+        private int operacionActiva = AGREGAR;
 
-    private ArrayList<Paciente> pacientes;
-    private ArrayList<Habitacion> habitaciones;
-    private Paciente pacienteSeleccionado = null;
+        private ArrayList<Paciente> pacientes;
+        private ArrayList<Habitacion> habitaciones;
+        private Paciente pacienteSeleccionado = null;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormMantHabitaciones(Connection conexionBD,
-            javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
+        private final FormularioListener listener;
 
-        this.setTitle("Información de Habitación");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormMantHabitaciones(FormularioListener listener, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.conexionBD = conexionBD;
+            this.setTitle("Información de Habitación");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.desabilitarPestanhasEnModoAgregar();
-        this.prepararFormulario();
+            this.listener = listener;
+            this.conexionBD = conexionBD;
 
-    }
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
 
-    public FormMantHabitaciones(Habitacion habitacion, int operacion, Connection conexionBD,
-            javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-
-        this.setTitle("Información de Habitación");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
-
-        this.conexionBD = conexionBD;
-        this.habitacionActiva = habitacion;
-        this.operacionActiva = operacion;
-
-        this.desabilitarPestanhasEnModoAgregar();
-        this.prepararFormulario();
-
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
-    private void desabilitarPestanhasEnModoAgregar() {
-
-        if (operacionActiva == FormMantHabitaciones.AGREGAR) {
-
-            panelFichas.setEnabledAt(1, false);
         }
-    }
 
-    private boolean prepararFormulario() {
-        boolean devolucion;
+        public FormMantHabitaciones(FormularioListener listener, Habitacion habitacion, int operacion, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        try {
-            this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
-            this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
-            this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
+            this.setTitle("Información de Habitación");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-            if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
-                devolucion = this.cargarDatosInterfaz();
-            } else {
-                devolucion = true;
+            this.listener = listener;
+            this.conexionBD = conexionBD;
+            this.habitacionActiva = habitacion;
+            this.operacionActiva = operacion;
+
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
+        private void desabilitarPestanhasEnModoAgregar() {
+
+            if (operacionActiva == FormMantHabitaciones.AGREGAR) {
+
+                panelFichas.setEnabledAt(1, false);
             }
-
-        } catch (Exception ex) {
-            devolucion = false;
         }
 
-        return devolucion;
-    }
+        private boolean prepararFormulario() {
+            boolean devolucion;
 
-    public boolean cargarDatosInterfaz() {
-        boolean devolucion;
+            try {
+                this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
+                this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
+                this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
 
-        try {
-            if (this.habitacionActiva != null) {
-                devolucion = this.cargarDatosGeneralesInterfaz();
-                devolucion = this.cargarListaPacientesInterfaz() && devolucion;
-            } else {
+                if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
+                    devolucion = this.cargarDatosInterfaz();
+                } else {
+                    devolucion = true;
+                }
+
+            } catch (Exception ex) {
                 devolucion = false;
             }
-        } catch (Exception ex) {
-            devolucion = false;
+
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        public boolean cargarDatosInterfaz() {
+            boolean devolucion;
 
-    public boolean cargarDatosGeneralesInterfaz() {
-        boolean devolucion;
-
-        try {
-            this.textNumHabitacion.setText(Integer.toString(this.habitacionActiva.getNumHabitacion()));
-            this.textPlanta.setText(Integer.toString(this.habitacionActiva.getNumPlanta()));
-            this.textPlazas.setText(Integer.toString(this.habitacionActiva.getNumPlazas()));
-            this.textObservaciones.setText(this.habitacionActiva.getObservaciones());
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean recogerDatosInterfaz() {
-        boolean devolucion;
-
-        try {
-            if (this.habitacionActiva == null) {
-                this.habitacionActiva = new Habitacion(this.conexionBD);
+            try {
+                if (this.habitacionActiva != null) {
+                    devolucion = this.cargarDatosGeneralesInterfaz();
+                    devolucion = this.cargarListaPacientesInterfaz() && devolucion;
+                } else {
+                    devolucion = false;
+                }
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            this.habitacionActiva.setData(
-                    Integer.parseInt(this.textNumHabitacion.getText()),
-                    Integer.parseInt(this.textPlanta.getText()),
-                    Integer.parseInt(this.textPlazas.getText()),
-                    this.textObservaciones.getText()
-            );
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        public boolean cargarDatosGeneralesInterfaz() {
+            boolean devolucion;
 
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Pacientes">
-    public boolean cargarListaPacientesInterfaz() {
-        boolean devolucion;
+            try {
+                this.textNumHabitacion.setText(Integer.toString(this.habitacionActiva.getNumHabitacion()));
+                this.textPlanta.setText(Integer.toString(this.habitacionActiva.getNumPlanta()));
+                this.textPlazas.setText(Integer.toString(this.habitacionActiva.getNumPlazas()));
+                this.textObservaciones.setText(this.habitacionActiva.getObservaciones());
 
-        try {
-            this.pacientes = Habitacion.getTodosPacientes(this.habitacionActiva.getId(),conexionBD);
-
-            this.visualizarListaPacientes();
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean visualizarListaPacientes() {
-        boolean devolucion;
-        int indice;
-        Paciente pacienteAux;
-        String[] linea = new String[3];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-            modeloTabla = this.configurarListaPacientes();
-
-            for (indice = 0; indice < this.pacientes.size(); indice++) {
-                pacienteAux = this.pacientes.get(indice);
-
-                linea[0] = pacienteAux.getNombre();
-                linea[1] = pacienteAux.getApellido1();
-                linea[2] = pacienteAux.getApellido2();
-
-                modeloTabla.addRow(linea);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
 
-            this.tablaPacientes.setModel(modeloTabla);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        private boolean recogerDatosInterfaz() {
+            boolean devolucion;
 
-    private DefaultTableModel configurarListaPacientes() {
+            try {
+                if (this.habitacionActiva == null) {
+                    this.habitacionActiva = new Habitacion(this.conexionBD);
+                }
 
-        DefaultTableModel devolucion;
+                this.habitacionActiva.setData(
+                        Integer.parseInt(this.textNumHabitacion.getText()),
+                        Integer.parseInt(this.textPlanta.getText()),
+                        Integer.parseInt(this.textPlazas.getText()),
+                        this.textObservaciones.getText()
+                );
 
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("Nombre");
-            devolucion.addColumn("Primer Apellido");
-            devolucion.addColumn("Segundo Apellido");
-
-        } catch (Exception ex) {
-            devolucion = null;
-        }
-
-        return devolucion;
-
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de las habitaciones">
-    public boolean cargarListaHabitacionesInterfaz() {
-        boolean devolucion;
-
-        try {
-            this.habitaciones = Paciente.getHabitaciones(pacientes);
-
-            this.visualizarListaHabitaciones();
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean visualizarListaHabitaciones() {
-        boolean devolucion;
-        int indice;
-        Habitacion habitacionAux;
-        String[] linea = new String[2];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-            modeloTabla = this.configurarListaHabitaciones();
-
-            for (indice = 0; indice < this.habitaciones.size(); indice++) {
-                habitacionAux = this.habitaciones.get(indice);
-
-                linea[0] = String.valueOf(habitacionAux.getNumHabitacion());
-                linea[1] = String.valueOf(habitacionAux.getNumPlanta());
-                modeloTabla.addRow(linea);
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
-            this.tablaPacientes.setModel(modeloTabla);
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
-
-    private DefaultTableModel configurarListaHabitaciones() {
-
-        DefaultTableModel devolucion;
-
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("Número");
-            devolucion.addColumn("Planta");
-
-        } catch (Exception ex) {
-            devolucion = null;
+        @Override
+        public void dispose() {
+            super.dispose();
+            if (listener != null) {
+                listener.cuandoCierraFormulario();
+            }
         }
 
-        return devolucion;
+    // <editor-fold defaultstate="collapsed" desc="Carga de datos de los Pacientes">
+        public boolean cargarListaPacientesInterfaz() {
+            boolean devolucion;
 
-    }
-// </editor-fold>
-// </editor-fold>
+            try {
+                this.pacientes = Habitacion.getTodosPacientes(this.habitacionActiva.getId(), conexionBD);
+
+                this.visualizarListaPacientes();
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaPacientes() {
+            boolean devolucion;
+            int indice;
+            Paciente pacienteAux;
+            String[] linea = new String[3];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+                modeloTabla = this.configurarListaPacientes();
+
+                for (indice = 0; indice < this.pacientes.size(); indice++) {
+                    pacienteAux = this.pacientes.get(indice);
+
+                    linea[0] = pacienteAux.getNombre();
+                    linea[1] = pacienteAux.getApellido1();
+                    linea[2] = pacienteAux.getApellido2();
+
+                    modeloTabla.addRow(linea);
+                }
+
+                this.tablaPacientes.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaPacientes() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("Nombre");
+                devolucion.addColumn("Primer Apellido");
+                devolucion.addColumn("Segundo Apellido");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Carga de datos de las habitaciones">
+        public boolean cargarListaHabitacionesInterfaz() {
+            boolean devolucion;
+
+            try {
+                this.habitaciones = Paciente.getHabitaciones(pacientes);
+
+                this.visualizarListaHabitaciones();
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaHabitaciones() {
+            boolean devolucion;
+            int indice;
+            Habitacion habitacionAux;
+            String[] linea = new String[2];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+                modeloTabla = this.configurarListaHabitaciones();
+
+                for (indice = 0; indice < this.habitaciones.size(); indice++) {
+                    habitacionAux = this.habitaciones.get(indice);
+
+                    linea[0] = String.valueOf(habitacionAux.getNumHabitacion());
+                    linea[1] = String.valueOf(habitacionAux.getNumPlanta());
+                    modeloTabla.addRow(linea);
+                }
+                this.tablaPacientes.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaHabitaciones() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("Número");
+                devolucion.addColumn("Planta");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+    // </editor-fold>
+    // </editor-fold>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -523,7 +534,7 @@ public class FormMantHabitaciones extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked
         // TODO add your handling code here:
@@ -584,7 +595,7 @@ public class FormMantHabitaciones extends javax.swing.JDialog {
     private void botonModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonModificarMouseClicked
         // TODO add your handling code here:
         if (this.recogerDatosInterfaz() == true) {
-            if ( this.habitacionActiva.modificar()) {
+            if (this.habitacionActiva.modificar()) {
                 FormAvisoUsuario formularioAviso;
                 formularioAviso = new FormAvisoUsuario(
                         FormAvisoUsuario.OPERACION_EXITOSA,
@@ -613,8 +624,8 @@ public class FormMantHabitaciones extends javax.swing.JDialog {
         if (this.pacientes != null) {
             this.pacienteSeleccionado = this.pacientes.get(this.tablaPacientes.getSelectedRow());
 
-            if (Paciente.getPaciente(pacienteSeleccionado.getId(),conexionBD) != null) {
-                formularioPaciente = new FormMantPacientes(Paciente.getPaciente(pacienteSeleccionado.getId(),conexionBD),
+            if (Paciente.getPaciente(pacienteSeleccionado.getId(), conexionBD) != null) {
+                formularioPaciente = new FormMantPacientes(Paciente.getPaciente(pacienteSeleccionado.getId(), conexionBD),
                         FormMantPacientes.MODIFICAR,
                         this.conexionBD, this, true);
                 formularioPaciente.setVisible(true);

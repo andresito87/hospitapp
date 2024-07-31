@@ -14,311 +14,357 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FormMantMedicos extends javax.swing.JDialog {
 
-// <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-    public static final int AGREGAR = 0;
-    public static final int MODIFICAR = 1;
-    public static final int ELIMINAR = 2;
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
+        public static final int AGREGAR = 0;
+        public static final int MODIFICAR = 1;
+        public static final int ELIMINAR = 2;
 
-    private Connection conexionBD;
+        private final Connection conexionBD;
 
-    private Medico medicoActivo = null;
+        private Medico medicoActivo = null;
 
-    private int operacionActiva = AGREGAR;
+        private int operacionActiva = AGREGAR;
 
-    private ArrayList<Diagnostico> diagnosticos;
+        private ArrayList<Diagnostico> diagnosticos;
 
-    private ArrayList<VisitaMedica> visitasMedicas;
-    private VisitaMedica visitaSeleccionada = null;
+        private ArrayList<VisitaMedica> visitasMedicas;
+        private VisitaMedica visitaSeleccionada = null;
 
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-    public FormMantMedicos(Connection conexionBD,
-            javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
+        private FormularioListener listener;
 
-        this.setTitle("Información de Médico");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
+        public FormMantMedicos(Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        this.conexionBD = conexionBD;
+            this.setTitle("Información de Médico");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-        this.desabilitarPestanhasEnModoAgregar();
-        this.prepararFormulario();
+            this.conexionBD = conexionBD;
 
-    }
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
 
-    public FormMantMedicos(Medico medico, int operacion, Connection conexionBD,
-            javax.swing.JDialog parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-
-        this.setTitle("Información de Médico");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
-
-        this.conexionBD = conexionBD;
-        this.medicoActivo = medico;
-        this.operacionActiva = operacion;
-
-        this.desabilitarPestanhasEnModoAgregar();
-        this.prepararFormulario();
-
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
-    private void desabilitarPestanhasEnModoAgregar() {
-
-        if (operacionActiva == FormMantMedicos.AGREGAR) {
-
-            panelFichas.setEnabledAt(1, false);
-            panelFichas.setEnabledAt(2, false);
         }
-    }
 
-    private boolean prepararFormulario() {
-        boolean devolucion;
+        public FormMantMedicos(Medico medico, int operacion, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
 
-        try {
-            this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
-            this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
-            this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
+            this.setTitle("Información de Médico");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
 
-            if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
-                devolucion = this.cargarDatosInterfaz();
-            } else {
-                devolucion = true;
+            this.conexionBD = conexionBD;
+            this.medicoActivo = medico;
+            this.operacionActiva = operacion;
+
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
+
+        }
+
+        public FormMantMedicos(FormularioListener listener, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
+
+            this.setTitle("Información de Médico");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
+
+            this.listener = listener;
+            this.conexionBD = conexionBD;
+
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
+
+        }
+
+        public FormMantMedicos(FormularioListener listener, Medico medico, int operacion, Connection conexionBD,
+                javax.swing.JDialog parent, boolean modal) {
+            super(parent, modal);
+            initComponents();
+
+            this.setTitle("Información de Médico");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
+
+            this.listener = listener;
+            this.conexionBD = conexionBD;
+            this.medicoActivo = medico;
+            this.operacionActiva = operacion;
+
+            this.desabilitarPestanhasEnModoAgregar();
+            this.prepararFormulario();
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
+        private void desabilitarPestanhasEnModoAgregar() {
+
+            if (operacionActiva == FormMantMedicos.AGREGAR) {
+
+                panelFichas.setEnabledAt(1, false);
+                panelFichas.setEnabledAt(2, false);
             }
-
-        } catch (Exception ex) {
-            devolucion = false;
         }
 
-        return devolucion;
-    }
+        private boolean prepararFormulario() {
+            boolean devolucion;
 
-    public boolean cargarDatosInterfaz() {
-        boolean devolucion;
+            try {
+                this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
+                this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
+                this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
 
-        try {
-            if (this.medicoActivo != null) {
-                devolucion = this.cargarDatosGeneralesInterfaz();
-                devolucion = this.cargarListaDiagnosticosInterfaz() && devolucion;
-                devolucion = this.cargarListaVisitasMedicasInterfaz() && devolucion;
-            } else {
+                if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
+                    devolucion = this.cargarDatosInterfaz();
+                } else {
+                    devolucion = true;
+                }
+
+            } catch (Exception ex) {
                 devolucion = false;
             }
-        } catch (Exception ex) {
-            devolucion = false;
+
+            return devolucion;
         }
 
-        return devolucion;
-    }
+        public boolean cargarDatosInterfaz() {
+            boolean devolucion;
 
-    public boolean cargarDatosGeneralesInterfaz() {
-        boolean devolucion;
-
-        try {
-
-            this.textNumColegiado.setText(Long.toString(this.medicoActivo.getNumColegiado()));
-            this.textNombre.setText(this.medicoActivo.getNombre());
-            this.textApellido1.setText(this.medicoActivo.getApellido1());
-            this.textApellido2.setText(this.medicoActivo.getApellido2());
-            this.textObservaciones.setText(this.medicoActivo.getObservaciones());
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean recogerDatosInterfaz() {
-        boolean devolucion;
-
-        try {
-            if (this.medicoActivo == null) {
-                this.medicoActivo = new Medico(this.conexionBD);
-            }
-            
-            String nombre =  this.textNombre.getText();
-            String apellido1 = this.textApellido1.getText();
-            String apellido2 = this.textApellido2.getText();
-
-            // Verifica si los campos están vacíos
-            if (nombre == null || nombre.trim().isEmpty()) {
-                throw new Exception("El campo nombre es obligatorio.");
-            }
-            if (apellido1 == null || apellido1.trim().isEmpty()) {
-                throw new Exception("El campo apellido1 es obligatorio.");
-            }
-            if (apellido2 == null || apellido2.trim().isEmpty()) {
-                throw new Exception("El campo apellido2 es obligatorio.");
-            }
-
-            this.medicoActivo.setData(Long.parseLong(this.textNumColegiado.getText()),
-                    this.textNombre.getText(),
-                    this.textApellido1.getText(),
-                    this.textApellido2.getText(),
-                    this.textObservaciones.getText());
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Diagnósticos">
-    public boolean cargarListaDiagnosticosInterfaz() {
-        boolean devolucion;
-
-        try {
-            this.diagnosticos = this.medicoActivo.getDiagnosticos();
-
-            this.visualizarListaDiagnosticos();
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean visualizarListaDiagnosticos() {
-        boolean devolucion;
-        int indice;
-        Diagnostico diagnosticoAux;
-        Paciente pacienteAux;
-        String[] linea = new String[3];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-            modeloTabla = this.configurarListaDiagnosticos();
-
-            for (indice = 0; indice < this.diagnosticos.size(); indice++) {
-                diagnosticoAux = this.diagnosticos.get(indice);
-
-                linea[0] = diagnosticoAux.getCodigo();
-                linea[1] = diagnosticoAux.getFecha().toString();
-
-                pacienteAux = diagnosticoAux.getPaciente();
-                if (pacienteAux != null) {
-                    linea[2] = pacienteAux.getNombreFormalCompleto();
+            try {
+                if (this.medicoActivo != null) {
+                    devolucion = this.cargarDatosGeneralesInterfaz();
+                    devolucion = this.cargarListaDiagnosticosInterfaz() && devolucion;
+                    devolucion = this.cargarListaVisitasMedicasInterfaz() && devolucion;
                 } else {
-                    linea[2] = "";
+                    devolucion = false;
+                }
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        public boolean cargarDatosGeneralesInterfaz() {
+            boolean devolucion;
+
+            try {
+
+                this.textNumColegiado.setText(Long.toString(this.medicoActivo.getNumColegiado()));
+                this.textNombre.setText(this.medicoActivo.getNombre());
+                this.textApellido1.setText(this.medicoActivo.getApellido1());
+                this.textApellido2.setText(this.medicoActivo.getApellido2());
+                this.textObservaciones.setText(this.medicoActivo.getObservaciones());
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean recogerDatosInterfaz() {
+            boolean devolucion;
+
+            try {
+                if (this.medicoActivo == null) {
+                    this.medicoActivo = new Medico(this.conexionBD);
                 }
 
-                modeloTabla.addRow(linea);
-            }
+                String nombre = this.textNombre.getText();
+                String apellido1 = this.textApellido1.getText();
+                String apellido2 = this.textApellido2.getText();
 
-            this.tablaDiagnosticos.setModel(modeloTabla);
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private DefaultTableModel configurarListaDiagnosticos() {
-
-        DefaultTableModel devolucion;
-
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("Código");
-            devolucion.addColumn("Fecha");
-            devolucion.addColumn("Paciente");
-
-        } catch (Exception ex) {
-            devolucion = null;
-        }
-
-        return devolucion;
-
-    }
-
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Carga de datos de los Visitas">
-    public boolean cargarListaVisitasMedicasInterfaz() {
-        boolean devolucion;
-
-        try {
-            this.visitasMedicas = this.medicoActivo.getVisitasMedicas();
-            this.visualizarListaVisitasMedicas();
-
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
-        }
-
-        return devolucion;
-    }
-
-    private boolean visualizarListaVisitasMedicas() {
-        boolean devolucion;
-        int indice;
-        VisitaMedica visitaMedicaAux;
-        Paciente pacienteAux;
-        String[] linea = new String[2];
-
-        DefaultTableModel modeloTabla;
-
-        try {
-            modeloTabla = this.configurarListaVisitasMedicas();
-
-            for (indice = 0; indice < this.visitasMedicas.size(); indice++) {
-                visitaMedicaAux = this.visitasMedicas.get(indice);
-
-                linea[0] = visitaMedicaAux.getFecha().toString();
-
-                pacienteAux = visitaMedicaAux.getPaciente();
-                if (pacienteAux != null) {
-                    linea[1] = pacienteAux.getNombreFormalCompleto();
-                } else {
-                    linea[1] = "";
+                // Verifica si los campos están vacíos
+                if (nombre == null || nombre.trim().isEmpty()) {
+                    throw new Exception("El campo nombre es obligatorio.");
+                }
+                if (apellido1 == null || apellido1.trim().isEmpty()) {
+                    throw new Exception("El campo apellido1 es obligatorio.");
+                }
+                if (apellido2 == null || apellido2.trim().isEmpty()) {
+                    throw new Exception("El campo apellido2 es obligatorio.");
                 }
 
-                modeloTabla.addRow(linea);
+                this.medicoActivo.setData(Long.parseLong(this.textNumColegiado.getText()),
+                        this.textNombre.getText(),
+                        this.textApellido1.getText(),
+                        this.textApellido2.getText(),
+                        this.textObservaciones.getText());
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
             }
-            this.tablaVisitasMedicas.setModel(modeloTabla);
 
-            devolucion = true;
-        } catch (Exception ex) {
-            devolucion = false;
+            return devolucion;
         }
 
-        return devolucion;
-    }
-
-    private DefaultTableModel configurarListaVisitasMedicas() {
-
-        DefaultTableModel devolucion;
-
-        try {
-            devolucion = new DefaultTableModel();
-
-            devolucion.addColumn("Fecha");
-            devolucion.addColumn("Paciente");
-
-        } catch (Exception ex) {
-            devolucion = null;
+        @Override
+        public void dispose() {
+            super.dispose();
+            if (listener != null) {
+                listener.cuandoCierraFormulario();
+            }
         }
 
-        return devolucion;
+    // <editor-fold defaultstate="collapsed" desc="Carga de datos de los Diagnósticos">
+        public boolean cargarListaDiagnosticosInterfaz() {
+            boolean devolucion;
 
-    }
+            try {
+                this.diagnosticos = this.medicoActivo.getDiagnosticos();
 
-// </editor-fold>
-// </editor-fold>
+                this.visualizarListaDiagnosticos();
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaDiagnosticos() {
+            boolean devolucion;
+            int indice;
+            Diagnostico diagnosticoAux;
+            Paciente pacienteAux;
+            String[] linea = new String[3];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+                modeloTabla = this.configurarListaDiagnosticos();
+
+                for (indice = 0; indice < this.diagnosticos.size(); indice++) {
+                    diagnosticoAux = this.diagnosticos.get(indice);
+
+                    linea[0] = diagnosticoAux.getCodigo();
+                    linea[1] = diagnosticoAux.getFecha().toString();
+
+                    pacienteAux = diagnosticoAux.getPaciente();
+                    if (pacienteAux != null) {
+                        linea[2] = pacienteAux.getNombreFormalCompleto();
+                    } else {
+                        linea[2] = "";
+                    }
+
+                    modeloTabla.addRow(linea);
+                }
+
+                this.tablaDiagnosticos.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaDiagnosticos() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("Código");
+                devolucion.addColumn("Fecha");
+                devolucion.addColumn("Paciente");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Carga de datos de los Visitas">
+        public boolean cargarListaVisitasMedicasInterfaz() {
+            boolean devolucion;
+
+            try {
+                this.visitasMedicas = this.medicoActivo.getVisitasMedicas();
+                this.visualizarListaVisitasMedicas();
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private boolean visualizarListaVisitasMedicas() {
+            boolean devolucion;
+            int indice;
+            VisitaMedica visitaMedicaAux;
+            Paciente pacienteAux;
+            String[] linea = new String[2];
+
+            DefaultTableModel modeloTabla;
+
+            try {
+                modeloTabla = this.configurarListaVisitasMedicas();
+
+                for (indice = 0; indice < this.visitasMedicas.size(); indice++) {
+                    visitaMedicaAux = this.visitasMedicas.get(indice);
+
+                    linea[0] = visitaMedicaAux.getFecha().toString();
+
+                    pacienteAux = visitaMedicaAux.getPaciente();
+                    if (pacienteAux != null) {
+                        linea[1] = pacienteAux.getNombreFormalCompleto();
+                    } else {
+                        linea[1] = "";
+                    }
+
+                    modeloTabla.addRow(linea);
+                }
+                this.tablaVisitasMedicas.setModel(modeloTabla);
+
+                devolucion = true;
+            } catch (Exception ex) {
+                devolucion = false;
+            }
+
+            return devolucion;
+        }
+
+        private DefaultTableModel configurarListaVisitasMedicas() {
+
+            DefaultTableModel devolucion;
+
+            try {
+                devolucion = new DefaultTableModel();
+
+                devolucion.addColumn("Fecha");
+                devolucion.addColumn("Paciente");
+
+            } catch (Exception ex) {
+                devolucion = null;
+            }
+
+            return devolucion;
+
+        }
+
+    // </editor-fold>
+    // </editor-fold>
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -600,7 +646,7 @@ public class FormMantMedicos extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
+    // <editor-fold defaultstate="collapsed" desc="Eventos del Formulario">
 
     private void botonSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_botonSalirMouseClicked
         // TODO add your handling code here:

@@ -8,57 +8,57 @@ import java.sql.*;
  */
 public class FormPrincipal extends javax.swing.JFrame {
     
-// <editor-fold defaultstate="collapsed" desc="Método Principal - Inicio">
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
+    // <editor-fold defaultstate="collapsed" desc="Método Principal - Inicio">
+        public static void main(String args[]) {
+            /* Set the Nimbus look and feel */
+            //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+            /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+             * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+             */
+            try {
+                for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                    if ("Nimbus".equals(info.getName())) {
+                        javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                        break;
+                    }
                 }
+            } catch (ClassNotFoundException ex) {
+                java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (InstantiationException ex) {
+                java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+                java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            //</editor-fold>
+
+            /* Create and display the form */
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    new FormPrincipal().setVisible(true);
+                }
+            });
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FormPrincipal().setVisible(true);
-            }
-        });
-    }
-// </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Atributos de la clase">
-    public final String SERVIDOR = "localhost";
-    public final String PUERTO = "3306";
-    public final String BASE_DATOS = "Hospital";
-    public final String USUARIO = "root";
-    public final String CONTRASENHA = "tiger";
-
-    private Connection conexionBD;
-
     // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Constructores de la clase">
-    public FormPrincipal() {
-        initComponents();
-        this.setTitle("Hospitalator: Gestión de hospitales");
-        this.setLocation(300, 50);
-        this.setSize(1000, 750);
-    }
-    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Atributos de la clase">
+        public final String SERVIDOR = "localhost";
+        public final String PUERTO = "3306";
+        public final String BASE_DATOS = "Hospital";
+        public final String USUARIO = "root";
+        public final String CONTRASENHA = "tiger";
+
+        private Connection conexionBD;
+
+        // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Constructores de la clase">
+        public FormPrincipal() {
+            initComponents();
+            this.setTitle("Hospitalator: Gestión de hospitales");
+            this.setLocation(300, 50);
+            this.setSize(1000, 750);
+        }
+        // </editor-fold>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -173,7 +173,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-// <editor-fold defaultstate="collapsed" desc="Eventos del formulario">    
+    // <editor-fold defaultstate="collapsed" desc="Eventos del formulario">    
     private void opcionSalirMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_opcionSalirMousePressed
         // TODO add your handling code here:
 
@@ -260,7 +260,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         formulario.setVisible(true);
     }//GEN-LAST:event_opcionVisitasMedicasMousePressed
     // </editor-fold>
-// <editor-fold defaultstate="collapsed" desc="Métodos de Conexión a la Base de Datos">
+    // <editor-fold defaultstate="collapsed" desc="Métodos de Conexión a la Base de Datos">
     public Connection conectarBD(String direccionServer, String puertoServer,
             String baseDatos, String usuario, String password) {
         Connection devolucion;
