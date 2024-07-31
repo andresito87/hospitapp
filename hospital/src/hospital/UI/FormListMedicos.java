@@ -1,5 +1,6 @@
 package hospital.UI;
 
+import hospital.kernel.FormularioListener;
 import hospital.kernel.Medico;
 import java.sql.*;
 import java.util.ArrayList;

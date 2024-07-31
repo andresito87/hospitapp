@@ -1,5 +1,6 @@
 package hospital.UI;
 
+import hospital.kernel.FormularioListener;
 import hospital.kernel.Diagnostico;
 import hospital.kernel.Medico;
 import hospital.kernel.Paciente;

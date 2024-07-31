@@ -1,5 +1,6 @@
 package hospital.UI;
 
+import hospital.kernel.FormularioListener;
 import hospital.kernel.Paciente;
 import java.sql.*;
 import java.time.LocalDate;

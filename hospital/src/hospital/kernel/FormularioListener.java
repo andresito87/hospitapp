@@ -1,4 +1,4 @@
-package hospital.UI;
+package hospital.kernel;
 
 /**
  *
