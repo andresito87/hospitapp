@@ -17,386 +17,407 @@ import javax.swing.table.DefaultTableModel;
 public class FormMantDiagnosticos extends javax.swing.JDialog {
 
     // <editor-fold defaultstate="collapsed" desc="Atributos de la Clase">
-        public static final int AGREGAR = 0;
-        public static final int MODIFICAR = 1;
-        public static final int ELIMINAR = 2;
+    public static final int AGREGAR = 0;
+    public static final int MODIFICAR = 1;
+    public static final int ELIMINAR = 2;
 
-        private final Connection conexionBD;
+    private final Connection conexionBD;
 
-        private Diagnostico diagnosticoActivo = null;
+    private Diagnostico diagnosticoActivo = null;
 
-        private int operacionActiva = AGREGAR;
+    private int operacionActiva = AGREGAR;
 
-        private ArrayList<Medico> medicos;
-        private ArrayList<Paciente> pacientes;
+    private ArrayList<Medico> medicos;
+    private ArrayList<Paciente> pacientes;
 
-        private Medico medicoSeleccionado = null;
-        private Paciente pacienteSeleccionado = null;
+    private Medico medicoSeleccionado = null;
+    private Paciente pacienteSeleccionado = null;
 
-        private int indiceMedicoSeleccionado;
-        private int indicePacienteSeleccionado;
+    private int indiceMedicoSeleccionado;
+    private int indicePacienteSeleccionado;
 
-        private final FormularioListener listener;
+    private final FormularioListener listener;
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Constructores de la Clase">
-        public FormMantDiagnosticos(FormularioListener listener, Connection conexionBD,
-                javax.swing.JDialog parent, boolean modal) {
-            super(parent, modal);
-            initComponents();
+    public FormMantDiagnosticos(FormularioListener listener, Connection conexionBD,
+            javax.swing.JDialog parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
 
-            this.setTitle("Información de Diagnóstico");
-            this.setLocation(300, 50);
-            this.setSize(1000, 750);
+        this.setTitle("Información de Diagnóstico");
+        this.setLocation(300, 50);
+        this.setSize(1000, 750);
 
-            this.listener = listener;
-            this.conexionBD = conexionBD;
+        this.listener = listener;
+        this.conexionBD = conexionBD;
 
-            this.desabilitarPestanhasEnModoAgregar();
-            this.prepararFormulario();
+        this.agregarFechaActualEnModoAgregar();
+        this.deshabilitarPestanhasEnModoAgregar();
+        this.deshabilitarTextFecha();
+        this.prepararFormulario();
 
-        }
+    }
 
-        public FormMantDiagnosticos(FormularioListener listener, Diagnostico diagnostico, int operacion, Connection conexionBD,
-                javax.swing.JDialog parent, boolean modal) {
-            super(parent, modal);
-            initComponents();
+    public FormMantDiagnosticos(FormularioListener listener, Diagnostico diagnostico, int operacion, Connection conexionBD,
+            javax.swing.JDialog parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
 
-            this.setTitle("Información de Diagnóstico");
-            this.setLocation(300, 50);
-            this.setSize(1000, 750);
+        this.setTitle("Información de Diagnóstico");
+        this.setLocation(300, 50);
+        this.setSize(1000, 750);
 
-            this.listener = listener;
-            this.conexionBD = conexionBD;
-            this.diagnosticoActivo = diagnostico;
-            this.operacionActiva = operacion;
+        this.listener = listener;
+        this.conexionBD = conexionBD;
+        this.diagnosticoActivo = diagnostico;
+        this.operacionActiva = operacion;
 
-            this.desabilitarPestanhasEnModoAgregar();
-            this.prepararFormulario();
+        this.agregarFechaActualEnModoAgregar();
+        this.deshabilitarPestanhasEnModoAgregar();
+        this.deshabilitarTextFecha();
+        this.prepararFormulario();
 
-        }
+    }
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Gestión del Formulario">
-        private void desabilitarPestanhasEnModoAgregar() {
-
-            if (operacionActiva == FormMantDiagnosticos.AGREGAR) {
-
-                panelFichas.setEnabledAt(1, false);
-                panelFichas.setEnabledAt(2, false);
-            }
+    private void deshabilitarPestanhasEnModoAgregar() {
+        if (operacionActiva == FormMantDiagnosticos.AGREGAR) {
+            panelFichas.setEnabledAt(1, false);
+            panelFichas.setEnabledAt(2, false);
         }
+    }
 
-        private boolean prepararFormulario() {
-            boolean devolucion;
-
-            try {
-                this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
-                this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
-                this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
-
-                if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
-                    devolucion = this.cargarDatosInterfaz();
-                } else {
-                    this.cargarDatosComboBoxMedicosInterfaz();
-                    this.cargarDatosComboBoxPacientesInterfaz();
-                    devolucion = true;
-                }
-
-            } catch (Exception ex) {
-                devolucion = false;
-            }
-
-            return devolucion;
+    private void agregarFechaActualEnModoAgregar() {
+        if (operacionActiva == FormMantDiagnosticos.AGREGAR) {
+            this.textFecha.setText(this.calcularFechaActual());
         }
+    }
 
-        public boolean cargarDatosInterfaz() {
-            boolean devolucion;
+    private String calcularFechaActual() {
+        LocalDate fechaActual = LocalDate.now();
+        DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return fechaActual.format(formateador);
+    }
+    
+    private void deshabilitarTextFecha(){
+        this.textFecha.setEnabled(false);
+    }
 
-            try {
-                if (this.diagnosticoActivo != null) {
-                    devolucion = this.cargarDatosGeneralesInterfaz();
-                    devolucion = this.cargarDatosComboBoxMedicosInterfaz() && devolucion;
-                    devolucion = this.cargarDatosComboBoxPacientesInterfaz() && devolucion;
-                    devolucion = this.cargarListaMedicosInterfaz() && devolucion;
-                    devolucion = this.cargarListaPacientesInterfaz() && devolucion;
-                } else {
-                    devolucion = false;
-                }
-            } catch (Exception ex) {
-                devolucion = false;
-            }
+    private boolean prepararFormulario() {
+        boolean devolucion;
 
-            return devolucion;
-        }
+        try {
+            this.botonAgregar.setVisible(this.operacionActiva == AGREGAR);
+            this.botonModificar.setVisible(this.operacionActiva == MODIFICAR);
+            this.botonEliminar.setVisible(this.operacionActiva == ELIMINAR);
 
-        public boolean cargarDatosGeneralesInterfaz() {
-            boolean devolucion;
-            String fecha = null;
-            try {
-                fecha = LocalDate.parse(this.diagnosticoActivo.getFecha().toString())
-                        .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            } catch (Exception ex) {
-            }
-
-            try {
-                this.textFecha.setText(fecha);
-                this.comboBoxPacientes.setSelectedIndex(this.indicePacienteSeleccionado);
-                this.comboBoxMedicos.setSelectedIndex(this.indiceMedicoSeleccionado);
-                this.textTipo.setText(Integer.toString(this.diagnosticoActivo.getTipo()));
-                this.textCodigo.setText(this.diagnosticoActivo.getCodigo());
-                this.textDescripcion.setText(this.diagnosticoActivo.getDescripcion());
-                this.textObservaciones.setText(this.diagnosticoActivo.getObservaciones());
-
+            if (this.operacionActiva == MODIFICAR || this.operacionActiva == ELIMINAR) {
+                devolucion = this.cargarDatosInterfaz();
+            } else {
+                this.cargarDatosComboBoxMedicosInterfaz();
+                this.cargarDatosComboBoxPacientesInterfaz();
                 devolucion = true;
-            } catch (Exception ex) {
-                devolucion = false;
             }
 
-            return devolucion;
+        } catch (Exception ex) {
+            devolucion = false;
         }
 
-        private boolean recogerDatosInterfaz() {
-            boolean devolucion;
+        return devolucion;
+    }
 
-            try {
-                if (this.diagnosticoActivo == null) {
-                    this.diagnosticoActivo = new Diagnostico(this.conexionBD);
-                }
+    public boolean cargarDatosInterfaz() {
+        boolean devolucion;
 
-                medicoSeleccionado = Medico.getTodosMedicos(conexionBD).get(indiceMedicoSeleccionado);
-                pacienteSeleccionado = Paciente.getTodosPacientes(conexionBD).get(indicePacienteSeleccionado);
-
-                this.diagnosticoActivo.setData(
-                        LocalDate.parse(this.textFecha.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                        this.medicoSeleccionado.getId(),
-                        this.pacienteSeleccionado.getId(),
-                        Integer.parseInt(this.textTipo.getText()),
-                        this.textCodigo.getText(),
-                        this.textDescripcion.getText(),
-                        this.textObservaciones.getText()
-                );
-
-                devolucion = true;
-            } catch (Exception ex) {
+        try {
+            if (this.diagnosticoActivo != null) {
+                devolucion = this.cargarDatosGeneralesInterfaz();
+                devolucion = this.cargarDatosComboBoxMedicosInterfaz() && devolucion;
+                devolucion = this.cargarDatosComboBoxPacientesInterfaz() && devolucion;
+                devolucion = this.cargarListaMedicosInterfaz() && devolucion;
+                devolucion = this.cargarListaPacientesInterfaz() && devolucion;
+            } else {
                 devolucion = false;
             }
-
-            return devolucion;
+        } catch (Exception ex) {
+            devolucion = false;
         }
 
-        public boolean cargarDatosComboBoxMedicosInterfaz() {
-            boolean devolucion;
-            Medico medicoAux;
-            int indice;
-            String cadenaComboAux;
-            long medicoSeleccionado = 0;
-            int indiceSeleccionado = 0;
+        return devolucion;
+    }
 
-            this.comboBoxMedicos.removeAllItems(); // Limpiar el combo box antes de rellenar
+    public boolean cargarDatosGeneralesInterfaz() {
+        boolean devolucion;
+        String fecha = null;
+        try {
+            fecha = LocalDate.parse(this.diagnosticoActivo.getFecha().toString())
+                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (Exception ex) {
+        }
 
-            try {
-                if (this.diagnosticoActivo != null) {
-                    medicoSeleccionado = this.diagnosticoActivo.getIdMedico();
-                }
-                medicos = Medico.getTodosMedicos(this.conexionBD);
+        try {
+            this.textFecha.setText(fecha);
+            this.comboBoxPacientes.setSelectedIndex(this.indicePacienteSeleccionado);
+            this.comboBoxMedicos.setSelectedIndex(this.indiceMedicoSeleccionado);
+            this.textTipo.setText(Integer.toString(this.diagnosticoActivo.getTipo()));
+            this.textCodigo.setText(this.diagnosticoActivo.getCodigo());
+            this.textDescripcion.setText(this.diagnosticoActivo.getDescripcion());
+            this.textObservaciones.setText(this.diagnosticoActivo.getObservaciones());
 
-                if (medicos != null) {
-                    for (indice = 0; indice < medicos.size(); indice++) {
-                        medicoAux = medicos.get(indice);
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
+        }
 
-                        cadenaComboAux = medicoAux.getNumColegiado() + " - " + medicoAux.getNombreFormalCompleto();
-                        this.comboBoxMedicos.addItem(cadenaComboAux);
+        return devolucion;
+    }
 
-                        if (medicoAux.getId() == medicoSeleccionado) {
-                            indiceSeleccionado = indice;
-                        }
+    private boolean recogerDatosInterfaz() {
+        boolean devolucion;
+
+        try {
+            if (this.diagnosticoActivo == null) {
+                this.diagnosticoActivo = new Diagnostico(this.conexionBD);
+            }
+
+            LocalDate fechaActual = LocalDate.now();
+            DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            String fechaFormateada = fechaActual.format(formateador);
+            medicoSeleccionado = Medico.getTodosMedicos(conexionBD).get(indiceMedicoSeleccionado);
+            pacienteSeleccionado = Paciente.getTodosPacientes(conexionBD).get(indicePacienteSeleccionado);
+
+            this.diagnosticoActivo.setData(
+                    LocalDate.parse(fechaFormateada, formateador),
+                    this.medicoSeleccionado.getId(),
+                    this.pacienteSeleccionado.getId(),
+                    Integer.parseInt(this.textTipo.getText()),
+                    this.textCodigo.getText(),
+                    this.textDescripcion.getText(),
+                    this.textObservaciones.getText()
+            );
+
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
+        }
+
+        return devolucion;
+    }
+
+    public boolean cargarDatosComboBoxMedicosInterfaz() {
+        boolean devolucion;
+        Medico medicoAux;
+        int indice;
+        String cadenaComboAux;
+        long medicoSeleccionado = 0;
+        int indiceSeleccionado = 0;
+
+        this.comboBoxMedicos.removeAllItems(); // Limpiar el combo box antes de rellenar
+
+        try {
+            if (this.diagnosticoActivo != null) {
+                medicoSeleccionado = this.diagnosticoActivo.getIdMedico();
+            }
+            medicos = Medico.getTodosMedicos(this.conexionBD);
+
+            if (medicos != null) {
+                for (indice = 0; indice < medicos.size(); indice++) {
+                    medicoAux = medicos.get(indice);
+
+                    cadenaComboAux = medicoAux.getNumColegiado() + " - " + medicoAux.getNombreFormalCompleto();
+                    this.comboBoxMedicos.addItem(cadenaComboAux);
+
+                    if (medicoAux.getId() == medicoSeleccionado) {
+                        indiceSeleccionado = indice;
                     }
-                    this.comboBoxMedicos.setSelectedIndex(indiceSeleccionado);
                 }
-
-                devolucion = true;
-            } catch (Exception ex) {
-                devolucion = false;
+                this.comboBoxMedicos.setSelectedIndex(indiceSeleccionado);
             }
 
-            return devolucion;
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
         }
 
-        public boolean cargarDatosComboBoxPacientesInterfaz() {
-            boolean devolucion;
-            Paciente pacienteAux;
-            int indice;
-            String cadenaComboAux;
-            long pacienteSeleccionado = 0;
-            int indiceSeleccionado = 0;
+        return devolucion;
+    }
 
-            this.comboBoxPacientes.removeAllItems(); // Limpiar el combo box antes de rellenar
+    public boolean cargarDatosComboBoxPacientesInterfaz() {
+        boolean devolucion;
+        Paciente pacienteAux;
+        int indice;
+        String cadenaComboAux;
+        long pacienteSeleccionado = 0;
+        int indiceSeleccionado = 0;
 
-            try {
-                if (this.diagnosticoActivo != null) {
-                    pacienteSeleccionado = this.diagnosticoActivo.getIdPaciente();
-                }
-                pacientes = Paciente.getTodosPacientes(this.conexionBD);
+        this.comboBoxPacientes.removeAllItems(); // Limpiar el combo box antes de rellenar
 
-                if (pacientes != null) {
-                    for (indice = 0; indice < pacientes.size(); indice++) {
-                        pacienteAux = pacientes.get(indice);
+        try {
+            if (this.diagnosticoActivo != null) {
+                pacienteSeleccionado = this.diagnosticoActivo.getIdPaciente();
+            }
+            pacientes = Paciente.getTodosPacientes(this.conexionBD);
 
-                        cadenaComboAux = pacienteAux.getDni() + " - " + pacienteAux.getNombreFormalCompleto();
-                        this.comboBoxPacientes.addItem(cadenaComboAux);
+            if (pacientes != null) {
+                for (indice = 0; indice < pacientes.size(); indice++) {
+                    pacienteAux = pacientes.get(indice);
 
-                        if (pacienteAux.getId() == pacienteSeleccionado) {
-                            indiceSeleccionado = indice;
-                        }
+                    cadenaComboAux = pacienteAux.getDni() + " - " + pacienteAux.getNombreFormalCompleto();
+                    this.comboBoxPacientes.addItem(cadenaComboAux);
+
+                    if (pacienteAux.getId() == pacienteSeleccionado) {
+                        indiceSeleccionado = indice;
                     }
-                    this.comboBoxPacientes.setSelectedIndex(indiceSeleccionado);
                 }
-
-                devolucion = true;
-            } catch (Exception ex) {
-                devolucion = false;
+                this.comboBoxPacientes.setSelectedIndex(indiceSeleccionado);
             }
 
-            return devolucion;
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
         }
 
-        @Override
-        public void dispose() {
-            super.dispose();
-            if (listener != null) {
-                listener.cuandoCierraFormulario();
-            }
+        return devolucion;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (listener != null) {
+            listener.cuandoCierraFormulario();
         }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="Carga de datos de los Médicos">
-        public boolean cargarListaMedicosInterfaz() {
-            boolean devolucion;
+    public boolean cargarListaMedicosInterfaz() {
+        boolean devolucion;
 
-            try {
-                this.medicos = Medico.getMedicosConDiag(this.diagnosticoActivo.getId(), conexionBD);
+        try {
+            this.medicos = Medico.getMedicosConDiag(this.diagnosticoActivo.getId(), conexionBD);
 
-                this.visualizarListaMedicos();
+            this.visualizarListaMedicos();
 
-                devolucion = true;
-            } catch (Exception ex) {
-                devolucion = false;
-            }
-
-            return devolucion;
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
         }
 
-        private boolean visualizarListaMedicos() {
-            boolean devolucion;
-            int indice;
-            Medico medicoAux;
-            String[] linea = new String[2];
+        return devolucion;
+    }
 
-            DefaultTableModel modeloTabla;
+    private boolean visualizarListaMedicos() {
+        boolean devolucion;
+        int indice;
+        Medico medicoAux;
+        String[] linea = new String[2];
 
-            try {
-                modeloTabla = this.configurarListaMedicos();
+        DefaultTableModel modeloTabla;
 
-                for (indice = 0; indice < this.medicos.size(); indice++) {
-                    medicoAux = this.medicos.get(indice);
+        try {
+            modeloTabla = this.configurarListaMedicos();
 
-                    linea[0] = Long.toString(medicoAux.getNumColegiado());
-                    linea[1] = medicoAux.getNombreFormalCompleto();
+            for (indice = 0; indice < this.medicos.size(); indice++) {
+                medicoAux = this.medicos.get(indice);
 
-                    modeloTabla.addRow(linea);
-                }
+                linea[0] = Long.toString(medicoAux.getNumColegiado());
+                linea[1] = medicoAux.getNombreFormalCompleto();
 
-                this.tablaMedicos.setModel(modeloTabla);
-
-                devolucion = true;
-            } catch (Exception ex) {
-                devolucion = false;
+                modeloTabla.addRow(linea);
             }
 
-            return devolucion;
+            this.tablaMedicos.setModel(modeloTabla);
+
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
         }
 
-        private DefaultTableModel configurarListaMedicos() {
+        return devolucion;
+    }
 
-            DefaultTableModel devolucion;
+    private DefaultTableModel configurarListaMedicos() {
 
-            try {
-                devolucion = new DefaultTableModel();
+        DefaultTableModel devolucion;
 
-                devolucion.addColumn("Número Colegiado");
-                devolucion.addColumn("Nombre Completo");
+        try {
+            devolucion = new DefaultTableModel();
 
-            } catch (Exception ex) {
-                devolucion = null;
-            }
+            devolucion.addColumn("Número Colegiado");
+            devolucion.addColumn("Nombre Completo");
 
-            return devolucion;
-
+        } catch (Exception ex) {
+            devolucion = null;
         }
+
+        return devolucion;
+
+    }
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Carga de datos de los Pacientes">
-        public boolean cargarListaPacientesInterfaz() {
-            boolean devolucion;
+    public boolean cargarListaPacientesInterfaz() {
+        boolean devolucion;
 
-            try {
-                this.pacientes = Paciente.getPacientesConDiag(this.diagnosticoActivo.getId(), conexionBD);
-                this.visualizarListaPacientes();
+        try {
+            this.pacientes = Paciente.getPacientesConDiag(this.diagnosticoActivo.getId(), conexionBD);
+            this.visualizarListaPacientes();
 
-                devolucion = true;
-            } catch (Exception ex) {
-                devolucion = false;
-            }
-
-            return devolucion;
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
         }
 
-        private boolean visualizarListaPacientes() {
-            boolean devolucion;
-            int indice;
-            Paciente pacienteAux;
-            String[] linea = new String[3];
+        return devolucion;
+    }
 
-            DefaultTableModel modeloTabla;
+    private boolean visualizarListaPacientes() {
+        boolean devolucion;
+        int indice;
+        Paciente pacienteAux;
+        String[] linea = new String[3];
 
-            try {
-                modeloTabla = this.configurarListaPacientes();
+        DefaultTableModel modeloTabla;
 
-                for (indice = 0; indice < this.pacientes.size(); indice++) {
-                    pacienteAux = this.pacientes.get(indice);
+        try {
+            modeloTabla = this.configurarListaPacientes();
 
-                    linea[0] = pacienteAux.getDni();
-                    linea[1] = pacienteAux.getNombreFormalCompleto();
+            for (indice = 0; indice < this.pacientes.size(); indice++) {
+                pacienteAux = this.pacientes.get(indice);
 
-                    modeloTabla.addRow(linea);
-                }
-                this.tablaPacientes.setModel(modeloTabla);
+                linea[0] = pacienteAux.getDni();
+                linea[1] = pacienteAux.getNombreFormalCompleto();
 
-                devolucion = true;
-            } catch (Exception ex) {
-                devolucion = false;
+                modeloTabla.addRow(linea);
             }
+            this.tablaPacientes.setModel(modeloTabla);
 
-            return devolucion;
+            devolucion = true;
+        } catch (Exception ex) {
+            devolucion = false;
         }
 
-        private DefaultTableModel configurarListaPacientes() {
+        return devolucion;
+    }
 
-            DefaultTableModel devolucion;
+    private DefaultTableModel configurarListaPacientes() {
 
-            try {
-                devolucion = new DefaultTableModel();
+        DefaultTableModel devolucion;
 
-                devolucion.addColumn("DNI");
-                devolucion.addColumn("Nombre Completo");
+        try {
+            devolucion = new DefaultTableModel();
 
-            } catch (Exception ex) {
-                devolucion = null;
-            }
+            devolucion.addColumn("DNI");
+            devolucion.addColumn("Nombre Completo");
 
-            return devolucion;
-
+        } catch (Exception ex) {
+            devolucion = null;
         }
+
+        return devolucion;
+
+    }
 
     // </editor-fold>
     // </editor-fold>
@@ -542,30 +563,33 @@ public class FormMantDiagnosticos extends javax.swing.JDialog {
                         .addGap(19, 19, 19)
                         .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(textTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(textCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
-                                .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(textFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(comboBoxMedicos, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel5)
-                            .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(18, 18, 18)
-                                .addComponent(textDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(comboBoxPacientes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(comboBoxPacientes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
+                                .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(textTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(textCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
+                                        .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(fichaDatosGeneralesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(comboBoxMedicos, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(textFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(jLabel5)
+                                    .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(textDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(34, 34, 34))))
                     .addGroup(fichaDatosGeneralesLayout.createSequentialGroup()
                         .addGap(53, 53, 53)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)))
